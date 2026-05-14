@@ -1,4 +1,4 @@
-import { TextVariant, TextWeight } from "./Text.types";
+import { TextVariant, TextWeight } from "./types";
 import { Theme } from "../../../theme";
 
 export const getVariantStyles = (

@@ -1,5 +1,5 @@
 import { WithSpringConfig } from "react-native-reanimated";
-import { ButtonSize, ButtonVariant, SizeToken } from "./Button.types";
+import { ButtonSize, ButtonVariant, SizeToken } from "./types";
 import { Theme } from "../../../theme";
 import { ViewStyle } from "react-native";
 

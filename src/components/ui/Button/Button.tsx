@@ -9,13 +9,13 @@ import * as Haptics from "expo-haptics";
 
 import { useTheme } from "@hooks/useTheme";
 import { Text } from "@ui/Text";
-import { ButtonProps } from "./Button.types";
-import { styles } from "./Button.styles";
+import { ButtonProps } from "./types";
+import { styles } from "./styles";
 import {
     getSizeTokens,
     getVariantContainerStyles,
     VARIANT_TEXT_COLOR,
-} from "./Button.constants";
+} from "./constants";
 
 export const Button = ({
     label,

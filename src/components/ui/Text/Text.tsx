@@ -1,8 +1,8 @@
 import React from "react";
 import { Text as RNText, StyleSheet } from "react-native";
 import { useTheme } from "@hooks/useTheme";
-import { TextProps } from "./Text.types";
-import { getVariantStyles, WEIGHT_TO_FONT } from "./Text.constants";
+import { TextProps } from "./types";
+import { getVariantStyles, WEIGHT_TO_FONT } from "./constants";
 
 export const Text = ({
     variant = "body",

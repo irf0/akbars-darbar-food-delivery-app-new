@@ -1,4 +1,4 @@
-import { theme, Theme } from "@theme/index";
+import { theme, Theme } from "@theme";
 import { useThemeStore } from "@store/themeStore";
 
 export const useTheme = (): Theme => {

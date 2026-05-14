@@ -6,15 +6,16 @@
     "baseUrl": "./",
     "paths": {
       "@components/*": ["src/components/*"],
-      "@ui/*":         ["src/components/ui/*"],
+      "@ui/*":         ["src/components/ui/*"], 
+      "@features/*":   ["src/features/*"],
       "@hooks/*":      ["src/hooks/*"],
       "@store/*":      ["src/store/*"],
       "@services/*":   ["src/services/*"],
-      "@theme/*":      ["src/theme/*"],
+      "@theme":        ["src/theme"],
       "@utils/*":      ["src/utils/*"],
       "@types/*":      ["src/types/*"],
       "@config/*":     ["src/config/*"],
-      "@screens/*":    ["src/screens/*"],
+      "@dev/*":        ["dev/playground/*"],
       "@navigation/*": ["src/navigation/*"]
     }
   }
