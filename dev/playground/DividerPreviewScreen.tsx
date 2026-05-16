@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { Divider } from '@ui/Divider/Divider'
+import { AppDivider } from '@components/ui/Divider/AppDivider'
 import { useTheme } from '@hooks/useTheme'
 
-const DividerPreviewScreen = () => {
+const AppDividerPreviewScreen = () => {
     const { colors, spacing, fontSize, fontFamily } = useTheme()
 
     const s = styles(colors, spacing, fontSize, fontFamily)
@@ -13,45 +13,45 @@ const DividerPreviewScreen = () => {
 
             {/* Horizontal – default */}
             <Text style={s.label}>Default</Text>
-            <Divider />
+            <AppDivider />
 
             {/* Horizontal – dashed */}
             <Text style={s.label}>Dashed</Text>
-            <Divider variant="dashed" />
+            <AppDivider variant="dashed" />
 
             {/* Horizontal – dotted */}
             <Text style={s.label}>Dotted</Text>
-            <Divider variant="dotted" />
+            <AppDivider variant="dotted" />
 
             {/* With label – center */}
             <Text style={s.label}>Label · center</Text>
-            <Divider label="OR" />
+            <AppDivider label="OR" />
 
             {/* With label – left */}
             <Text style={s.label}>Label · left</Text>
-            <Divider label="OR" labelPosition="left" />
+            <AppDivider label="OR" labelPosition="left" />
 
             {/* With label – right */}
             <Text style={s.label}>Label · right</Text>
-            <Divider label="OR" labelPosition="right" />
+            <AppDivider label="OR" labelPosition="right" />
 
             {/* Custom color */}
             <Text style={s.label}>Custom color</Text>
-            <Divider color={colors.primary} />
+            <AppDivider color={colors.primary} />
 
             {/* Spacing variants */}
             <Text style={s.label}>Spacing · xs</Text>
-            <Divider spacing="xs" />
+            <AppDivider spacing="xs" />
             <Text style={s.label}>Spacing · lg</Text>
-            <Divider spacing="lg" />
+            <AppDivider spacing="lg" />
 
             {/* Vertical */}
             <Text style={s.label}>Vertical</Text>
             <View style={s.verticalRow}>
                 <Text style={s.rowText}>Left</Text>
-                <Divider orientation="vertical" spacing="sm" />
+                <AppDivider orientation="vertical" spacing="sm" />
                 <Text style={s.rowText}>Middle</Text>
-                <Divider orientation="vertical" spacing="sm" />
+                <AppDivider orientation="vertical" spacing="sm" />
                 <Text style={s.rowText}>Right</Text>
             </View>
 
@@ -59,7 +59,7 @@ const DividerPreviewScreen = () => {
     )
 }
 
-export default DividerPreviewScreen
+export default AppDividerPreviewScreen
 
 const styles = (colors: any, spacing: any, fontSize: any, fontFamily: any) =>
     StyleSheet.create({

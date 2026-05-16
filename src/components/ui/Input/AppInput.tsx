@@ -6,7 +6,7 @@ import { DISABLED_OPACITY, FOCUS_ANIMATION, getInputContainerStyle } from './con
 import { InputProps } from './types'
 import { inputStyles } from './styles'
 
-const Input = ({ label, error, disabled, ...rest }: InputProps) => {
+export const AppInput = ({ label, error, disabled, ...rest }: InputProps) => {
     const { colors, fontSize, fontFamily } = useTheme()
     const [isFocused, setIsFocused] = useState(false)
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -86,5 +86,4 @@ const Input = ({ label, error, disabled, ...rest }: InputProps) => {
     )
 }
 
-export default Input
 

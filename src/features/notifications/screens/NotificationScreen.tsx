@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import AppScreen from 'src/layout/AppScreen'
+import { AppText } from '@components/ui/Text'
 
 const NotificationScreen = () => {
     return (
-        <View>
-            <Text>NotificationScreen</Text>
-        </View>
+        <AppScreen>
+            <AppText>NotificationScreen</AppText>
+        </AppScreen>
     )
 }
 

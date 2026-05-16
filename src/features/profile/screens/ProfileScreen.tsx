@@ -6,6 +6,8 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { AppStackParamList } from '@navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AppScreen from 'src/layout/AppScreen';
+import { AppText } from '@components/ui/Text';
 
 type ParentNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
@@ -34,37 +36,39 @@ export default function ProfileScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={styles.header}>
-                <View style={[styles.avatar, { backgroundColor: colors.surfaceAlt }]}>
-                    <Ionicons name="person" size={40} color={colors.primary} />
+        <AppScreen>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
+                <View style={styles.header}>
+                    <View style={[styles.avatar, { backgroundColor: colors.surfaceAlt }]}>
+                        <Ionicons name="person" size={40} color={colors.primary} />
+                    </View>
+                    <AppText style={[styles.phone, { color: colors.text }]}>
+                        +91 {user?.phone || 'User'}
+                    </AppText>
                 </View>
-                <Text style={[styles.phone, { color: colors.text }]}>
-                    +91 {user?.phone || 'User'}
-                </Text>
-            </View>
 
-            <View style={styles.menu}>
-                <TouchableOpacity
-                    style={[styles.logoutButton, { borderColor: colors.error }]}
-                    onPress={handleLogout}
-                >
-                    <Ionicons name="log-out-outline" size={20} color={colors.error} />
-                    <Text style={[styles.logoutText, { color: colors.error }]}>
-                        Log Out
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            {__DEV__ && (
-                <View style={styles.devBox}>
-                    <Button
-                        title="Launch UI Component Lab"
-                        color="#4f46e5"
-                        onPress={() => navigation.navigate('PlaygroundMenu')}
-                    />
+                <View style={styles.menu}>
+                    <TouchableOpacity
+                        style={[styles.logoutButton, { borderColor: colors.error }]}
+                        onPress={handleLogout}
+                    >
+                        <Ionicons name="log-out-outline" size={20} color={colors.error} />
+                        <AppText style={[styles.logoutText, { color: colors.error }]}>
+                            Log Out
+                        </AppText>
+                    </TouchableOpacity>
                 </View>
-            )}
-        </View>
+                {__DEV__ && (
+                    <View style={styles.devBox}>
+                        <Button
+                            title="Launch UI Component Lab"
+                            color="#4f46e5"
+                            onPress={() => navigation.navigate('PlaygroundMenu')}
+                        />
+                    </View>
+                )}
+            </View>
+        </AppScreen>
     );
 }
 

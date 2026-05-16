@@ -96,7 +96,7 @@ interface CardComponent extends React.FC<CardProps> {
     Subtitle: typeof CardSubtitle
 }
 
-const Card: CardComponent = ({
+const AppCard: CardComponent = ({
     variant = DEFAULTS.variant,
     size = DEFAULTS.size,
     onPress,
@@ -154,11 +154,11 @@ const Card: CardComponent = ({
     return content
 }
 
-Card.Image = CardImage
-Card.Body = CardBody
-Card.Footer = CardFooter
-Card.Title = CardTitle
-Card.Subtitle = CardSubtitle
+AppCard.Image = CardImage
+AppCard.Body = CardBody
+AppCard.Footer = CardFooter
+AppCard.Title = CardTitle
+AppCard.Subtitle = CardSubtitle
 
-export { Card }
-export default Card
+export { AppCard }
+export default AppCard

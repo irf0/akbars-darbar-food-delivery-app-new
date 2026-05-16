@@ -22,6 +22,16 @@ export type AppStackParamList = {
     InputPreview: undefined;
     DividerPreview: undefined;
     CardPreview: undefined
+    BadgePreview: undefined
+    AvatarPreview: undefined
+    LoaderPreview: undefined
+    SkeletonPreview: undefined
+    EmptyStatePreview: undefined
+    ToastPreview: undefined
+    ModalPreview: undefined
+    BottomSheetPreview: undefined
+    HeaderPreview: undefined
+    ListItemPreview: undefined
 }
 
 

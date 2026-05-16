@@ -8,7 +8,7 @@ import {
 import * as Haptics from "expo-haptics";
 
 import { useTheme } from "@hooks/useTheme";
-import { Text } from "@ui/Text";
+import { AppText } from "@ui/Text/AppText";
 import { ButtonProps } from "./types";
 import { styles } from "./styles";
 import {
@@ -17,7 +17,7 @@ import {
     VARIANT_TEXT_COLOR,
 } from "./constants";
 
-export const Button = ({
+export const AppButton = ({
     label,
     onPress,
     variant = "solid",
@@ -105,14 +105,14 @@ export const Button = ({
                         }
                     />
                 ) : (
-                    <Text
+                    <AppText
                         variant="label"
                         weight="semibold"
                         color={textColor as any}
                         style={{ fontSize: sizeTokens.fontSize }}
                     >
                         {label}
-                    </Text>
+                    </AppText>
                 )}
 
                 {!loading && rightIcon && (

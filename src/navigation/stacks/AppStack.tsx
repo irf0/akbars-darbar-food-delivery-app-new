@@ -7,6 +7,16 @@ import ButtonPreviewScreen from '@dev/ButtonPreviewScreen'
 import InputPreviewScreen from '@dev/InputPreviewScreen'
 import DividerPreviewScreen from '@dev/DividerPreviewScreen'
 import CardPreviewScreen from '@dev/CardPreviewScreen'
+import BadgePreviewScreen from '@dev/BadgePreviewScreen'
+import AvatarPreviewScreen from '@dev/AvatarPreviewScreen'
+import LoaderPreviewScreen from '@dev/LoaderPreviewScreen'
+import SkeletonPreviewScreen from '@dev/SkeletonPreviewScreen'
+import EmptyStatePreviewScreen from '@dev/EmptyStatePreviewScreen'
+import ToastPreviewScreen from '@dev/ToastPreviewScreen'
+import ModalPreviewScreen from '@dev/ModalPreviewScreen'
+import BottomSheetPreviewScreen from '@dev/BottomSheetPreviewScreen'
+import HeaderPreviewScreen from '@dev/HeaderPreviewScreen'
+import ListItemPreviewScreen from '@dev/ListItemPreviewScreen'
 
 
 const Stack = createNativeStackNavigator<AppStackParamList>()
@@ -41,8 +51,58 @@ export const AppStack = () => {
                     <Stack.Screen
                         name="CardPreview"
                         component={CardPreviewScreen}
-                        options={{ title: 'Dividers' }}
+                        options={{ title: 'Cards' }}
                     />
+                    <Stack.Screen
+                        name="BadgePreview"
+                        component={BadgePreviewScreen}
+                        options={{ title: 'Badge' }}
+                    />
+                    <Stack.Screen
+                        name="AvatarPreview"
+                        component={AvatarPreviewScreen}
+                        options={{ title: 'Avatar' }}
+                    />
+                    <Stack.Screen
+                        name="LoaderPreview"
+                        component={LoaderPreviewScreen}
+                        options={{ title: 'Avatar' }}
+                    />
+                    <Stack.Screen
+                        name="SkeletonPreview"
+                        component={SkeletonPreviewScreen}
+                        options={{ title: 'Avatar' }}
+                    />
+                    <Stack.Screen
+                        name="EmptyStatePreview"
+                        component={EmptyStatePreviewScreen}
+                        options={{ title: 'Empty' }}
+                    />
+                    <Stack.Screen
+                        name="ToastPreview"
+                        component={ToastPreviewScreen}
+                        options={{ title: 'Empty' }}
+                    />
+                    <Stack.Screen
+                        name="ModalPreview"
+                        component={ModalPreviewScreen}
+                        options={{ title: 'Empty' }}
+                    />
+                    <Stack.Screen
+                        name="HeaderPreview"
+                        component={HeaderPreviewScreen}
+                        options={{ title: 'Empty' }}
+                    />
+                    <Stack.Screen
+                        name="ListItemPreview"
+                        component={ListItemPreviewScreen}
+                        options={{ title: 'Empty' }}
+                    />
+                    {/* <Stack.Screen  //Doesn't run in Expo Go due to reanimated
+                        name="BottomSheetPreview"
+                        component={BottomSheetPreviewScreen}
+                        options={{ title: 'Empty' }}
+                    /> */}
                 </>
             )}
         </Stack.Navigator>

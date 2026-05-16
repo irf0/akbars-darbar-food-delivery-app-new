@@ -1,4 +1,4 @@
-export { Card, default } from './Card'
+export { AppCard, default } from './AppCard'
 export type {
     CardBodyProps,
     CardFooterProps,

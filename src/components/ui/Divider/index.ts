@@ -1,4 +1,4 @@
-export { Divider, default } from './Divider'
+export { Divider, default } from './AppDivider'
 export type {
     DividerLabelPosition,
     DividerOrientation,

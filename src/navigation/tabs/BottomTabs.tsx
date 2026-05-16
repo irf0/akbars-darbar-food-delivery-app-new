@@ -9,6 +9,7 @@ import HomeScreen from '@features/home/screens/HomeScreen';
 import SearchScreen from '@features/search/screens/SearchScreen';
 import NotificationScreen from '@features/notifications/screens/NotificationScreen';
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
+import { useTheme } from '@hooks/useTheme';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
@@ -22,7 +23,7 @@ const iconConfig: Record<keyof BottomTabsParamList, { active: any; inactive: any
 
 export const BottomTabs = () => {
     // 2. Use your theme tokens
-    const { colors, spacing, fontSize, fontWeight } = theme.light;
+    const { colors, spacing, fontSize, fontWeight } = useTheme()
 
     return (
         <Tab.Navigator

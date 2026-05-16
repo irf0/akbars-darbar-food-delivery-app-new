@@ -13,8 +13,8 @@ import {
 } from 'react-native'
 import { useTheme } from '@hooks/useTheme'
 import { Text } from '@ui/Text'
-import { Card } from '@ui/Card'
-import { Divider } from '@ui/Divider/Divider'
+import { AppCard } from '@ui/Card/AppCard'
+import { Divider } from '@components/ui/Divider/AppDivider'
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -192,14 +192,14 @@ const StatItem = ({ label, value }: { label: string; value: string }) => {
     )
 }
 
-// ─── 1. Restaurant Card ───────────────────────────────────────────────────────
+// ─── 1. Restaurant AppCard ───────────────────────────────────────────────────────
 
-const RestaurantCard = ({ item }: { item: typeof RESTAURANTS[0] }) => {
+const RestaurantAppCard = ({ item }: { item: typeof RESTAURANTS[0] }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     return (
-        <Card variant="elevated" size="sm" onPress={() => { }}>
+        <AppCard variant="elevated" size="sm" onPress={() => { }}>
             <View>
-                <Card.Image source={item.image} aspectRatio={16 / 9} />
+                <AppCard.Image source={item.image} aspectRatio={16 / 9} />
                 <View style={[s.tagRow, { top: spacing.sm, left: spacing.sm }]}>
                     {item.tags.map(tag => (
                         <View key={tag} style={[s.tag, { backgroundColor: colors.primary, borderRadius: radius.full, paddingHorizontal: spacing.sm, paddingVertical: 3 }]}>
@@ -208,7 +208,7 @@ const RestaurantCard = ({ item }: { item: typeof RESTAURANTS[0] }) => {
                     ))}
                 </View>
             </View>
-            <Card.Body>
+            <AppCard.Body>
                 <View style={s.row}>
                     <Text style={{ fontSize: fontSize.lg, fontFamily: fontFamily.bold, color: colors.text, flex: 1 }}>{item.name}</Text>
                     <View style={s.row}>
@@ -223,19 +223,19 @@ const RestaurantCard = ({ item }: { item: typeof RESTAURANTS[0] }) => {
                     <MetaChip icon="📍" label={item.distance} />
                     <MetaChip icon="🛵" label={item.deliveryFee} />
                 </View>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
-// ─── 2. Product Grid Card ─────────────────────────────────────────────────────
+// ─── 2. Product Grid AppCard ─────────────────────────────────────────────────────
 
-const ProductCard = ({ item }: { item: typeof PRODUCTS[0] }) => {
+const ProductAppCard = ({ item }: { item: typeof PRODUCTS[0] }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     return (
-        <Card variant="elevated" size="sm" onPress={item.inStock ? () => { } : undefined}>
+        <AppCard variant="elevated" size="sm" onPress={item.inStock ? () => { } : undefined}>
             <View>
-                <Card.Image source={item.image} aspectRatio={1} />
+                <AppCard.Image source={item.image} aspectRatio={1} />
                 {item.discount && (
                     <View style={[s.badge, { backgroundColor: colors.error, borderRadius: radius.sm, top: spacing.sm, right: spacing.sm, paddingHorizontal: spacing.xs, paddingVertical: 2 }]}>
                         <Text style={{ fontSize: fontSize.xs, fontFamily: fontFamily.bold, color: '#fff' }}>-{item.discount}%</Text>
@@ -247,7 +247,7 @@ const ProductCard = ({ item }: { item: typeof PRODUCTS[0] }) => {
                     </View>
                 )}
             </View>
-            <Card.Body>
+            <AppCard.Body>
                 <Text style={{ fontSize: fontSize.xs, color: colors.textSecondary, fontFamily: fontFamily.medium, letterSpacing: 0.5, textTransform: 'uppercase' }}>{item.category}</Text>
                 <Text style={{ fontSize: fontSize.sm, fontFamily: fontFamily.semibold, color: colors.text, marginTop: 2 }} numberOfLines={1}>{item.name}</Text>
                 <View style={[s.row, { marginTop: 4 }]}>
@@ -269,19 +269,19 @@ const ProductCard = ({ item }: { item: typeof PRODUCTS[0] }) => {
                         {item.inStock ? 'Add to Cart' : 'Unavailable'}
                     </Text>
                 </TouchableOpacity>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
-// ─── 3. Profile Card ──────────────────────────────────────────────────────────
+// ─── 3. Profile AppCard ──────────────────────────────────────────────────────────
 
-const ProfileCard = ({ item }: { item: typeof PROFILES[0] }) => {
+const ProfileAppCard = ({ item }: { item: typeof PROFILES[0] }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     const [following, setFollowing] = useState(item.isFollowing)
     return (
-        <Card variant="outlined" size="md">
-            <Card.Body>
+        <AppCard variant="outlined" size="md">
+            <AppCard.Body>
                 <View style={s.profileTop}>
                     <Image source={item.avatar} style={{ width: 56, height: 56, borderRadius: radius.full, backgroundColor: colors.surfaceAlt }} />
                     <TouchableOpacity
@@ -314,12 +314,12 @@ const ProfileCard = ({ item }: { item: typeof PROFILES[0] }) => {
                     <View style={{ width: 1, backgroundColor: colors.border }} />
                     <StatItem label="Following" value={String(item.following)} />
                 </View>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
-// ─── 4. My Profile Card ───────────────────────────────────────────────────────
+// ─── 4. My Profile AppCard ───────────────────────────────────────────────────────
 
 const MY_PROFILE = {
     name: 'Jordan Ellis',
@@ -329,12 +329,12 @@ const MY_PROFILE = {
     joined: 'Joined March 2022',
 }
 
-const MyProfileCard = () => {
+const MyProfileAppCard = () => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
 
     return (
-        <Card variant="elevated" size="md">
-            <Card.Body>
+        <AppCard variant="elevated" size="md">
+            <AppCard.Body>
                 {/* Avatar + Edit button */}
                 <View style={[s.row, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
                     <View style={{ position: 'relative' }}>
@@ -404,19 +404,19 @@ const MyProfileCard = () => {
                         </Text>
                     </View>
                 </View>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
-// ─── 5. Standard Content Card ─────────────────────────────────────────────────
+// ─── 5. Standard Content AppCard ─────────────────────────────────────────────────
 
-const StandardContentCard = () => {
+const StandardContentAppCard = () => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     return (
-        <Card variant="elevated" size="md">
-            <Card.Image source={{ uri: 'https://picsum.photos/seed/nature1/800/400' }} aspectRatio={16 / 7} />
-            <Card.Body>
+        <AppCard variant="elevated" size="md">
+            <AppCard.Image source={{ uri: 'https://picsum.photos/seed/nature1/800/400' }} aspectRatio={16 / 7} />
+            <AppCard.Body>
                 <View style={[s.row, { marginBottom: spacing.xs }]}>
                     <View style={{ backgroundColor: colors.primaryLight, borderRadius: radius.full, paddingHorizontal: spacing.sm, paddingVertical: 2 }}>
                         <Text style={{ fontSize: fontSize.xs, fontFamily: fontFamily.semibold, color: colors.primary }}>Travel</Text>
@@ -429,8 +429,8 @@ const StandardContentCard = () => {
                 <Text style={{ fontSize: fontSize.sm, fontFamily: fontFamily.regular, color: colors.textSecondary, marginTop: spacing.sm, lineHeight: 22 }}>
                     From the terraced rice fields of Bali to the lantern-lit streets of Hội An, discover the places most travel guides leave off the map.
                 </Text>
-            </Card.Body>
-            <Card.Footer>
+            </AppCard.Body>
+            <AppCard.Footer>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
                     <Image source={{ uri: 'https://picsum.photos/seed/face3/100/100' }} style={{ width: 28, height: 28, borderRadius: radius.full }} />
                     <View>
@@ -444,17 +444,17 @@ const StandardContentCard = () => {
                 >
                     <Text style={{ fontSize: fontSize.sm, fontFamily: fontFamily.semibold, color: '#fff' }}>Read</Text>
                 </TouchableOpacity>
-            </Card.Footer>
-        </Card>
+            </AppCard.Footer>
+        </AppCard>
     )
 }
 
-// ─── 5. Swipeable Action Card ─────────────────────────────────────────────────
+// ─── 5. Swipeable Action AppCard ─────────────────────────────────────────────────
 
 const SWIPE_THRESHOLD = 80
 const ACTION_WIDTH = 72
 
-const SwipeableCard = ({
+const SwipeableAppCard = ({
     item,
     onDelete,
     onEdit,
@@ -465,7 +465,7 @@ const SwipeableCard = ({
 }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     const translateX = useRef(new Animated.Value(0)).current
-    const cardHeight = useRef(new Animated.Value(1)).current // scale for collapse
+    const AppCardHeight = useRef(new Animated.Value(1)).current // scale for collapse
     const opacity = useRef(new Animated.Value(1)).current
 
     const panResponder = useRef(
@@ -482,7 +482,7 @@ const SwipeableCard = ({
                     Animated.sequence([
                         Animated.timing(translateX, { toValue: -400, duration: 250, useNativeDriver: true }),
                         Animated.parallel([
-                            Animated.timing(cardHeight, { toValue: 0, duration: 200, useNativeDriver: true }),
+                            Animated.timing(AppCardHeight, { toValue: 0, duration: 200, useNativeDriver: true }),
                             Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
                         ]),
                     ]).start(onDelete)
@@ -504,7 +504,7 @@ const SwipeableCard = ({
     }
 
     return (
-        <Animated.View style={{ opacity, transform: [{ scaleY: cardHeight }], marginBottom: spacing.sm, overflow: 'hidden' }}>
+        <Animated.View style={{ opacity, transform: [{ scaleY: AppCardHeight }], marginBottom: spacing.sm, overflow: 'hidden' }}>
             {/* Underlying action layers */}
             <View style={[StyleSheet.absoluteFill, s.row, { borderRadius: radius.md, overflow: 'hidden' }]}>
                 {/* Edit — left reveal */}
@@ -519,13 +519,13 @@ const SwipeableCard = ({
                 </View>
             </View>
 
-            {/* Card surface */}
+            {/* AppCard surface */}
             <Animated.View
                 {...panResponder.panHandlers}
                 style={{ transform: [{ translateX }] }}
             >
-                <Card variant="elevated" size="md">
-                    <Card.Body>
+                <AppCard variant="elevated" size="md">
+                    <AppCard.Body>
                         <View style={s.row}>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ fontSize: fontSize.md, fontFamily: fontFamily.semibold, color: colors.text }}>{item.title}</Text>
@@ -535,8 +535,8 @@ const SwipeableCard = ({
                                 <Text style={{ fontSize: fontSize.xs, fontFamily: fontFamily.semibold, color: tagColor[item.tag] }}>{item.tag}</Text>
                             </View>
                         </View>
-                    </Card.Body>
-                </Card>
+                    </AppCard.Body>
+                </AppCard>
             </Animated.View>
         </Animated.View>
     )
@@ -551,7 +551,7 @@ const SwipeableSection = () => {
     return (
         <View>
             {items.map(item => (
-                <SwipeableCard
+                <SwipeableAppCard
                     key={item.id}
                     item={item}
                     onDelete={() => remove(item.id)}
@@ -568,9 +568,9 @@ const SwipeableSection = () => {
     )
 }
 
-// ─── 6. Expandable Detail Card ────────────────────────────────────────────────
+// ─── 6. Expandable Detail AppCard ────────────────────────────────────────────────
 
-const ExpandableCard = ({ item }: { item: typeof EXPANDABLE_ITEMS[0] }) => {
+const ExpandableAppCard = ({ item }: { item: typeof EXPANDABLE_ITEMS[0] }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     const [expanded, setExpanded] = useState(false)
     const animValue = useRef(new Animated.Value(0)).current
@@ -593,8 +593,8 @@ const ExpandableCard = ({ item }: { item: typeof EXPANDABLE_ITEMS[0] }) => {
     })
 
     return (
-        <Card variant="outlined" size="md" style={{ marginBottom: spacing.sm }}>
-            <Card.Body>
+        <AppCard variant="outlined" size="md" style={{ marginBottom: spacing.sm }}>
+            <AppCard.Body>
                 <TouchableOpacity activeOpacity={0.7} onPress={toggle} style={[s.row, { justifyContent: 'space-between' }]}>
                     <Text style={{ fontSize: fontSize.md, fontFamily: fontFamily.semibold, color: colors.text, flex: 1, paddingRight: spacing.sm }}>
                         {item.title}
@@ -622,20 +622,20 @@ const ExpandableCard = ({ item }: { item: typeof EXPANDABLE_ITEMS[0] }) => {
                         </Text>
                     </View>
                 </Animated.View>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
-// ─── 7. Product Row Card ──────────────────────────────────────────────────────
+// ─── 7. Product Row AppCard ──────────────────────────────────────────────────────
 
-const ProductRowCard = ({ item }: { item: typeof ROW_PRODUCTS[0] }) => {
+const ProductRowAppCard = ({ item }: { item: typeof ROW_PRODUCTS[0] }) => {
     const { colors, spacing, radius, fontSize, fontFamily } = useTheme()
     const [qty, setQty] = useState(1)
 
     return (
-        <Card variant="elevated" size="sm" style={{ marginBottom: spacing.sm }}>
-            <Card.Body>
+        <AppCard variant="elevated" size="sm" style={{ marginBottom: spacing.sm }}>
+            <AppCard.Body>
                 <View style={s.row}>
                     {/* Thumbnail */}
                     <Image
@@ -687,8 +687,8 @@ const ProductRowCard = ({ item }: { item: typeof ROW_PRODUCTS[0] }) => {
                         </View>
                     </View>
                 </View>
-            </Card.Body>
-        </Card>
+            </AppCard.Body>
+        </AppCard>
     )
 }
 
@@ -707,7 +707,7 @@ const s = StyleSheet.create({
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
-const CardPreviewScreen = () => {
+const AppCardPreviewScreen = () => {
     const { colors, spacing } = useTheme()
 
     return (
@@ -720,7 +720,7 @@ const CardPreviewScreen = () => {
             <SectionLabel>Food & Restaurant</SectionLabel>
             {RESTAURANTS.map(item => (
                 <View key={item.id} style={{ marginBottom: spacing.md }}>
-                    <RestaurantCard item={item} />
+                    <RestaurantAppCard item={item} />
                 </View>
             ))}
 
@@ -728,7 +728,7 @@ const CardPreviewScreen = () => {
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
                 {PRODUCTS.map(item => (
                     <View key={item.id} style={{ width: '47%' }}>
-                        <ProductCard item={item} />
+                        <ProductAppCard item={item} />
                     </View>
                 ))}
             </View>
@@ -736,37 +736,37 @@ const CardPreviewScreen = () => {
             <SectionLabel>Profile / User</SectionLabel>
             {PROFILES.map(item => (
                 <View key={item.id} style={{ marginBottom: spacing.md }}>
-                    <ProfileCard item={item} />
+                    <ProfileAppCard item={item} />
                 </View>
             ))}
 
             <Divider spacing="lg" label="New Varieties" />
 
-            {/* Standard Content Card */}
-            <SectionLabel>Standard Content Card</SectionLabel>
-            <StandardContentCard />
+            {/* Standard Content AppCard */}
+            <SectionLabel>Standard Content AppCard</SectionLabel>
+            <StandardContentAppCard />
 
             {/* Swipeable */}
-            <SectionLabel>Swipeable Action Card · swipe left to delete, right to edit</SectionLabel>
+            <SectionLabel>Swipeable Action AppCard · swipe left to delete, right to edit</SectionLabel>
             <SwipeableSection />
 
             {/* Expandable */}
-            <SectionLabel>Expandable Detail Card</SectionLabel>
+            <SectionLabel>Expandable Detail AppCard</SectionLabel>
             {EXPANDABLE_ITEMS.map(item => (
-                <ExpandableCard key={item.id} item={item} />
+                <ExpandableAppCard key={item.id} item={item} />
             ))}
 
             {/* Product Row */}
-            <SectionLabel>Product Row Card</SectionLabel>
+            <SectionLabel>Product Row AppCard</SectionLabel>
             {ROW_PRODUCTS.map(item => (
-                <ProductRowCard key={item.id} item={item} />
+                <ProductRowAppCard key={item.id} item={item} />
             ))}
 
             {/* My Profile */}
-            <SectionLabel>My Profile Card</SectionLabel>
-            <MyProfileCard />
+            <SectionLabel>My Profile AppCard</SectionLabel>
+            <MyProfileAppCard />
         </ScrollView>
     )
 }
 
-export default CardPreviewScreen
+export default AppCardPreviewScreen

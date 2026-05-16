@@ -75,8 +75,8 @@ export const darkColors: typeof lightColors = {
     primaryLight: palette.purple700,
     secondary: palette.blue500,
 
-    background: palette.gray900,
-    surface: "#1F2937",
+    background: palette.black,
+    surface: "#080a0c",
     surfaceAlt: "#374151",
 
     text: palette.gray50,

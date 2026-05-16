@@ -7,11 +7,11 @@ import {
     Text as RNText,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Input from "@components/ui/Input/Input";
+import { AppInput } from "@components/ui/Input/AppInput";
 
 
 
-export default function InputPreviewScreen() {
+export default function AppInputPreviewScreen() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [phone, setPhone] = useState("")
@@ -27,13 +27,13 @@ export default function InputPreviewScreen() {
             >
                 {/* Header */}
                 <View style={styles.header}>
-                    <RNText style={styles.heading}>Input Component</RNText>
+                    <RNText style={styles.heading}>AppInput Component</RNText>
                     <RNText style={styles.subheading}>All states and variants</RNText>
                 </View>
 
                 {/* Default */}
                 <RNText style={styles.sectionTitle}>DEFAULT STATE</RNText>
-                <Input
+                <AppInput
                     label="Email"
                     placeholder="Enter your email"
                     value={email}
@@ -43,7 +43,7 @@ export default function InputPreviewScreen() {
 
                 {/* Password */}
                 <RNText style={styles.sectionTitle}>PASSWORD ENTRY</RNText>
-                <Input
+                <AppInput
                     label="Password"
                     placeholder="Enter your password"
                     value={password}
@@ -53,7 +53,7 @@ export default function InputPreviewScreen() {
 
                 {/* Error state */}
                 <RNText style={styles.sectionTitle}>ERROR STATE</RNText>
-                <Input
+                <AppInput
                     label="Email"
                     placeholder="Enter your email"
                     value="wrongemail"
@@ -63,7 +63,7 @@ export default function InputPreviewScreen() {
 
                 {/* Disabled */}
                 <RNText style={styles.sectionTitle}>DISABLED</RNText>
-                <Input
+                <AppInput
                     label="Phone"
                     placeholder="Enter your phone"
                     value={phone}

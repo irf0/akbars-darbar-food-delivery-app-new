@@ -4,7 +4,7 @@ import { useTheme } from "@hooks/useTheme";
 import { TextProps } from "./types";
 import { getVariantStyles, WEIGHT_TO_FONT } from "./constants";
 
-export const Text = ({
+export const AppText = ({
     variant = "body",
     weight,
     color = "text",

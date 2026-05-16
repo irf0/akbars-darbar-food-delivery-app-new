@@ -9,7 +9,7 @@ import {
 import { createDividerStyles } from './styles'
 import type { DividerProps } from './types'
 
-export const Divider: React.FC<DividerProps> = ({
+export const AppDivider: React.FC<DividerProps> = ({
     orientation = DEFAULTS.orientation,
     variant = DEFAULTS.variant,
     spacing = DEFAULTS.spacing,
@@ -96,4 +96,3 @@ export const Divider: React.FC<DividerProps> = ({
     )
 }
 
-export default Divider

@@ -6,7 +6,7 @@ import {
     SafeAreaView,
     Text as RNText,
 } from "react-native";
-import { Button } from '@components/ui/Button/Button';
+import { AppButton } from '@components/ui/Button/AppButton';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <View style={styles.section}>
@@ -15,7 +15,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
     </View>
 );
 
-const ButtonPreviewScreen = () => {
+const AppButtonPreviewScreen = () => {
     const [loading, setLoading] = useState(false);
 
     const handleLoadingPress = () => {
@@ -28,44 +28,44 @@ const ButtonPreviewScreen = () => {
             <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
                 {/* Visual Header Context */}
                 <View style={styles.header}>
-                    <RNText style={styles.heading}>Button Lab</RNText>
+                    <RNText style={styles.heading}>AppButton Lab</RNText>
                     <RNText style={styles.subheading}>Interactive design tokens & states reference</RNText>
                 </View>
 
                 {/* 1. Component Variants Section */}
                 <Section title="Variants">
-                    <Button label="Solid" onPress={() => { }} variant="solid" fullWidth />
-                    <Button label="Outline" onPress={() => { }} variant="outline" fullWidth />
-                    <Button label="Ghost" onPress={() => { }} variant="ghost" fullWidth />
-                    <Button label="Danger" onPress={() => { }} variant="danger" fullWidth />
+                    <AppButton label="Solid" onPress={() => { }} variant="solid" fullWidth />
+                    <AppButton label="Outline" onPress={() => { }} variant="outline" fullWidth />
+                    <AppButton label="Ghost" onPress={() => { }} variant="ghost" fullWidth />
+                    <AppButton label="Danger" onPress={() => { }} variant="danger" fullWidth />
                 </Section>
 
                 {/* 2. Sizing Scaling Section */}
                 <Section title="Sizes">
-                    <Button label="Large Button" onPress={() => { }} size="lg" fullWidth />
-                    <Button label="Medium Button" onPress={() => { }} size="md" fullWidth />
-                    <Button label="Small Button" onPress={() => { }} size="sm" fullWidth />
+                    <AppButton label="Large AppButton" onPress={() => { }} size="lg" fullWidth />
+                    <AppButton label="Medium AppButton" onPress={() => { }} size="md" fullWidth />
+                    <AppButton label="Small AppButton" onPress={() => { }} size="sm" fullWidth />
                 </Section>
 
                 {/* 3. Operational Interaction States Section */}
                 <Section title="States">
-                    <Button
+                    <AppButton
                         label="Tap to Load"
                         onPress={handleLoadingPress}
                         loading={loading}
                         fullWidth
                     />
-                    <Button label="Disabled" onPress={() => { }} disabled fullWidth />
+                    <AppButton label="Disabled" onPress={() => { }} disabled fullWidth />
                 </Section>
 
                 {/* 4. Structural Flex Row Testing Section */}
                 <Section title="Inline Row">
                     <View style={styles.row}>
                         <View style={styles.rowItem}>
-                            <Button label="Cancel" onPress={() => { }} variant="outline" fullWidth />
+                            <AppButton label="Cancel" onPress={() => { }} variant="outline" fullWidth />
                         </View>
                         <View style={styles.rowItem}>
-                            <Button label="Confirm" onPress={() => { }} variant="solid" fullWidth />
+                            <AppButton label="Confirm" onPress={() => { }} variant="solid" fullWidth />
                         </View>
                     </View>
                 </Section>
@@ -74,7 +74,7 @@ const ButtonPreviewScreen = () => {
     );
 };
 
-export default ButtonPreviewScreen;
+export default AppButtonPreviewScreen;
 
 const styles = StyleSheet.create({
     safe: {
