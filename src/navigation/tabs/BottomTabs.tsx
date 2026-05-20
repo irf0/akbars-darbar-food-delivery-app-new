@@ -2,21 +2,20 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabsParamList } from '@navigation/types';
-import { theme } from '@theme';
 
 // Screens
 import HomeScreen from '@features/home/screens/HomeScreen';
-import SearchScreen from '@features/search/screens/SearchScreen';
 import NotificationScreen from '@features/notifications/screens/NotificationScreen';
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
 import { useTheme } from '@hooks/useTheme';
+import { MenuScreen } from '@features/menu/screens/MenuScreen';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
 // 1. Move icons OUTSIDE to prevent re-creating the object on every render
 const iconConfig: Record<keyof BottomTabsParamList, { active: any; inactive: any }> = {
     Home: { active: 'home', inactive: 'home-outline' },
-    Search: { active: 'search', inactive: 'search-outline' },
+    Menu: { active: 'search', inactive: 'search-outline' },
     Notifications: { active: 'notifications', inactive: 'notifications-outline' },
     Profile: { active: 'person', inactive: 'person-outline' },
 };
@@ -53,7 +52,7 @@ export const BottomTabs = () => {
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Search" component={SearchScreen} />
+            <Tab.Screen name="Menu" component={MenuScreen} />
             <Tab.Screen name="Notifications" component={NotificationScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>

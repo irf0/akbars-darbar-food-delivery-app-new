@@ -123,6 +123,13 @@ const DEV_SCREENS: DevScreenEntry[] = [
         icon: '☰',
         category: 'Display',
     },
+    {
+        name: 'SplashPreview',
+        title: 'Splash Screen',
+        description: 'App loading animation with logo, name and tagline',
+        icon: '✦',
+        category: 'Feedback',
+    },
     // ↓ Add more entries here as you build new components
 ]
 

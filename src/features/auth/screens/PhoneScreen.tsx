@@ -14,6 +14,8 @@ import {
 import { AuthScreenProps } from '@navigation/types';
 import { theme } from '@theme';
 import { useLogin } from '../hooks/useLogin';
+import { setConfirmation } from '../store/confirmationRef';
+import AppLoader from '@components/ui/Loader';
 
 export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -37,15 +39,16 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
 
     const handleContinue = async () => {
         if (phoneNumber.length < 10) {
-            setValidationError('Enter a valid 10-digit number');
-            return;
+            setValidationError('Enter a valid 10-digit number')
+            return
         }
-        setErrorDismissed(false);
-        const success = await sendOTP(phoneNumber);
-        if (success) {
-            navigation.navigate('OTP', { phoneNumber });
+        setErrorDismissed(false)
+        const result = await sendOTP(phoneNumber)
+        if (result) {
+            setConfirmation(result)
+            navigation.navigate('OTP', { phoneNumber })
         }
-    };
+    }
 
     const hasInputError = !!validationError;
 
@@ -119,7 +122,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
                         disabled={phoneNumber.length < 10 || loading}
                     >
                         {loading
-                            ? <ActivityIndicator color={colors.warning} size={spacing.md} />
+                            ? <AppLoader variant="dots" color='primary' size='md' />
                             : <Text style={styles.buttonText}>Send Code</Text>
                         }
                     </TouchableOpacity>

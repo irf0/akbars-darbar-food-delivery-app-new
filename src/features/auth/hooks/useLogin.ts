@@ -1,5 +1,7 @@
-import api from "@services/api"
-import { useState } from "react"
+// src/features/auth/hooks/useLogin.ts
+
+import { useState } from 'react'
+import { getAuth, signInWithPhoneNumber } from '@react-native-firebase/auth'
 
 export const useLogin = () => {
     const [loading, setLoading] = useState(false)
@@ -8,12 +10,14 @@ export const useLogin = () => {
     const sendOTP = async (phone: string) => {
         try {
             setLoading(true)
-            const response = await api.post('/auth/send-otp', { phone })
-            response.data
-            return true
-        } catch (err) {
-            setError((err as Error).message)
-            return false
+            const auth = getAuth()
+            const confirmation = await signInWithPhoneNumber(auth, `+91${phone}`)
+            return confirmation
+        } catch (err: any) {
+            console.log('RAW ERROR:', err)
+            const message = err?.message ?? err?.code ?? 'Failed to send OTP'
+            setError(message)
+            return null
         } finally {
             setLoading(false)
         }

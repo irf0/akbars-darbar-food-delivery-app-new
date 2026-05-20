@@ -3,7 +3,7 @@ import React from 'react'
 import { useTheme } from '@hooks/useTheme'
 import { ScreenProps } from './types'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useThemeStore } from '@store/themeStore'
+import { useThemeStore } from '@store/theme/themeStore'
 import { StatusBar } from 'expo-status-bar'
 
 

@@ -17,6 +17,7 @@ import ModalPreviewScreen from '@dev/ModalPreviewScreen'
 import BottomSheetPreviewScreen from '@dev/BottomSheetPreviewScreen'
 import HeaderPreviewScreen from '@dev/HeaderPreviewScreen'
 import ListItemPreviewScreen from '@dev/ListItemPreviewScreen'
+import SplashPreviewScreen from '@dev/SplashPreviewScreen'
 
 
 const Stack = createNativeStackNavigator<AppStackParamList>()
@@ -25,6 +26,7 @@ export const AppStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="MainTabs" component={BottomTabs} />
+
 
             {__DEV__ && (
                 <>
@@ -81,22 +83,27 @@ export const AppStack = () => {
                     <Stack.Screen
                         name="ToastPreview"
                         component={ToastPreviewScreen}
-                        options={{ title: 'Empty' }}
+                        options={{ title: 'Toast' }}
                     />
                     <Stack.Screen
                         name="ModalPreview"
                         component={ModalPreviewScreen}
-                        options={{ title: 'Empty' }}
+                        options={{ title: 'Modal' }}
                     />
                     <Stack.Screen
                         name="HeaderPreview"
                         component={HeaderPreviewScreen}
-                        options={{ title: 'Empty' }}
+                        options={{ title: 'Header' }}
                     />
                     <Stack.Screen
                         name="ListItemPreview"
                         component={ListItemPreviewScreen}
-                        options={{ title: 'Empty' }}
+                        options={{ title: 'ListItem' }}
+                    />
+                    <Stack.Screen
+                        name="SplashPreview"
+                        component={SplashPreviewScreen}
+                        options={{ title: 'Splash Screen' }}
                     />
                     {/* <Stack.Screen  //Doesn't run in Expo Go due to reanimated
                         name="BottomSheetPreview"

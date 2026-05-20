@@ -1,68 +1,113 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { useTheme } from '@hooks/useTheme'
-import { StatusBar } from 'expo-status-bar'
-import { useThemeStore } from '@store/themeStore'
-import Screen from 'src/layout/AppScreen'
-import AppScreen from 'src/layout/AppScreen'
-import { AppBadge } from '@components/ui/Badge'
-import { AppAvatar } from '@components/ui/Avatar'
-import AppLoader from '@components/ui/Loader'
-import { AppButton } from '@components/ui/Button/AppButton'
-import { toast } from '@components/ui/Toast'
-import AppModal from '@components/ui/Modal'
-import { AppListItem } from '@components/ui/ListItem'
+import React, { useEffect, useRef } from 'react'
+import {
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Animated,
+    StatusBar,
+} from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
-import { AppText } from '@components/ui/Text'
+import { useAuthStore } from '@features/auth/store/useAuthStore'
+import { useMenu } from '@hooks/useMenu'
+import { useAdminSettings } from '@hooks/useAdminSettings'
+import { useCartStore } from '@store/cart/index'
+import { theme } from '@theme'
+import HeroBanner from '../components/HeroBanner'
+import { CategoryList } from '../components/CategoryList'
+import { BestSellerList } from '../components/BestSellerList'
+import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import { createStyles } from './styles'
+import { HomeHeader } from '../components/HomeHeader'
 
 
-const HomeScreen = () => {
-    const theme = useTheme()
-    const { resolved } = useThemeStore()
-    const [visible, setVisible] = useState(false)
+
+
+type Props = NativeStackScreenProps<AppStackParamList, 'MainTabs'>
+
+export default function HomeScreen({ navigation }: Props) {
+    const tabNavigation = useNavigation<BottomTabNavigationProp<BottomTabsParamList>>()
+    const styles = createStyles
+
+    const { user } = useAuthStore()
+    const { settings } = useAdminSettings()
+    const { menu, loading } = useMenu()
+    const bestSellers = Object.values(menu).flat().filter(i => i.bestSeller && i.available)
+    const totalItems = useCartStore(s => s.totalItems())
+
+    const fadeAnim = useRef(new Animated.Value(0)).current
+    const slideAnim = useRef(new Animated.Value(20)).current
+
+
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1, duration: 500,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0, duration: 500,
+                useNativeDriver: true,
+            }),
+        ]).start()
+    }, [])
 
     return (
+        <SafeAreaView style={createStyles.container} edges={['top']}>
 
-        <AppScreen scroll >
-            <Text style={{ color: theme.colors.text }}>HomeScreen</Text>
-            <AppBadge label="Delivered" color='neutral' variant="filled" />
-            <AppAvatar
-                source={{ uri: "https://picsum.photos/200/300" }}
-                size="md"
-                presence="online"
-            />
-            <AppLoader variant='dots' size="md" color='primary' />
+            <StatusBar barStyle="dark-content" />
 
-            {/* toast testing */}
-            <AppButton
-                style={{ marginVertical: 25 }}
-                label="Test Toast"
-                onPress={() => toast.success('Order placed!', 'Your order is on its way.')}
-            />
+            {/* ── Header ── */}
+            <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+                <HomeHeader
+                    user={user}
+                    settings={settings}
+                    totalItems={totalItems}
+                    onCartPress={() => navigation.navigate('Cart')}
+                />
+            </Animated.View>
 
-            <AppButton label="Test Modal" onPress={() => setVisible(true)} />
-            <AppModal
-                visible={visible}
-                onClose={() => setVisible(false)}
-                title="Confirm order"
-                subtitle="Are you sure you want to place this order?"
-                primaryAction={{ label: 'Confirm', onPress: () => { setVisible(false); toast.success('Order placed!') } }}
-                secondaryAction={{ label: 'Cancel', onPress: () => setVisible(false) }}
-            />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                {/* ── Search Bar ── */}
+                <TouchableOpacity
+                    style={styles.searchBar}
+                    onPress={() => tabNavigation.navigate('Menu')}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name="search-outline" size={18} color={theme.light.colors.textSecondary} />
+                    <Text style={styles.searchPlaceholder}>
+                        Search biryani, starters...
+                    </Text>
+                </TouchableOpacity>
 
-            <AppText>List Item Test</AppText>
-            <AppListItem
-                title='Notifications'
-                leftElement={<Ionicons name='notifications' size={22} color={theme.colors.primary} />}
-                showChevron
-                onPress={() => { }}
-            />
+                {/* Hero Banner */}
+                <HeroBanner onPress={() => navigation.navigate('FullMenu')} />
 
+                {/* Categories */}
+                <CategoryList
+                    onCategoryPress={(category) => navigation.navigate('FullMenu', { category })}
+                    onSeeAllPress={() => navigation.navigate('FullMenu')}
+                />
 
-        </AppScreen>
+                {/* Best-Sellers */}
+                <BestSellerList
+                    items={bestSellers}
+                    loading={loading}
+                    settings={settings}
+                    onItemPress={(itemId) => navigation.navigate('MenuDetails', { itemId })}
+                    onViewAllPress={() => navigation.navigate('FullMenu')}
+                />
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
-export default HomeScreen
 
-const styles = StyleSheet.create({})
+
+

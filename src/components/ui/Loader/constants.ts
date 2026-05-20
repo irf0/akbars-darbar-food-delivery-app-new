@@ -19,7 +19,7 @@ export const LOADER_SIZE_MAP: Record<LoaderSize, {
 }
 
 export const LOADER_COLOR_MAP: Record<LoaderColor, string> = {
-    primary: '#6366F1',
+    primary: '#A90303',
     white: '#FFFFFF',
     neutral: '#9CA3AF',
 }

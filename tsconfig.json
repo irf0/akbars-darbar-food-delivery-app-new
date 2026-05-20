@@ -11,6 +11,7 @@
       "@hooks/*":      ["src/hooks/*"],
       "@store/*":      ["src/store/*"],
       "@services/*":   ["src/services/*"],
+      "@schemas":      ["src/schemas/*"],
       "@theme":        ["src/theme"],
       "@utils/*":      ["src/utils/*"],
       "@types/*":      ["src/types/*"],

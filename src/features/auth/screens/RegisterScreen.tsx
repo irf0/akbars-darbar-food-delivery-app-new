@@ -12,25 +12,24 @@ import {
 import { theme } from '@theme';
 import { useRegister } from '../hooks/useRegister';
 import { AuthScreenProps } from '@navigation/types';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function RegisterScreen({ route, navigation }: AuthScreenProps<'Register'>) {
-    const { phoneNumber } = route?.params
+    const { completeOnboarding } = useAuthStore()
     const { loading, error, registerUser } = useRegister()
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
 
     const t = theme.light;
     const styles = createStyles(t);
 
-    const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isFormValid = firstName.trim().length > 1 && lastName.trim().length > 0 && isValidEmail(email);
+    const isFormValid = firstName.trim().length > 3 && lastName.trim().length > 0
 
     const handleRegister = async () => {
         if (!isFormValid) return
-        const success = await registerUser(phoneNumber, firstName, lastName)
+        const success = await registerUser(firstName, lastName)
         if (success) {
-            navigation.navigate('Welcome')
+            completeOnboarding()
         }
     };
 
@@ -74,25 +73,6 @@ export default function RegisterScreen({ route, navigation }: AuthScreenProps<'R
                         />
                     </View>
 
-                    {/* Email */}
-                    <Text style={styles.label}>Email Address</Text>
-                    <View style={[
-                        styles.inputWrapper,
-                        !isValidEmail(email) && email.length > 5 && { borderColor: t.colors.error }
-                    ]}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="john@example.com"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            placeholderTextColor={t.colors.textDisabled}
-                        />
-                    </View>
-                    {!isValidEmail(email) && email.length > 5 && (
-                        <Text style={styles.errorText}>Please enter a valid email address</Text>
-                    )}
                 </View>
 
                 {error && (

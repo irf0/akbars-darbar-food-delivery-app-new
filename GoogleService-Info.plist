@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDp5NDRqci_b8gzL0n0LxtCEIq4aEI74j4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>114680907571</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.irfandarbar24.Darbar</string>
+	<key>PROJECT_ID</key>
+	<string>darbarapp-7d671</string>
+	<key>STORAGE_BUCKET</key>
+	<string>darbarapp-7d671.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:114680907571:ios:0d9c90034c67a0384fa046</string>
+</dict>
+</plist>

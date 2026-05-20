@@ -1,8 +1,9 @@
-// src/features/auth/hooks/useRegister.ts
-
-import api from "@services/api"
 import { useState } from "react"
 import { useAuthStore } from "../store/useAuthStore"
+import firestore from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
+
+import { DarbarUser } from "types"
 
 export const useRegister = () => {
     const [loading, setLoading] = useState(false)
@@ -10,18 +11,30 @@ export const useRegister = () => {
     const { setAuth } = useAuthStore()
 
     const registerUser = async (
-        phone: string,
         firstName: string,
         lastName: string,
-        email?: string
     ) => {
         try {
             setLoading(true)
             setError(null)
-            const response = await api.post('/auth/register', { phone, firstName, lastName, email })
-            const { token, user } = response.data
-            setAuth(token, user)
+
+            const currentUser = auth().currentUser
+            if (!currentUser) return false
+            const token = await currentUser.getIdToken()
+            const newUser: DarbarUser = {
+                uid: currentUser.uid,
+                phone: currentUser.phoneNumber ?? '',
+                firstName,
+                lastName,
+                isRegistered: true,
+                fcmToken: '',
+                address: { area: '', building: '', city: '', street: '' },
+                createdAt: new Date().toISOString(),
+            }
+            await firestore().collection('users').doc(currentUser.uid).set(newUser)
+            setAuth(token, newUser)
             return true
+
         } catch (err) {
             setError((err as Error).message)
             return false
@@ -29,6 +42,6 @@ export const useRegister = () => {
             setLoading(false)
         }
     }
-
     return { loading, error, registerUser }
+
 }

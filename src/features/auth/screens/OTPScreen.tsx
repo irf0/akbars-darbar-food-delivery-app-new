@@ -6,9 +6,11 @@ import {
 import { AuthScreenProps } from '@navigation/types';
 import { theme } from '@theme';
 import { useOTP } from '../hooks/useOTP';
+import AppLoader from '@components/ui/Loader';
+import { getConfirmation } from '../store/confirmationRef';
 
 export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>) {
-    const { phoneNumber } = route.params;
+    const { phoneNumber } = route.params
     const { loading, error, verifyOTP } = useOTP()
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -51,12 +53,18 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
     };
 
     const handleVerify = async (code: string) => {
-        const success = await verifyOTP(phoneNumber, code)
-        if (success) {
+        const confirmation = getConfirmation()
+        console.log('confirmation:', confirmation)
+        console.log('code:', code)
+        if (!confirmation) {
+            console.log('No confirmation found')
+            return
+        }
+        const destination = await verifyOTP(confirmation, code)
+        if (destination === 'register') {
             navigation.navigate('Register', { phoneNumber })
         }
-
-    };
+    }
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
@@ -95,6 +103,21 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
                         </Text>
                     </TouchableOpacity>
 
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[
+                            styles.button,
+                            (otp.some(d => d === '') || loading) && styles.buttonDisabled,
+                        ]}
+                        onPress={() => handleVerify(otp.join(''))}
+                        disabled={otp.some(d => d === '') || loading}
+                    >
+                        {loading
+                            ? <AppLoader variant="dots" color='primary' size='md' />
+                            : <Text style={styles.buttonText}>Verify</Text>
+                        }
+                    </TouchableOpacity>
+
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -122,4 +145,20 @@ const createStyles = (t: typeof theme.light) => StyleSheet.create({
     },
     resendContainer: { marginTop: t.spacing.md, alignItems: 'center' },
     resendText: { fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: t.colors.primary },
+    button: {
+        backgroundColor: t.colors.primary,
+        height: 56,
+        borderRadius: t.radius.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: t.spacing.lg,
+    },
+    buttonDisabled: {
+        backgroundColor: t.colors.textDisabled,
+    },
+    buttonText: {
+        color: t.colors.textInverse,
+        fontSize: t.fontSize.base,
+        fontWeight: t.fontWeight.bold,
+    },
 });

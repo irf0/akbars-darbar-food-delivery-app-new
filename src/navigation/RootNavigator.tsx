@@ -1,58 +1,46 @@
-// src/navigation/RootNavigator.tsx
-
-import React, { useEffect } from 'react'
-import { View, ActivityIndicator, StyleSheet, Appearance } from 'react-native'
+import React, { useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { useAuthStore } from '@features/auth/store/useAuthStore'
+import { useAdminSettings } from '@hooks/useAdminSettings'
 import { AppStack } from './stacks/AppStack'
 import { AuthStack } from './stacks/AuthStack'
 import { linkingConfig } from './linkingConfig'
-import { useThemeStore } from '@store/themeStore'
 import { ToastProvider } from '@components/ui/Toast'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { AppSplashScreen } from '@components/ui/Splash'
+import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen'
+import { useCartStore } from '@store/cart'
+import OrderTypeScreen from '@features/auth/screens/OrderTypeScreen'
 
 
 export default function RootNavigator() {
-
-    //in case a device theme change on-the-go
-    useEffect(() => {
-        const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-            const { mode } = useThemeStore.getState()
-            if (mode === 'system') {
-                useThemeStore.setState({ resolved: colorScheme ?? 'light' })
-            }
-        })
-        return () => subscription.remove()
-    }, [])
-
+    const { orderType } = useCartStore()
+    const [showSplash, setShowSplash] = useState(true)
     const { hasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore()
-
-    if (!hasHydrated) {
-        return (
-            <View style={styles.loader}>
-                <ActivityIndicator size="large" />
-            </View>
-        )
-    }
+    const { settings } = useAdminSettings()
 
     const showApp = isAuthenticated && hasCompletedOnboarding
+    const isShopClosed = settings?.isShopClosed ?? false
+
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <ToastProvider>
                 <NavigationContainer linking={linkingConfig}>
-                    {/* {showApp ? <AppStack /> : <AuthStack />} */}
-                    {<AppStack />}
+                    {isShopClosed
+                        ? <ShopClosedScreen />
+                        : showApp
+                            ? !orderType
+                                ? <OrderTypeScreen />
+                                : <AppStack />
+                            : <AuthStack />
+                    }
                 </NavigationContainer>
+
+                {(showSplash || !hasHydrated) && (
+                    <AppSplashScreen onFinish={() => setShowSplash(false)} />
+                )}
             </ToastProvider>
         </GestureHandlerRootView>
     )
 }
-
-const styles = StyleSheet.create({
-    loader: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-})

@@ -1,29 +1,24 @@
-import { lightColors, darkColors } from "./colors";
-import { fontFamily, fontSize, lineHeight, fontWeight } from "./typography";
-import { spacing, radius, shadow } from "./spacing";
+import { lightColors } from './colors'
+import { fontFamily, fontSize, lineHeight, fontWeight } from './typography'
+import { spacing, radius, shadow } from './spacing'
+import { layout } from './layout'
+
+const base = {
+    colors: lightColors,
+    fontFamily,
+    fontSize,
+    lineHeight,
+    fontWeight,
+    spacing,
+    radius,
+    shadow,
+    layout
+}
 
 export const theme = {
-    light: {
-        colors: lightColors,
-        fontFamily,
-        fontSize,
-        lineHeight,
-        fontWeight,
-        spacing,
-        radius,
-        shadow,
-    },
-    dark: {
-        colors: darkColors,
-        fontFamily,
-        fontSize,
-        lineHeight,
-        fontWeight,
-        spacing,
-        radius,
-        shadow,
-    },
-};
+    light: base,
+    dark: base,
+}
 
-export type Theme = typeof theme.light;
-export type Colors = typeof lightColors;
+export type Theme = typeof base
+export type Colors = typeof lightColors

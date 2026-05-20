@@ -3,20 +3,23 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 export type AuthStackParamList = {
     Phone: undefined
-    OTP: { phoneNumber: string }
+    OTP: { phoneNumber: string, }
     Register: { phoneNumber: string }
     Welcome: undefined
 }
 
 export type BottomTabsParamList = {
     Home: undefined
-    Search: undefined
+    Menu: undefined
     Notifications: undefined
     Profile: undefined
 }
 
 export type AppStackParamList = {
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
+    FullMenu: { category?: string } | undefined
+    MenuDetails: { itemId: string }
+    Cart: undefined
     PlaygroundMenu: undefined;
     ButtonPreview: undefined;
     InputPreview: undefined;
@@ -32,6 +35,7 @@ export type AppStackParamList = {
     BottomSheetPreview: undefined
     HeaderPreview: undefined
     ListItemPreview: undefined
+    SplashPreview: undefined
 }
 
 

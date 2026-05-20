@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-starter-kit2",
-    "slug": "react-native-starter-kit2",
+    "name": "akbarsdabar",
+    "slug": "akbars-dabar",
     "scheme": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,22 +14,37 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.irfandarbar24.Darbar",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.irfandarbar24.Darbar"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store",
-      "expo-font"
-    ]
+      "expo-font",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/messaging"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4bafa7e4-ad17-495c-a00b-7f06b14b59f4"
+      }
+    }
   }
 }

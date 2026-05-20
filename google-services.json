@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "114680907571",
+    "project_id": "darbarapp-7d671",
+    "storage_bucket": "darbarapp-7d671.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114680907571:android:d53721384d89973c4fa046",
+        "android_client_info": {
+          "package_name": "com.irfandarbar24.Darbar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOBRiCD9AvM6cWch10CpYh6NNgbXAiWfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
