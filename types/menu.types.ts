@@ -22,4 +22,14 @@ export interface MenuItem {
     full_takeaway_price: number
 }
 
-export type MenuByCategory = Record<string, MenuItem[]>
+export type MenuByCategory = {
+    [category: string]: {
+        [subcategory: string]: MenuItem[]
+    }
+}
+
+export interface MenuSection {
+    title: string
+    category: string
+    data: MenuItem[]
+}

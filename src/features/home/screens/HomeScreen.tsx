@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useAuthStore } from '@features/auth/store/useAuthStore'
 import { useMenu } from '@hooks/useMenu'
 import { useAdminSettings } from '@hooks/useAdminSettings'
-import { useCartStore } from '@store/cart/index'
+import { useCartStore } from '@store/cart/useCartStore'
 import { theme } from '@theme'
 import HeroBanner from '../components/HeroBanner'
 import { CategoryList } from '../components/CategoryList'
@@ -22,8 +22,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { createStyles } from './styles'
 import { HomeHeader } from '../components/HomeHeader'
-
-
 
 
 type Props = NativeStackScreenProps<AppStackParamList, 'MainTabs'>
@@ -77,10 +75,10 @@ export default function HomeScreen({ navigation }: Props) {
                 {/* ── Search Bar ── */}
                 <TouchableOpacity
                     style={styles.searchBar}
-                    onPress={() => tabNavigation.navigate('Menu')}
+                    onPress={() => navigation.navigate('Search')}
                     activeOpacity={0.7}
                 >
-                    <Ionicons name="search-outline" size={18} color={theme.light.colors.textSecondary} />
+                    <Ionicons name="search-outline" size={18} color={theme.colors.textSecondary} />
                     <Text style={styles.searchPlaceholder}>
                         Search biryani, starters...
                     </Text>

@@ -2,7 +2,7 @@
 import { StyleSheet } from 'react-native'
 import { theme } from '@theme'
 
-const t = theme.light
+const t = theme
 
 export const shopClosedStyles = StyleSheet.create({
     container: {

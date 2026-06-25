@@ -2,7 +2,7 @@ import { theme } from "@theme";
 import { StyleSheet } from "react-native";
 
 
-const t = theme.light
+const t = theme
 export const categoryStyles = StyleSheet.create({
     // Sections
     section: { marginBottom: t.spacing.xl },

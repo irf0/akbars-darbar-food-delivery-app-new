@@ -66,4 +66,3 @@ export const lightColors = {
     shadow: palette.black,
 }
 
-export const darkColors = lightColors

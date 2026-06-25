@@ -15,7 +15,7 @@ type ParentNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 export default function ProfileScreen() {
     const navigation = useNavigation<ParentNavigationProp>()
     const { user, logout } = useAuthStore();
-    const activeTheme = theme.light;
+    const activeTheme = theme
     const { colors, spacing, radius, fontSize, fontWeight } = activeTheme;
 
     const handleLogout = () => {
@@ -58,15 +58,7 @@ export default function ProfileScreen() {
                         </AppText>
                     </TouchableOpacity>
                 </View>
-                {__DEV__ && (
-                    <View style={styles.devBox}>
-                        <Button
-                            title="Launch UI Component Lab"
-                            color="#4f46e5"
-                            onPress={() => navigation.navigate('PlaygroundMenu')}
-                        />
-                    </View>
-                )}
+
             </View>
         </AppScreen>
     );

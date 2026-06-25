@@ -9,6 +9,7 @@ import NotificationScreen from '@features/notifications/screens/NotificationScre
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
 import { useTheme } from '@hooks/useTheme';
 import { MenuScreen } from '@features/menu/screens/MenuScreen';
+import { theme } from '@theme';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
@@ -22,7 +23,7 @@ const iconConfig: Record<keyof BottomTabsParamList, { active: any; inactive: any
 
 export const BottomTabs = () => {
     // 2. Use your theme tokens
-    const { colors, spacing, fontSize, fontWeight } = useTheme()
+    const { colors, spacing, fontSize, fontWeight } = theme
 
     return (
         <Tab.Navigator
@@ -41,7 +42,7 @@ export const BottomTabs = () => {
                 tabBarStyle: {
                     backgroundColor: colors.background,
                     borderTopColor: colors.border,
-                    height: 60, // Standard premium height
+                    height: 60,
                     paddingBottom: spacing.sm,
                     paddingTop: spacing.xs,
                 },

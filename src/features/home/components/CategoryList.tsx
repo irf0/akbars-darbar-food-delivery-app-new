@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { theme } from '@theme'
 
-const t = theme.light
+const t = theme
 
 const CATEGORIES = [
     { id: '1', name: 'Biryani', emoji: '🍛' },

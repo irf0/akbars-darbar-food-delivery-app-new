@@ -1,49 +1,62 @@
-// import { StyleSheet, Platform } from 'react-native'
-// import { theme } from '@theme'
+import { Platform, StyleSheet } from "react-native";
 
-// export const styles = StyleSheet.create({
-//     container: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         justifyContent: 'space-between',
-//         paddingHorizontal: theme.light.spacing.lg,
-//         paddingVertical: theme.light.spacing.md,
-//         backgroundColor: theme.light.colors.background,
-//         // Thin bottom border as the only visual separator — keeps it flat like Zomato
-//         borderBottomWidth: StyleSheet.hairlineWidth,
-//         borderBottomColor: theme.light.colors.border,
-//         // Android needs explicit elevation to sit above list items when sticky
-//         ...Platform.select({
-//             android: { elevation: 2 },
-//             ios: {
-//                 shadowColor: '#000',
-//                 shadowOffset: { width: 0, height: 1 },
-//                 shadowOpacity: 0.06,
-//                 shadowRadius: 2,
-//                 // Rasterize since it's sticky and redraws constantly
-//                 // Note: apply shouldRasterizeIOS on the View wrapping this if needed
-//             },
-//         }),
-//     },
-//     title: {
-//         fontSize: theme.light.fontSize.md,
-//         fontWeight: theme.light.fontWeight.bold,
-//         color: theme.light.colors.text,
-//         letterSpacing: 0.1,
-//     },
-//     right: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         gap: theme.light.spacing.sm,
-//     },
-//     collapsedHint: {
-//         fontSize: theme.light.fontSize.xs,
-//         color: theme.light.colors.textSecondary,
-//         fontStyle: 'italic',
-//     },
-//     chevron: {
-//         fontSize: 18,
-//         color: theme.light.colors.textSecondary,
-//         lineHeight: 22,
-//     },
-// })
+
+export const styles = StyleSheet.create({
+    screenContainer: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+    },
+    listContent: {
+        paddingBottom: 40,
+    },
+    headerContainer: {
+        // Semi-transparent background for a modern, high-end "glass" look when sticky
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
+        paddingHorizontal: 20,
+        paddingTop: 18,
+        paddingBottom: 14,
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderBottomColor: '#f3f4f6',
+
+        // Luxury brands use soft, deep ambient shadows rather than harsh borders
+        ...Platform.select({
+            ios: {
+                shadowColor: '#070b12',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
+    },
+    leftColumn: {
+        flexDirection: 'column',
+        gap: 3, // Modern structural layout spacing
+    },
+    headerTitle: {
+        fontSize: 21,
+        // Uses ultra-bold weight and tight tracking characteristic of premium editorial UI
+        fontWeight: '900',
+        color: '#090a0f',
+        letterSpacing: -0.6,
+    },
+    metaText: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#8b8e99',
+        textTransform: 'uppercase',
+        letterSpacing: 0.8, // Elegant tracking on smaller uppercase text
+    },
+    minimalistDivider: {
+        height: 24,
+        width: 3,
+        borderRadius: 1.5,
+        backgroundColor: '#10b981', // Emerald green luxury accent (change to #fc8019 if you prefer brand orange)
+        marginBottom: 4,
+    },
+})

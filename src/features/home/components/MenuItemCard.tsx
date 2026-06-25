@@ -5,7 +5,7 @@ import { theme } from '@theme'
 import { MenuItem } from '../../../../types/index'
 import { AdminSettings } from '../../../../types/index'
 
-const t = theme.light
+const t = theme
 
 interface Props {
     item: MenuItem

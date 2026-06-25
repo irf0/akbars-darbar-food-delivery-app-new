@@ -15,10 +15,7 @@ const base = {
     layout
 }
 
-export const theme = {
-    light: base,
-    dark: base,
-}
+export const theme = base
 
 export type Theme = typeof base
 export type Colors = typeof lightColors

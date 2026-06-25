@@ -1,64 +1,49 @@
 import firestore from '@react-native-firebase/firestore'
-import { MenuItem, MenuByCategory } from '../../../types/menu.types'
+import { MenuByCategory, MenuItem } from '../../../types/index'
 
-// Listens to menu collection in real time
-export const listenMenu = (
-    onData: (menu: MenuByCategory) => void,
-    onError?: (error: Error) => void
-): (() => void) => {
+export function listenMenu(
+    onData: (data: MenuByCategory) => void,
+    onError: (error: Error) => void
+) {
     return firestore()
         .collection('menu')
-        .orderBy('category', 'asc')
+        .orderBy('category')
+        .orderBy('subCategory')
         .onSnapshot(
-            (snapshot) => {
-                const items: MenuItem[] = snapshot.docs.map((doc) => ({
-                    ...(doc.data() as MenuItem),
-                    id: doc.id,
-                }))
+            snapshot => {
+                const grouped: MenuByCategory = {}
 
-                // Sort — Biryani always first
-                items.sort((a, b) => {
-                    if (a.category === 'Biryani') return -1
-                    if (b.category === 'Biryani') return 1
-                    return a.category.localeCompare(b.category)
+                snapshot.docs.forEach(doc => {
+                    const item = { id: doc.id, ...doc.data() } as MenuItem
+                    const { category, subCategory } = item
+
+                    if (!grouped[category]) grouped[category] = {}
+                    if (!grouped[category][subCategory]) grouped[category][subCategory] = []
+
+                    grouped[category][subCategory].push(item)
                 })
-
-                // Group by category
-                const grouped = items.reduce<MenuByCategory>((acc, item) => {
-                    acc[item.category] = [...(acc[item.category] || []), item]
-                    return acc
-                }, {})
 
                 onData(grouped)
             },
-            (error) => onError?.(error)
+            onError
         )
 }
 
-// Fetch extra menu (one time) 
+export function searchMenu(menu: MenuByCategory, query: string): MenuItem[] {
+    const lowerQuery = query.trim().toLowerCase()
+    if (!lowerQuery) return []
 
-export const fetchExtraMenu = async (): Promise<MenuItem[]> => {
-    const snapshot = await firestore().collection('extramenu').get()
-    return snapshot.docs.map((doc) => ({
-        ...(doc.data() as MenuItem),
-        id: doc.id,
-    }))
-}
+    const results: MenuItem[] = []
 
-// Search menu items 
+    Object.values(menu).forEach(subcategories => {
+        Object.values(subcategories).forEach(items => {
+            items.forEach(item => {
+                if (item.name.toLowerCase().includes(lowerQuery)) {
+                    results.push(item)
+                }
+            })
+        })
+    })
 
-export const searchMenu = (
-    menu: MenuByCategory,
-    query: string
-): MenuItem[] => {
-    if (!query.trim()) return []
-    const lower = query.toLowerCase()
-    return Object.values(menu)
-        .flat()
-        .filter(
-            (item) =>
-                item.name.toLowerCase().includes(lower) ||
-                item.category.toLowerCase().includes(lower) ||
-                item.subCategory.toLowerCase().includes(lower)
-        )
+    return results
 }

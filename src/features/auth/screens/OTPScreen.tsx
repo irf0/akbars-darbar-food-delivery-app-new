@@ -1,68 +1,62 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react'
 import {
     StyleSheet, Text, View, TextInput, TouchableOpacity,
     KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
-} from 'react-native';
-import { AuthScreenProps } from '@navigation/types';
-import { theme } from '@theme';
-import { useOTP } from '../hooks/useOTP';
-import AppLoader from '@components/ui/Loader';
-import { getConfirmation } from '../store/confirmationRef';
+} from 'react-native'
+import { AuthScreenProps } from '@navigation/types'
+import { theme } from '@theme'
+import { useOTP } from '../hooks/useOTP'
+import { useOTPTimer } from '../hooks/useOTPTimer'
+import AppLoader from '@components/ui/Loader'
+import { getConfirmation } from '../store/confirmationRef'
 
 export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>) {
     const { phoneNumber } = route.params
-    const { loading, error, verifyOTP } = useOTP()
+    const { loading, error, verifyOTP, resendOTP, clearError } = useOTP()
+    const { seconds, canResend, reset } = useOTPTimer(60)
 
-    const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    const [timer, setTimer] = useState(30);
-    const inputs = useRef<Array<TextInput | null>>([]);
-    const activeTheme = theme.light;
-    const { colors, spacing, radius, fontSize, fontWeight } = activeTheme;
-    const styles = createStyles(activeTheme);
-
-
-
-    // Resend Timer Logic
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+    const [otp, setOtp] = useState(['', '', '', '', '', ''])
+    const inputs = useRef<Array<TextInput | null>>([])
+    const styles = createStyles(theme)
+    const { colors, spacing } = theme
 
     const handleChange = (text: string, index: number) => {
-        const newOtp = [...otp];
-        newOtp[index] = text;
-        setOtp(newOtp);
+        clearError()
+        const newOtp = [...otp]
+        newOtp[index] = text
+        setOtp(newOtp)
 
-        // Auto-focus next input
         if (text && index < 5) {
-            inputs.current[index + 1]?.focus();
+            inputs.current[index + 1]?.focus()
         }
 
-        // Auto-submit if last digit entered
         if (newOtp.every(digit => digit !== '')) {
-            handleVerify(newOtp.join(''));
+            handleVerify(newOtp.join(''))
         }
-    };
+    }
 
     const handleKeyPress = (e: any, index: number) => {
         if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
-            inputs.current[index - 1]?.focus();
+            inputs.current[index - 1]?.focus()
         }
-    };
+    }
 
     const handleVerify = async (code: string) => {
         const confirmation = getConfirmation()
-        console.log('confirmation:', confirmation)
-        console.log('code:', code)
-        if (!confirmation) {
-            console.log('No confirmation found')
-            return
-        }
+        if (!confirmation) return
+
         const destination = await verifyOTP(confirmation, code)
         if (destination === 'register') {
             navigation.navigate('Register', { phoneNumber })
+        }
+    }
+
+    const handleResend = async () => {
+        const success = await resendOTP(phoneNumber)
+        if (success) {
+            setOtp(['', '', '', '', '', ''])
+            inputs.current[0]?.focus()
+            reset()
         }
     }
 
@@ -79,9 +73,10 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
                     <View style={styles.otpContainer}>
                         {otp.map((digit, index) => (
                             <TextInput
+                                key={index}
                                 textContentType="oneTimeCode"
-                                autoComplete={index === 0 ? "sms-otp" : "off"} key={index}
-                                ref={(el) => { inputs.current[index] = el; }}
+                                autoComplete={index === 0 ? 'sms-otp' : 'off'}
+                                ref={(el) => { inputs.current[index] = el }}
                                 style={styles.otpInput}
                                 keyboardType="number-pad"
                                 maxLength={1}
@@ -93,13 +88,17 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
                         ))}
                     </View>
 
+                    {error && (
+                        <Text style={styles.errorText}>{error}</Text>
+                    )}
+
                     <TouchableOpacity
-                        disabled={timer > 0}
-                        onPress={() => setTimer(30)}
+                        disabled={!canResend || loading}
+                        onPress={handleResend}
                         style={styles.resendContainer}
                     >
-                        <Text style={[styles.resendText, timer > 0 && { color: colors.textDisabled }]}>
-                            {timer > 0 ? `Resend code in ${timer}s` : "Resend Code"}
+                        <Text style={[styles.resendText, !canResend && { color: colors.textDisabled }]}>
+                            {!canResend ? `Resend code in ${seconds}s` : 'Resend Code'}
                         </Text>
                     </TouchableOpacity>
 
@@ -121,10 +120,10 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-    );
+    )
 }
 
-const createStyles = (t: typeof theme.light) => StyleSheet.create({
+const createStyles = (t: typeof theme) => StyleSheet.create({
     container: { flex: 1, backgroundColor: t.colors.background },
     inner: { padding: t.spacing.lg, flex: 1, justifyContent: 'center' },
     header: { marginBottom: t.spacing.xxl, alignItems: 'center' },
@@ -143,6 +142,12 @@ const createStyles = (t: typeof theme.light) => StyleSheet.create({
         fontWeight: t.fontWeight.bold,
         color: t.colors.primary,
     },
+    errorText: {
+        color: t.colors.error,
+        fontSize: t.fontSize.sm,
+        textAlign: 'center',
+        marginBottom: t.spacing.sm,
+    },
     resendContainer: { marginTop: t.spacing.md, alignItems: 'center' },
     resendText: { fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: t.colors.primary },
     button: {
@@ -153,12 +158,10 @@ const createStyles = (t: typeof theme.light) => StyleSheet.create({
         alignItems: 'center',
         marginTop: t.spacing.lg,
     },
-    buttonDisabled: {
-        backgroundColor: t.colors.textDisabled,
-    },
+    buttonDisabled: { backgroundColor: t.colors.textDisabled },
     buttonText: {
         color: t.colors.textInverse,
         fontSize: t.fontSize.base,
         fontWeight: t.fontWeight.bold,
     },
-});
+})

@@ -60,8 +60,7 @@ const MenuItemCard = ({ item, orderType, onAddPress }: Props) => {
                     source={{ uri: item.image }}
                     style={styles.image}
                     contentFit="cover"
-                    // Remove transition — causes layout recalc during fast scrolls
-                    cachePolicy="memory-disk"  // Cache aggressively
+                    cachePolicy="memory-disk"
                 />
                 {item.available && (
                     <TouchableOpacity

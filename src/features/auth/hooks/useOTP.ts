@@ -1,31 +1,28 @@
 import { useState } from 'react'
 import {
     getAuth,
-    getIdToken,
     PhoneAuthProvider,
     signInWithCredential,
+    getIdToken,
     FirebaseAuthTypes
 } from '@react-native-firebase/auth'
 import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore'
 import { useAuthStore } from '../store/useAuthStore'
 import { DarbarUser } from '../../../../types/index'
+import { setConfirmation, clearConfirmation } from '../store/confirmationRef'
 
 export const useOTP = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const { setAuth, completeOnboarding } = useAuthStore()
 
+    const clearError = () => setError(null)
+
     const verifyOTP = async (confirmation: FirebaseAuthTypes.ConfirmationResult, otp: string) => {
         try {
             setLoading(true)
-
-            const credential = PhoneAuthProvider.credential(
-                (confirmation as any)._verificationId,
-                otp
-            )
-
-            const auth = getAuth()
-            const result = await signInWithCredential(auth, credential)
+            clearError()
+            const result = await confirmation.confirm(otp)
 
             if (!result) {
                 setError('Invalid OTP. Please try again.')
@@ -45,6 +42,7 @@ export const useOTP = () => {
 
             if (user.isRegistered) {
                 completeOnboarding()
+                clearConfirmation()
             }
 
             return user.isRegistered ? 'home' : 'register'
@@ -57,5 +55,21 @@ export const useOTP = () => {
         }
     }
 
-    return { loading, error, verifyOTP }
+    const resendOTP = async (phoneNumber: string) => {
+        try {
+            setLoading(true)
+            clearError()
+            const auth = getAuth()
+            const newConfirmation = await auth.signInWithPhoneNumber(phoneNumber)
+            setConfirmation(newConfirmation)
+            return true
+        } catch (err: any) {
+            setError(err.message ?? 'Failed to resend OTP')
+            return false
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { loading, error, verifyOTP, resendOTP, clearError }
 }

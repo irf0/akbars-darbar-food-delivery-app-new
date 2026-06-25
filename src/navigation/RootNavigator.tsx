@@ -9,12 +9,12 @@ import { ToastProvider } from '@components/ui/Toast'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { AppSplashScreen } from '@components/ui/Splash'
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen'
-import { useCartStore } from '@store/cart'
 import OrderTypeScreen from '@features/auth/screens/OrderTypeScreen'
+import { useOrderTypeStore } from '@store/orderType/useOrderTypeStore'
 
 
 export default function RootNavigator() {
-    const { orderType } = useCartStore()
+    const { orderType } = useOrderTypeStore()
     const [showSplash, setShowSplash] = useState(true)
     const { hasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore()
     const { settings } = useAdminSettings()

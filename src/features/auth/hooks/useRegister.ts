@@ -5,6 +5,13 @@ import auth from '@react-native-firebase/auth'
 
 import { DarbarUser } from "types"
 
+type AddressForm = {
+    area: string
+    building: string
+    street: string
+    city: string
+}
+
 export const useRegister = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -13,6 +20,7 @@ export const useRegister = () => {
     const registerUser = async (
         firstName: string,
         lastName: string,
+        address: AddressForm,
     ) => {
         try {
             setLoading(true)
@@ -28,7 +36,7 @@ export const useRegister = () => {
                 lastName,
                 isRegistered: true,
                 fcmToken: '',
-                address: { area: '', building: '', city: '', street: '' },
+                address,
                 createdAt: new Date().toISOString(),
             }
             await firestore().collection('users').doc(currentUser.uid).set(newUser)

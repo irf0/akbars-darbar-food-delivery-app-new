@@ -6,7 +6,7 @@ import { DeliveryBadge } from './DeliveryBadge'
 import { AdminSettings } from '../../../../types/index'
 import { DarbarUser } from '../../../../types/index'
 
-const t = theme.light
+const t = theme
 
 interface Props {
     user: DarbarUser | null

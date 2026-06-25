@@ -7,7 +7,7 @@ interface Props {
     onPress: () => void
 }
 
-const t = theme.light
+const t = theme
 export const HeroBanner = ({ onPress }: Props) => {
 
     return (

@@ -9,7 +9,6 @@ import { CartStore } from './types'
 export interface CartItem extends MenuItem {
     quantity: number
     portion: PortionType
-    orderType: 'delivery' | 'takeaway'
 }
 
 
@@ -30,14 +29,12 @@ const mmkvStorage = {
     },
 }
 
-// ── Store ─────────────────────────────────────────────────────────────────────
 
 export const useCartStore = create<CartStore>()(
     persist(
         (set, get) => ({
             items: [],
             orderType: null,
-            setOrderType: (type) => set({ orderType: type }),
             addItem: (item, portion, orderType) => {
                 const existing = get().items.find(
                     i => i.id === item.id && i.portion === portion && i.orderType === orderType

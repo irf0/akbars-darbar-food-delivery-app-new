@@ -19,23 +19,8 @@ export type AppStackParamList = {
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
     FullMenu: { category?: string } | undefined
     MenuDetails: { itemId: string }
+    Search: undefined
     Cart: undefined
-    PlaygroundMenu: undefined;
-    ButtonPreview: undefined;
-    InputPreview: undefined;
-    DividerPreview: undefined;
-    CardPreview: undefined
-    BadgePreview: undefined
-    AvatarPreview: undefined
-    LoaderPreview: undefined
-    SkeletonPreview: undefined
-    EmptyStatePreview: undefined
-    ToastPreview: undefined
-    ModalPreview: undefined
-    BottomSheetPreview: undefined
-    HeaderPreview: undefined
-    ListItemPreview: undefined
-    SplashPreview: undefined
 }
 
 

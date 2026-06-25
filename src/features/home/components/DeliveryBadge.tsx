@@ -2,7 +2,7 @@ import { theme } from "@theme"
 import { StyleSheet, Text, View } from "react-native"
 
 export const DeliveryBadge = ({ enabled }: { enabled: boolean }) => {
-    const t = theme.light
+    const t = theme
     return (
         <View style={[
             deliveryStyles.badge,

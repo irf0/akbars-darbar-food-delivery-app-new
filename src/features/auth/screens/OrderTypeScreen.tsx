@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useCartStore } from '@store/cart/cartStore'
+import { useCartStore } from '@store/cart/useCartStore'
 import { theme } from '@theme'
+import { useOrderTypeStore } from '@store/orderType/useOrderTypeStore'
 
-const t = theme.light
+const t = theme
 
 const OPTIONS = [
     {
@@ -22,7 +23,7 @@ const OPTIONS = [
 ]
 
 const OrderTypeScreen = () => {
-    const { setOrderType } = useCartStore()
+    const { setOrderType } = useOrderTypeStore()
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -61,7 +62,6 @@ const OrderTypeScreen = () => {
                 ))}
             </View>
 
-            <Text style={styles.footer}>You can change this anytime</Text>
 
         </SafeAreaView>
     )

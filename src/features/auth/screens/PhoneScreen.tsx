@@ -22,7 +22,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
     const [validationError, setValidationError] = useState('');
     const [errorDismissed, setErrorDismissed] = useState(false);
     const { sendOTP, loading, error } = useLogin();
-    const activeTheme = theme.light;
+    const activeTheme = theme;
     const { colors, spacing, shadow } = activeTheme;
     const styles = createStyles(activeTheme);
 
@@ -139,7 +139,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
     );
 }
 
-const createStyles = (t: typeof theme.light) => StyleSheet.create({
+const createStyles = (t: typeof theme) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: t.colors.background,
