@@ -1,47 +1,51 @@
 import React from 'react'
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { theme } from '@theme'
+import { Image } from 'expo-image'
 
 const t = theme
 
-const CATEGORIES = [
-    { id: '1', name: 'Biryani', emoji: '🍛' },
-    { id: '2', name: 'Starters', emoji: '🍗' },
-    { id: '3', name: 'Curries', emoji: '🍲' },
-    { id: '4', name: 'Breads', emoji: '🫓' },
-    { id: '5', name: 'Rice', emoji: '🍚' },
-    { id: '6', name: 'Desserts', emoji: '🍮' },
-    { id: '7', name: 'Drinks', emoji: '🥤' },
-]
-
-interface Props {
-    onCategoryPress: (category: string) => void
-    onSeeAllPress: () => void
+const CATEGORY_ICONS: Record<string, any> = {
+    beverages: require('../../../../assets/CategoryIcons/category-beverages.png'),
+    biryani: require('../../../../assets/CategoryIcons/category-biryani.png'),
+    snacks: require('../../../../assets/CategoryIcons/category-dessert.png'),
+    egg: require('../../../../assets/CategoryIcons/category-egg.png'),
+    gravy: require('../../../../assets/CategoryIcons/category-gravy.png'),
+    roti: require('../../../../assets/CategoryIcons/category-roti.png'),
+    salad: require('../../../../assets/CategoryIcons/category-salad.png'),
+    starters: require('../../../../assets/CategoryIcons/category-starters.png'),
+    tandoori: require('../../../../assets/CategoryIcons/category-tandoori.png'),
 }
 
-export const CategoryList = ({ onCategoryPress, onSeeAllPress }: Props) => {
+const FALLBACK_ICON = CATEGORY_ICONS.starters
+
+function getCategoryIcon(category: string) {
+    return CATEGORY_ICONS[category.toLowerCase()] ?? FALLBACK_ICON
+}
+
+interface Props {
+    categories: string[]
+}
+
+export const CategoryList = ({ categories }: Props) => {
     return (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Categories</Text>
-                <TouchableOpacity onPress={onSeeAllPress}>
-                    <Text style={styles.sectionLink}>See all</Text>
-                </TouchableOpacity>
             </View>
             <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                data={CATEGORIES}
-                keyExtractor={i => i.id}
+                data={categories}
+                keyExtractor={i => i}
                 contentContainerStyle={{ gap: 10 }}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         style={styles.categoryChip}
-                        onPress={() => onCategoryPress(item.name)}
                         activeOpacity={0.7}
                     >
-                        <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-                        <Text style={styles.categoryName}>{item.name}</Text>
+                        <Image source={getCategoryIcon(item)} style={styles.categoryIcon} />
+                        <Text style={styles.categoryEmoji}>{item}</Text>
                     </TouchableOpacity>
                 )}
             />
@@ -77,6 +81,11 @@ const styles = StyleSheet.create({
         borderColor: t.colors.border,
         gap: 4,
         minWidth: 70,
+    },
+    categoryIcon: {
+        width: 32,
+        height: 32,
+        resizeMode: 'contain',
     },
     categoryEmoji: { fontSize: 24 },
     categoryName: {

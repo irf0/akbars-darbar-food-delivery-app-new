@@ -16,12 +16,14 @@ import { useCartStore } from '@store/cart/useCartStore'
 import { theme } from '@theme'
 import HeroBanner from '../components/HeroBanner'
 import { CategoryList } from '../components/CategoryList'
-import { BestSellerList } from '../components/BestSellerList'
 import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { createStyles } from './styles'
 import { HomeHeader } from '../components/HomeHeader'
+import useMenuCategories from '@hooks/useMenuCategories'
+import { useOrderTypeStore } from '@store/orderType/useOrderTypeStore'
+import BestSellerList from '../components/BestSellerList'
 
 
 type Props = NativeStackScreenProps<AppStackParamList, 'MainTabs'>
@@ -29,7 +31,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'MainTabs'>
 export default function HomeScreen({ navigation }: Props) {
     const tabNavigation = useNavigation<BottomTabNavigationProp<BottomTabsParamList>>()
     const styles = createStyles
-
+    const { categories } = useMenuCategories()
     const { user } = useAuthStore()
     const { settings } = useAdminSettings()
     const { menu, loading } = useMenu()
@@ -89,17 +91,12 @@ export default function HomeScreen({ navigation }: Props) {
 
                 {/* Categories */}
                 <CategoryList
-                    onCategoryPress={(category) => navigation.navigate('FullMenu', { category })}
-                    onSeeAllPress={() => navigation.navigate('FullMenu')}
+                    categories={categories}
                 />
 
                 {/* Best-Sellers */}
                 <BestSellerList
-                    items={bestSellers}
-                    loading={loading}
-                    settings={settings}
-                    onItemPress={(itemId) => navigation.navigate('MenuDetails', { itemId })}
-                    onViewAllPress={() => navigation.navigate('FullMenu')}
+
                 />
             </ScrollView>
         </SafeAreaView>
