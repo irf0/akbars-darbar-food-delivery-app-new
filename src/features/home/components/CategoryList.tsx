@@ -25,9 +25,12 @@ function getCategoryIcon(category: string) {
 
 interface Props {
     categories: string[]
+    onCategoryPress: (category: string) => void
+
+
 }
 
-export const CategoryList = ({ categories }: Props) => {
+export const CategoryList = ({ categories, onCategoryPress }: Props) => {
     return (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -43,6 +46,7 @@ export const CategoryList = ({ categories }: Props) => {
                     <TouchableOpacity
                         style={styles.categoryChip}
                         activeOpacity={0.7}
+                        onPress={() => onCategoryPress(item)}
                     >
                         <Image source={getCategoryIcon(item)} style={styles.categoryIcon} />
                         <Text style={styles.categoryEmoji}>{item}</Text>

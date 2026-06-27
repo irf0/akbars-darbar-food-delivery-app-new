@@ -16,13 +16,16 @@ const DietBadge = memo(({ type }: { type: MenuItem['item_type'] }) => {
     )
 })
 
-const BestSellerList = () => {
+interface Props {
+    onItemPress: (item: MenuItem) => void
+}
+
+const BestSellerList = ({ onItemPress }: Props) => {
     const { bestSellers } = useBestSellers()
     const { orderType } = useOrderTypeStore()
     return (
         <View>
             <Text>BestSeller List</Text>
-
             <View>
                 {/* image
                 dietBadge
@@ -37,6 +40,7 @@ const BestSellerList = () => {
                     contentContainerStyle={{ gap: 10 }}
                     renderItem={({ item }) => (
                         <Pressable
+                            onPress={() => onItemPress(item)}
                         // style={styles.categoryChip}
                         >
                             <Image

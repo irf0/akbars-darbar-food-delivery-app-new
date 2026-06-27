@@ -1,5 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { MenuItem } from 'types'
 
 export type AuthStackParamList = {
     Phone: undefined
@@ -10,7 +11,7 @@ export type AuthStackParamList = {
 
 export type BottomTabsParamList = {
     Home: undefined
-    Menu: undefined
+    Menu: { category: string }
     Notifications: undefined
     Profile: undefined
 }
@@ -18,7 +19,7 @@ export type BottomTabsParamList = {
 export type AppStackParamList = {
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
     FullMenu: { category?: string } | undefined
-    MenuDetails: { itemId: string }
+    MenuDetails: { item: MenuItem }
     Search: undefined
     Cart: undefined
 }

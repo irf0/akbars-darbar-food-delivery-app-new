@@ -92,11 +92,17 @@ export default function HomeScreen({ navigation }: Props) {
                 {/* Categories */}
                 <CategoryList
                     categories={categories}
+                    onCategoryPress={(item) =>
+                        navigation.navigate('MainTabs', {
+                            screen: 'Menu',
+                            params: { category: item },
+                        })
+                    }
                 />
 
                 {/* Best-Sellers */}
                 <BestSellerList
-
+                    onItemPress={(item) => navigation.navigate('MenuDetails', { item: item })}
                 />
             </ScrollView>
         </SafeAreaView>
