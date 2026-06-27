@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { collection, getDocs, getFirestore, doc, onSnapshot } from '@react-native-firebase/firestore'
 import { MenuItem, MenuByCategory } from 'types'
-import { menuCache } from '@utils/others/menuCache'
+import { menuCache } from '@utils/menuCache'
 
 export type FilterType = 'veg' | 'nonVeg' | 'bestSeller' | null
 

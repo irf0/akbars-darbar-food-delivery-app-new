@@ -23,7 +23,8 @@ const OPTIONS = [
 ]
 
 const OrderTypeScreen = () => {
-    const { setOrderType } = useOrderTypeStore()
+    const { setOrderType, orderType } = useOrderTypeStore()
+    console.log(orderType)
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>

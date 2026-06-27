@@ -5,7 +5,7 @@ import { useMenuData } from '../hooks/useMenuData'
 import MenuItemCard from '../components/MenuItemCard'
 import MenuItemDetailCard from '../components/MenuItemDetailCard'
 import { AppSkeleton } from '@components/ui/Skeleton'
-import { flattenSections, FlatRow } from '@utils/others/flattenSections'
+import { flattenSections, FlatRow } from '@utils/flattenSections'
 import { styles } from '../styles/SectionHeader.styles'
 import { MenuItem } from 'types'
 

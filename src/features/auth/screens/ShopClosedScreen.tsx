@@ -9,8 +9,8 @@ import { useAdminSettings } from '@hooks/useAdminSettings'
 import { shopClosedStyles } from '../styles'
 import AppCard from '@components/ui/Card'
 import { AppBadge } from '@components/ui/Badge'
-import { formatTime } from '@utils/others/formatTime'
-import { getTimeUntilOpening } from '@utils/others/getTimeUntilOpening'
+import { formatTime } from '@utils/formatTime'
+import { getTimeUntilOpening } from '@utils/getTimeUntilOpening'
 
 
 export default function ShopClosedScreen() {
