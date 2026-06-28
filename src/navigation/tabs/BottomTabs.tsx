@@ -7,8 +7,7 @@ import { BottomTabsParamList } from '@navigation/types';
 import HomeScreen from '@features/home/screens/HomeScreen';
 import NotificationScreen from '@features/notifications/screens/NotificationScreen';
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
-import { useTheme } from '@hooks/useTheme';
-import { MenuScreen } from '@features/menu/screens/MenuScreen';
+import MenuScreen from '@features/menu/screens/MenuScreen';
 import { theme } from '@theme';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();

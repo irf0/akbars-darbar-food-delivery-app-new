@@ -6,8 +6,7 @@ import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { AppStackParamList } from '@navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import AppScreen from 'src/layout/AppScreen';
-import { AppText } from '@components/ui/Text';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ParentNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
@@ -36,15 +35,15 @@ export default function ProfileScreen() {
     };
 
     return (
-        <AppScreen>
+        <SafeAreaView>
             <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <View style={styles.header}>
                     <View style={[styles.avatar, { backgroundColor: colors.surfaceAlt }]}>
                         <Ionicons name="person" size={40} color={colors.primary} />
                     </View>
-                    <AppText style={[styles.phone, { color: colors.text }]}>
+                    <Text style={[styles.phone, { color: colors.text }]}>
                         +91 {user?.phone || 'User'}
-                    </AppText>
+                    </Text>
                 </View>
 
                 <View style={styles.menu}>
@@ -53,14 +52,14 @@ export default function ProfileScreen() {
                         onPress={handleLogout}
                     >
                         <Ionicons name="log-out-outline" size={20} color={colors.error} />
-                        <AppText style={[styles.logoutText, { color: colors.error }]}>
+                        <Text style={[styles.logoutText, { color: colors.error }]}>
                             Log Out
-                        </AppText>
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
             </View>
-        </AppScreen>
+        </SafeAreaView>
     );
 }
 

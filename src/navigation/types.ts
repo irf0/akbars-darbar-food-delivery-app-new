@@ -19,7 +19,7 @@ export type BottomTabsParamList = {
 export type AppStackParamList = {
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
     FullMenu: { category?: string } | undefined
-    MenuDetails: { item: MenuItem }
+    MenuDetail: { item: MenuItem }
     Search: undefined
     Cart: undefined
 }

@@ -15,7 +15,6 @@ import { AuthScreenProps } from '@navigation/types';
 import { theme } from '@theme';
 import { useLogin } from '../hooks/useLogin';
 import { setConfirmation } from '../store/confirmationRef';
-import AppLoader from '@components/ui/Loader';
 
 export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -122,7 +121,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
                         disabled={phoneNumber.length < 10 || loading}
                     >
                         {loading
-                            ? <AppLoader variant="dots" color='primary' size='md' />
+                            ? <ActivityIndicator color={theme.colors.primary} size='large' />
                             : <Text style={styles.buttonText}>Send Code</Text>
                         }
                     </TouchableOpacity>

@@ -7,8 +7,6 @@ import {
 } from 'react-native'
 import { useAdminSettings } from '@hooks/useAdminSettings'
 import { shopClosedStyles } from '../styles'
-import AppCard from '@components/ui/Card'
-import { AppBadge } from '@components/ui/Badge'
 import { formatTime } from '@utils/formatTime'
 import { getTimeUntilOpening } from '@utils/getTimeUntilOpening'
 
@@ -18,7 +16,6 @@ export default function ShopClosedScreen() {
 
     const { settings } = useAdminSettings()
 
-    // Animations
     const fadeAnim = useRef(new Animated.Value(0)).current
     const slideAnim = useRef(new Animated.Value(30)).current
     const pulseAnim = useRef(new Animated.Value(1)).current
@@ -31,9 +28,7 @@ export default function ShopClosedScreen() {
         return () => clearInterval(interval)
     }, [settings])
 
-
     useEffect(() => {
-        // Fade + slide in
         Animated.parallel([
             Animated.timing(fadeAnim, {
                 toValue: 1,
@@ -49,7 +44,6 @@ export default function ShopClosedScreen() {
             }),
         ]).start()
 
-        // Pulse the emoji gently
         Animated.loop(
             Animated.sequence([
                 Animated.timing(pulseAnim, {
@@ -70,8 +64,6 @@ export default function ShopClosedScreen() {
 
     return (
         <View style={shopClosedStyles.container}>
-
-            {/* Decorative top arc */}
             <View style={shopClosedStyles.arc} />
 
             <Animated.View
@@ -80,47 +72,35 @@ export default function ShopClosedScreen() {
                     { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
                 ]}
             >
-                {/* Emoji */}
                 <Animated.Text
                     style={[shopClosedStyles.emoji, { transform: [{ scale: pulseAnim }] }]}
                 >
                     🍛
                 </Animated.Text>
 
-                {/* Pill badge */}
-                <AppBadge
-                    label="Currently Closed"
-                    variant="filled"
-                    color="error"
-                    size="sm"
-                />
+                {/* TODO: replace with proper shared Badge component later */}
+                <View style={{ backgroundColor: '#C62828', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 }}>
+                    <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>Currently Closed</Text>
+                </View>
 
-                {/* Heading */}
                 <Text style={shopClosedStyles.title}>We'll Be Back{'\n'}Very Soon!</Text>
 
-
-                {/* Hours card */}
+                {/* TODO: replace with proper shared Card component later */}
                 {settings && (
-                    <AppCard variant="outlined" size="md">
-                        <AppCard.Body style={{ alignItems: 'center' }}>
-                            <Text style={shopClosedStyles.hoursTime}>{countdown}</Text>
-                            {/* <Text style={shopClosedStyles.hoursTime}>{formatTime(settings.openingTime)}</Text> */}
-                            <Text style={shopClosedStyles.hoursSubLabel}>
-                                Opening at {settings.openingTime}:00 {settings.openingTime < 12 ? "AM" : "PM"}
-                            </Text>
-                        </AppCard.Body>
-                    </AppCard>
+                    <View style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 12, padding: 16, alignItems: 'center' }}>
+                        <Text style={shopClosedStyles.hoursTime}>{countdown}</Text>
+                        <Text style={shopClosedStyles.hoursSubLabel}>
+                            Opening at {settings.openingTime}:00 {settings.openingTime < 12 ? "AM" : "PM"}
+                        </Text>
+                    </View>
                 )}
 
-                {/* Footer */}
                 <Text style={shopClosedStyles.footer}>
                     Thank you for your patience 🙏
                 </Text>
             </Animated.View>
 
-            {/* Decorative bottom arc */}
             <View style={shopClosedStyles.arcBottom} />
         </View>
     )
 }
-

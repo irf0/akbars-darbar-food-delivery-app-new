@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import AppScreen from 'src/layout/AppScreen'
 import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '@hooks/useTheme'
@@ -17,6 +16,7 @@ import { Image } from 'expo-image'
 import { MenuItem } from 'types'
 import { useMenuSearch } from '../hooks/useMenuSearch'
 import { theme } from '@theme'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const VEG_GREEN = '#0F8A3D'
 const NON_VEG_RED = '#E04141'
@@ -109,7 +109,7 @@ const SearchScreen = () => {
     )
 
     return (
-        <AppScreen>
+        <SafeAreaView>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Pressable onPress={() => navigation.goBack()}>
@@ -173,7 +173,7 @@ const SearchScreen = () => {
                     removeClippedSubviews
                 />
             </View>
-        </AppScreen>
+        </SafeAreaView>
     )
 }
 

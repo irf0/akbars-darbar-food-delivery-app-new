@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react'
 import {
     StyleSheet, Text, View, TextInput, TouchableOpacity,
-    KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
+    KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard,
+    ActivityIndicator
 } from 'react-native'
 import { AuthScreenProps } from '@navigation/types'
 import { theme } from '@theme'
 import { useOTP } from '../hooks/useOTP'
 import { useOTPTimer } from '../hooks/useOTPTimer'
-import AppLoader from '@components/ui/Loader'
 import { getConfirmation } from '../store/confirmationRef'
 
 export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>) {
@@ -112,7 +112,7 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
                         disabled={otp.some(d => d === '') || loading}
                     >
                         {loading
-                            ? <AppLoader variant="dots" color='primary' size='md' />
+                            ? <ActivityIndicator color={theme.colors.primary} size="small" />
                             : <Text style={styles.buttonText}>Verify</Text>
                         }
                     </TouchableOpacity>

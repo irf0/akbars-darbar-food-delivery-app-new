@@ -1,5 +1,5 @@
 export type ItemType = 'Veg' | 'Non-Veg'
-export type PortionType = 'half' | 'full'
+export type PortionType = 'half' | 'full' | null
 
 export interface MenuItem {
     id: string

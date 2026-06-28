@@ -14,6 +14,6 @@ export const AppStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={BottomTabs} />
         <Stack.Screen name="Search" component={SearchScreen} />
-        <Stack.Screen name="MenuDetails" component={MenuDetailScreen} />
+        <Stack.Screen name="MenuDetail" component={MenuDetailScreen} />
     </Stack.Navigator>
 )

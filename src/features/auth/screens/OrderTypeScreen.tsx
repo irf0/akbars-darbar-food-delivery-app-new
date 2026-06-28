@@ -1,9 +1,8 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useCartStore } from '@store/cart/useCartStore'
 import { theme } from '@theme'
-import { useOrderTypeStore } from '@store/orderType/useOrderTypeStore'
+import { useOrderTypeStore } from '@store/useOrderTypeStore'
 
 const t = theme
 
