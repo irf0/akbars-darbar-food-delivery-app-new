@@ -1,14 +1,21 @@
 import { createMMKV } from 'react-native-mmkv'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { MenuItem, PortionType } from '../../../types/index'
-import { CartStore } from './types'
+import { CartItem, MenuItem, PortionType } from '../../types/index'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export interface CartItem extends MenuItem {
-    quantity: number
-    portion: PortionType
+interface CartStore {
+    items: CartItem[]
+    orderType: 'delivery' | 'takeaway' | null
+    addItem: (item: MenuItem, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
+    removeItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
+    incrementItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
+    decrementItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
+    clearCart: () => void
+    totalItems: () => number
+    totalPrice: () => number
+
 }
 
 

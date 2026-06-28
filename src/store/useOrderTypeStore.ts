@@ -1,6 +1,11 @@
 import { create } from 'zustand'
-import { OrderTypeStore } from './types'
 
+
+interface OrderTypeStore {
+    orderType: 'delivery' | 'takeaway' | null
+    setOrderType: (type: 'delivery' | 'takeaway') => void
+    clearOrderType: () => void
+}
 
 export const useOrderTypeStore = create<OrderTypeStore>((set) => ({
     orderType: null,
