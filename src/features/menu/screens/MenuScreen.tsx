@@ -1,70 +1,107 @@
-import React, { useState, useMemo, useRef } from 'react'
-import { View, Text, SafeAreaView, StatusBar } from 'react-native'
-import { FlashList, FlashListRef } from '@shopify/flash-list'
-import { useMenuData } from '../hooks/useMenuData'
-import MenuItemCard from '../components/MenuItemCard'
-import MenuItemDetailCard from '../components/MenuItemDetailCard'
-import { AppSkeleton } from '@components/ui/Skeleton'
-import { flattenSections, FlatRow } from '@utils/flattenSections'
-import { styles } from '../styles/SectionHeader.styles'
+import { FlashList } from '@shopify/flash-list'
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
+import useFlattenedMenu from '@hooks/useFlattenedMenu'
+import { useOrderTypeStore } from '@store/useOrderTypeStore'
+import { getDisplayPrice } from '@utils/getDisplayPrice'
+import { Image } from 'expo-image'
+import { DietBadge } from '@components/DietBadge'
+import { usePortionSelectorStore } from '@store/usePortionSelectorStore'
 import { MenuItem } from 'types'
+import { CompositeScreenProps } from '@react-navigation/native'
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
 
-export const MenuScreen = () => {
-    const [modalVisible, setModalVisible] = useState(false)
-    const { sections, isLoading, isRefreshing, onRefresh } = useMenuData()
-    const listRef = useRef<FlashListRef<FlatRow>>(null)
+type Props = CompositeScreenProps<
+    BottomTabScreenProps<BottomTabsParamList, 'Menu'>,
+    NativeStackScreenProps<AppStackParamList>
+>
 
-    const flatData = useMemo(() => flattenSections(sections), [sections])
+const MenuScreen = ({ navigation, route }: Props) => {
+    const { flattenedMenu } = useFlattenedMenu()
+    const orderType = useOrderTypeStore((state) => state.orderType)
+    const openModal = usePortionSelectorStore((state) => state.openModal)
 
-    // Collect header indices for sticky headers
-    const stickyIndices = useMemo(
-        () => flatData.reduce<number[]>((acc, row, i) => {
-            if (row.type === 'header') acc.push(i)
-            return acc
-        }, []),
-        [flatData]
-    )
 
-    if (isLoading) return <AppSkeleton variant='rect' />
+    const handleAddBtn = (item: MenuItem) => {
+        const halfPrice = orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price
+
+        if (halfPrice === 0) {
+            console.log('Directly add to cart!')
+        } else {
+            openModal(item)
+        }
+    }
 
     return (
-        <SafeAreaView style={styles.screenContainer}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-            <FlashList
-                ref={listRef}
-                data={flatData}
-                keyExtractor={(row) =>
-                    row.type === 'header' ? `header-${row.title}` : row.item.id
+        <FlashList
+            data={flattenedMenu}
+            keyExtractor={(item) =>
+                item.type === 'header' ? item.subCategory : item.data.id
+            }
+            getItemType={(item) => item.type}
+            renderItem={({ item }) => {
+                if (item.type === 'header') {
+                    return <Text>{item.subCategory}</Text>
                 }
+                return (
+                    <>
+                        <Pressable onPress={() => navigation.navigate("MenuDetail", { item: item.data })}>
+                            <Image
+                                cachePolicy={'memory-disk'}
+                                source={{ uri: item.data.image }}
+                                style={styles.itemImage}
+                                contentFit="cover"
+                                transition={200}
+                            />
+                            <DietBadge type={item.data.item_type} />
+                            <Text>{item.data.name}</Text>
+                            <Text>{getDisplayPrice(item.data, orderType)}</Text>
+                        </Pressable>
+                        <TouchableOpacity
+                            style={{ padding: 20, backgroundColor: "red" }}
+                            onPress={() => handleAddBtn(item.data)}>
+                            <Text>ADD</Text>
+                        </TouchableOpacity>
+                    </>
+                )
+            }
 
-                getItemType={row => row.type}
-                stickyHeaderIndices={stickyIndices}
-                refreshing={isRefreshing}
-                onRefresh={onRefresh}
-                contentContainerStyle={styles.listContent}
-                renderItem={({ item: row }) => {
-                    if (row.type === 'header') {
-                        return (
-                            <View style={styles.headerContainer}>
-                                <View style={styles.leftColumn}>
-                                    <Text style={styles.headerTitle}>{row.title}</Text>
-                                    <Text style={styles.metaText}>
-                                        {row.count} curated selections
-                                    </Text>
-                                </View>
-                                <View style={styles.minimalistDivider} />
-                            </View>
-                        )
-                    }
-                    return (
-                        <MenuItemCard
-                            orderType='delivery'
-                            item={row.item}
-                            onAddPress={() => setModalVisible(true)}
-                        />
-                    )
-                }}
-            />
-        </SafeAreaView>
+            }
+        />
     )
 }
+
+const styles = StyleSheet.create({
+    headerRow: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: '#f5f5f5',
+    },
+    headerText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+    itemImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 12
+    },
+    itemName: {
+        fontSize: 14,
+    },
+    itemPrice: {
+        fontSize: 14,
+        fontWeight: '600',
+    },
+})
+
+export default MenuScreen

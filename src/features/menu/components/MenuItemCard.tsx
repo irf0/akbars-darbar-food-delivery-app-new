@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native
 import { Image } from 'expo-image'
 import { MenuItem } from 'types'
 import { styles } from '../styles/MenuItemCard.styles'
-import { AppBadge } from '@components/ui/Badge'
 
 interface Props {
     item: MenuItem
@@ -35,7 +34,6 @@ const MenuItemCard = ({ item, orderType, onAddPress }: Props) => {
             <View style={styles.details}>
                 <View style={styles.dietBadgeContainer}>
                     <DietBadge type={item.item_type} />
-                    <AppBadge label="★ Bestseller" variant="ghost" color="warning" size="sm" />
                 </View>
 
                 <Text style={styles.name} numberOfLines={2}>

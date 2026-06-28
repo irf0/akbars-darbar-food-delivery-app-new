@@ -1,20 +1,14 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { memo } from 'react'
 import { Image } from 'expo-image'
 import useBestSellers from '@hooks/useBestSellers'
 import { theme } from '@theme'
 import { MenuItem, OrderType } from 'types'
-import { useOrderTypeStore } from '@store/orderType/useOrderTypeStore'
+import { useOrderTypeStore } from '@store/useOrderTypeStore'
 import { getDisplayPrice } from '@utils/getDisplayPrice'
+import { DietBadge } from '@components/DietBadge'
+import { usePortionSelectorStore } from '@store/usePortionSelectorStore'
 
-const DietBadge = memo(({ type }: { type: MenuItem['item_type'] }) => {
-    const color = type === 'Veg' ? '#388E3C' : '#C62828'
-    return (
-        <View style={[styles.dietDot, { borderColor: color }]}>
-            <View style={[styles.dietDotInner, { backgroundColor: color }]} />
-        </View>
-    )
-})
 
 interface Props {
     onItemPress: (item: MenuItem) => void
@@ -23,6 +17,17 @@ interface Props {
 const BestSellerList = ({ onItemPress }: Props) => {
     const { bestSellers } = useBestSellers()
     const { orderType } = useOrderTypeStore()
+    const openModal = usePortionSelectorStore((state) => state.openModal)
+
+    const handleAddBtn = (item: MenuItem) => {
+        const halfPrice = orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price
+
+        if (halfPrice === 0) {
+            console.log('Directly add to cart!')
+        } else {
+            openModal(item)
+        }
+    }
     return (
         <View>
             <Text>BestSeller List</Text>
@@ -39,19 +44,25 @@ const BestSellerList = ({ onItemPress }: Props) => {
                     keyExtractor={i => i?.id}
                     contentContainerStyle={{ gap: 10 }}
                     renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => onItemPress(item)}
-                        // style={styles.categoryChip}
-                        >
-                            <Image
-                                cachePolicy={'memory-disk'}
-                                source={{ uri: item?.image }}
-                                style={{ width: 140, height: 140, borderRadius: 12 }}
-                            />
-                            <DietBadge type={item.item_type} />
-                            <Text >{item?.name}</Text>
-                            <Text>₹{getDisplayPrice(item, orderType)}</Text>
-                        </Pressable>
+                        <View>
+                            <Pressable
+                                onPress={() => onItemPress(item)}
+                            >
+                                <Image
+                                    cachePolicy={'memory-disk'}
+                                    source={{ uri: item?.image }}
+                                    style={{ width: 140, height: 140, borderRadius: 12 }}
+                                />
+                                <DietBadge type={item.item_type} />
+                                <Text >{item?.name}</Text>
+                                <Text>₹{getDisplayPrice(item, orderType)}</Text>
+                            </Pressable>
+                            <TouchableOpacity
+                                style={{ padding: 20, backgroundColor: "red" }}
+                                onPress={() => handleAddBtn(item)}>
+                                <Text>ADD</Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
                 />
 
