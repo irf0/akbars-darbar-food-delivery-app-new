@@ -11,14 +11,13 @@ export type AuthStackParamList = {
 
 export type BottomTabsParamList = {
     Home: undefined
-    Menu: { category: string }
+    Menu: { category?: string }
     Notifications: undefined
     Profile: undefined
 }
 
 export type AppStackParamList = {
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
-    FullMenu: { category?: string } | undefined
     MenuDetail: { item: MenuItem }
     Search: undefined
     Cart: undefined

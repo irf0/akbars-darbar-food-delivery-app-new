@@ -4,6 +4,7 @@ import { AppStackParamList } from '@navigation/types'
 import { BottomTabs } from '@navigation/tabs/BottomTabs'
 import SearchScreen from '@features/search/screens/SearchScreen'
 import MenuDetailScreen from '@features/menu/screens/MenuDetailScreen'
+import CartScreen from '@features/cart/screens/CartScreen'
 
 // Entire dev module tree is excluded from production bundle
 
@@ -15,5 +16,6 @@ export const AppStack = () => (
         <Stack.Screen name="MainTabs" component={BottomTabs} />
         <Stack.Screen name="Search" component={SearchScreen} />
         <Stack.Screen name="MenuDetail" component={MenuDetailScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
     </Stack.Navigator>
 )

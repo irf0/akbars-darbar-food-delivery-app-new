@@ -2,24 +2,21 @@ import { createMMKV } from 'react-native-mmkv'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { CartItem, MenuItem, PortionType } from '../../types/index'
+import { useOrderTypeStore } from './useOrderTypeStore'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 
-interface CartStore {
+interface CartStoreState {
     items: CartItem[]
-    orderType: 'delivery' | 'takeaway' | null
-    addItem: (item: MenuItem, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
-    removeItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
-    incrementItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
-    decrementItem: (itemId: string, portion: PortionType, orderType: 'delivery' | 'takeaway') => void
+    addItem: (item: MenuItem, portion: PortionType, quantity: number) => void
+    removeItem: (itemId: string, portion: PortionType) => void
+    incrementItem: (itemId: string, portion: PortionType) => void
+    decrementItem: (itemId: string, portion: PortionType,) => void
     clearCart: () => void
     totalItems: () => number
     totalPrice: () => number
-
 }
 
 
-// ── MMKV Storage Adapter ──────────────────────────────────────────────────────
 
 const storage = createMMKV({ id: 'darbar-cart' })
 
@@ -37,55 +34,54 @@ const mmkvStorage = {
 }
 
 
-export const useCartStore = create<CartStore>()(
+export const useCartStore = create<CartStoreState>()(
     persist(
         (set, get) => ({
             items: [],
-            orderType: null,
-            addItem: (item, portion, orderType) => {
+            addItem: (item, portion) => {
                 const existing = get().items.find(
-                    i => i.id === item.id && i.portion === portion && i.orderType === orderType
+                    i => i.id === item.id && i.portion === portion
                 )
                 if (existing) {
                     set(state => ({
                         items: state.items.map(i =>
-                            i.id === item.id && i.portion === portion && i.orderType === orderType
+                            i.id === item.id && i.portion === portion
                                 ? { ...i, quantity: i.quantity + 1 }
                                 : i
                         ),
                     }))
                 } else {
                     set(state => ({
-                        items: [...state.items, { ...item, quantity: 1, portion, orderType }],
+                        items: [...state.items, { ...item, quantity: 1, portion }],
                     }))
                 }
             },
 
-            removeItem: (itemId, portion, orderType) => {
+            removeItem: (itemId, portion) => {
                 set(state => ({
-                    items: state.items.filter(i => !(i.id === itemId && i.portion === portion && i.orderType === orderType))
+                    items: state.items.filter(i => !(i.id === itemId && i.portion === portion))
                 }))
             },
 
-            incrementItem: (itemId, portion, orderType) => {
+            incrementItem: (itemId, portion) => {
                 set(state => ({
                     items: state.items.map(i =>
-                        i.id === itemId && i.portion === portion && i.orderType === orderType ? { ...i, quantity: i.quantity + 1 } : i
+                        i.id === itemId && i.portion === portion ? { ...i, quantity: i.quantity + 1 } : i
                     ),
                 }))
             },
 
-            decrementItem: (itemId, portion, orderType) => {
+            decrementItem: (itemId, portion) => {
                 const item = get().items.find(
-                    i => i.id === itemId && i.portion === portion && i.orderType === orderType
+                    i => i.id === itemId && i.portion === portion
                 )
                 if (!item) return
                 if (item.quantity === 1) {
-                    get().removeItem(itemId, portion, orderType)
+                    get().removeItem(itemId, portion)
                 } else {
                     set(state => ({
                         items: state.items.map(i =>
-                            i.id === itemId && i.portion === portion && i.orderType === orderType ? { ...i, quantity: i.quantity - 1 } : i
+                            i.id === itemId && i.portion === portion ? { ...i, quantity: i.quantity - 1 } : i
                         ),
                     }))
                 }
@@ -98,16 +94,18 @@ export const useCartStore = create<CartStore>()(
 
             totalPrice: () =>
                 get().items.reduce((sum, i) => {
+                    const currentOrderType = useOrderTypeStore.getState().orderType
                     const price =
-                        i.portion === 'half'
-                            ? i.orderType === 'delivery'
-                                ? i.half_delivery_price
+                        i.portion === 'half' ?
+                            currentOrderType === 'delivery' ?
+                                i.half_delivery_price
                                 : i.half_takeaway_price
-                            : i.orderType === 'delivery'
+                            : currentOrderType === 'delivery'
                                 ? i.full_delivery_price
                                 : i.full_takeaway_price
                     return sum + price * i.quantity
-                }, 0),
+                }, 0)
+
         }),
         {
             name: 'darbar-cart',

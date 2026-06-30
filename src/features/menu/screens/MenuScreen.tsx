@@ -11,6 +11,7 @@ import { CompositeScreenProps } from '@react-navigation/native'
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
+import { useCartStore } from '@store/useCartStore'
 
 type Props = CompositeScreenProps<
     BottomTabScreenProps<BottomTabsParamList, 'Menu'>,
@@ -21,13 +22,13 @@ const MenuScreen = ({ navigation, route }: Props) => {
     const { flattenedMenu } = useFlattenedMenu()
     const orderType = useOrderTypeStore((state) => state.orderType)
     const openModal = usePortionSelectorStore((state) => state.openModal)
-
+    const { addItem } = useCartStore()
 
     const handleAddBtn = (item: MenuItem) => {
         const halfPrice = orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price
 
         if (halfPrice === 0) {
-            console.log('Directly add to cart!')
+            addItem(item, 'full', 1)
         } else {
             openModal(item)
         }

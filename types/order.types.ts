@@ -34,7 +34,6 @@ export interface OrderItem extends MenuItem {
 export interface CartItem extends MenuItem {
     quantity: number
     portion: PortionType
-    orderType: 'delivery' | 'takeaway'
 }
 
 export interface Order {

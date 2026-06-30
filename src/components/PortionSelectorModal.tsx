@@ -4,6 +4,7 @@ import { usePortionSelectorStore } from '@store/usePortionSelectorStore'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
 import { Image } from 'expo-image'
 import { DietBadge } from './DietBadge'
+import { useCartStore } from '@store/useCartStore'
 
 export const PortionSelectorModal = () => {
     const isVisible = usePortionSelectorStore((state) => state.isVisible)
@@ -12,14 +13,18 @@ export const PortionSelectorModal = () => {
     const setPortionType = usePortionSelectorStore((state) => state.setPortionType)
     const closeModal = usePortionSelectorStore((state) => state.closeModal)
     const orderType = useOrderTypeStore((state) => state.orderType)
+    const { addItem } = useCartStore()
+
+
 
     if (!item) return null
-
     const halfPrice = orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price
     const fullPrice = orderType === 'delivery' ? item.full_delivery_price : item.full_takeaway_price
 
     const handleAddToCart = () => {
-        console.log('add to cart (placeholder)', item, portionType)
+        if (!portionType) return null
+        addItem(item, portionType, 1)
+        console.log(useCartStore.getState().items)
         closeModal()
     }
 
