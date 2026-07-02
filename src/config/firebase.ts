@@ -2,6 +2,7 @@ import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import messaging from '@react-native-firebase/messaging'
 
+//Collections
 export const Collections = {
     menu: firestore().collection('menu'),
     extraMenu: firestore().collection('extramenu'),
@@ -11,8 +12,7 @@ export const Collections = {
     favorites: firestore().collection('favorites'),
 } as const
 
-// ── Typed document helpers ────────────────────────────────────────────────────
-
+//Documents
 export const menuDoc = (id: string) =>
     firestore().collection('menu').doc(id)
 
@@ -22,7 +22,10 @@ export const orderDoc = (id: string) =>
 export const userDoc = (uid: string) =>
     firestore().collection('users').doc(uid)
 
-// ── Auth + Messaging exports ──────────────────────────────────────────────────
+export const adminDoc = (uid: string) =>
+    firestore().collection('adminSettings').doc(uid)
+
+//Auth + Messaging exports
 
 export const firebaseAuth = auth()
 export const firebaseMessaging = messaging()

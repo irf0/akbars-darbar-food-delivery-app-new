@@ -1,4 +1,4 @@
-import { theme } from "@theme"
+import { theme } from "src/theme"
 import { StyleSheet, Text, View } from "react-native"
 
 export const DeliveryBadge = ({ enabled }: { enabled: boolean }) => {

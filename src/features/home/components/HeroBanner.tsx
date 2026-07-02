@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 
 interface Props {
     onPress: () => void
@@ -20,7 +20,7 @@ export const HeroBanner = ({ onPress }: Props) => {
                 </Text>
                 <TouchableOpacity
                     style={styles.heroBtn}
-                    onPress={() => navigation.navigate('FullMenu')}
+                    onPress={onPress}
                 >
                     <Text style={styles.heroBtnText}>Order Now</Text>
                     <Ionicons name="arrow-forward" size={14} color="#fff" />

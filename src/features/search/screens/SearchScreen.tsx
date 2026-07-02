@@ -13,9 +13,9 @@ import {
     View
 } from 'react-native'
 import { Image } from 'expo-image'
-import { MenuItem } from 'types'
+import { MenuItem } from '@types'
 import { useMenuSearch } from '../hooks/useMenuSearch'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const VEG_GREEN = '#0F8A3D'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Button } from 'react-native';
-import { theme } from '@theme';
+import { theme } from 'src/theme';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';

@@ -9,7 +9,7 @@ import {
     Platform,
     ScrollView
 } from 'react-native';
-import { theme } from '@theme';
+import { theme } from 'src/theme';
 import { useRegister } from '../hooks/useRegister';
 import { AuthScreenProps } from '@navigation/types';
 import { useAuthStore } from '../store/useAuthStore';
@@ -19,6 +19,7 @@ type AddressForm = {
     building: string
     street: string
     city: string
+    label?: string
 }
 
 export default function RegisterScreen({ route, navigation }: AuthScreenProps<'Register'>) {
@@ -29,6 +30,7 @@ export default function RegisterScreen({ route, navigation }: AuthScreenProps<'R
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [address, setAddress] = useState<AddressForm>({
+        label: 'Home',
         area: '',
         building: '',
         street: '',

@@ -12,7 +12,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { AuthScreenProps } from '@navigation/types';
-import { theme } from '@theme';
+import { theme } from 'src/theme';
 import { useLogin } from '../hooks/useLogin';
 import { setConfirmation } from '../store/confirmationRef';
 

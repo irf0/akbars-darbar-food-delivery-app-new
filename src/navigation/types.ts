@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { MenuItem } from 'types'
+import { MenuItem } from '@types'
 
 export type AuthStackParamList = {
     Phone: undefined

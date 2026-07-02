@@ -10,8 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuthStore } from '@features/auth/store/useAuthStore'
 import { useAdminSettings } from '@hooks/useAdminSettings'
-import { useCartStore } from '@store/useCartStore'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 import HeroBanner from '../components/HeroBanner'
 import { CategoryList } from '../components/CategoryList'
 import { createStyles } from './styles'
@@ -22,6 +21,8 @@ import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
 import { CompositeScreenProps } from '@react-navigation/native'
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useCartStore } from '@store/useCartStore'
+import { useAdminSettingsStore } from '@store/useAdminSettingsStore'
 
 
 type Props = CompositeScreenProps<
@@ -33,13 +34,13 @@ export default function HomeScreen({ navigation }: Props) {
     const styles = createStyles
     const { categories } = useMenuCategories()
     const { user } = useAuthStore()
-    const { settings } = useAdminSettings()
+    const { settings } = useAdminSettingsStore()
     const totalItems = useCartStore(s => s.totalItems())
 
     const fadeAnim = useRef(new Animated.Value(0)).current
     const slideAnim = useRef(new Animated.Value(20)).current
 
-
+    // console.log(user)
     useEffect(() => {
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -85,7 +86,9 @@ export default function HomeScreen({ navigation }: Props) {
                 </TouchableOpacity>
 
                 {/* Hero Banner */}
-                <HeroBanner onPress={() => navigation.navigate('FullMenu')} />
+                <HeroBanner
+                    onPress={() => navigation.navigate('MainTabs', { screen: 'Menu', params: {} })}
+                />
 
                 {/* Categories */}
                 <CategoryList

@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 import { Image } from 'expo-image'
 
 const t = theme

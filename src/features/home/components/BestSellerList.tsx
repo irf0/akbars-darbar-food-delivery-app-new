@@ -2,11 +2,11 @@ import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'r
 import React from 'react'
 import { Image } from 'expo-image'
 import useBestSellers from '@hooks/useBestSellers'
-import { theme } from '@theme'
-import { MenuItem } from 'types'
+import { theme } from 'src/theme'
+import { MenuItem } from '@types'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
 import { getDisplayPrice } from '@utils/getDisplayPrice'
-import { DietBadge } from '@components/DietBadge'
+import { DietBadge } from 'src/global/components/DietBadge'
 import { usePortionSelectorStore } from '@store/usePortionSelectorStore'
 
 

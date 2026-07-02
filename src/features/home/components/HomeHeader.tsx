@@ -1,16 +1,16 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 import { DeliveryBadge } from './DeliveryBadge'
-import { AdminSettings } from '../../../../types/index'
-import { DarbarUser } from '../../../../types/index'
+import { AdminConfig } from '@types'
+import { DarbarUser } from '../../../types/index'
 
 const t = theme
 
 interface Props {
     user: DarbarUser | null
-    settings: AdminSettings | null
+    settings: AdminConfig | null
     totalItems: number
     onCartPress: () => void
 }

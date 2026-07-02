@@ -1,8 +1,9 @@
 import React, { memo, useCallback } from 'react'
 import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
-import { MenuItem } from 'types'
+import { MenuItem } from '@types'
 import { styles } from '../styles/MenuItemCard.styles'
+import { DietBadge } from '@components/DietBadge'
 
 interface Props {
     item: MenuItem
@@ -10,14 +11,7 @@ interface Props {
     onAddPress: (item: MenuItem) => void
 }
 
-const DietBadge = memo(({ type }: { type: MenuItem['item_type'] }) => {
-    const color = type === 'Veg' ? '#388E3C' : '#C62828'
-    return (
-        <View style={[styles.dietDot, { borderColor: color }]}>
-            <View style={[styles.dietDotInner, { backgroundColor: color }]} />
-        </View>
-    )
-})
+
 
 const MenuItemCard = ({ item, orderType, onAddPress }: Props) => {
     const startingPrice = orderType === 'delivery'

@@ -5,7 +5,7 @@ import {
     ActivityIndicator
 } from 'react-native'
 import { AuthScreenProps } from '@navigation/types'
-import { theme } from '@theme'
+import { theme } from 'src/theme'
 import { useOTP } from '../hooks/useOTP'
 import { useOTPTimer } from '../hooks/useOTPTimer'
 import { getConfirmation } from '../store/confirmationRef'

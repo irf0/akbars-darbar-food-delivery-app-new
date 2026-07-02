@@ -3,7 +3,7 @@ import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppStackParamList } from '@navigation/types'
 import { Image } from 'expo-image'
-import { DietBadge } from '@components/DietBadge'
+import { DietBadge } from 'src/global/components/DietBadge'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
 import { usePortionSelectorStore } from '@store/usePortionSelectorStore'
 

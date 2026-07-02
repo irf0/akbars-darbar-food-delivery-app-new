@@ -10,14 +10,18 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen'
 import OrderTypeScreen from '@features/auth/screens/OrderTypeScreen'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
-import { PortionSelectorModal } from '@components/PortionSelectorModal'
+import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal'
+import { useAddressMigration } from '@hooks/useAddressMigration'
+import { useAdminSettingsStore } from '@store/useAdminSettingsStore'
 
 
 export default function RootNavigator() {
     const { orderType } = useOrderTypeStore()
     const [showSplash, setShowSplash] = useState(true)
     const { hasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore()
-    const { settings } = useAdminSettings()
+    const { settings } = useAdminSettingsStore()
+    const { migrateLegacyAddress } = useAddressMigration();
+
 
     const showApp = isAuthenticated && hasCompletedOnboarding
     const isShopClosed = settings?.isShopClosed ?? false
@@ -26,6 +30,11 @@ export default function RootNavigator() {
         const timer = setTimeout(() => setShowSplash(false), 1500)
         return () => clearTimeout(timer)
     }, [])
+
+    //Existing user address migration to new schema
+    useEffect(() => {
+        migrateLegacyAddress();
+    }, []);
 
     // TODO: replace with proper AppSplashScreen once shared components are rebuilt
     if (showSplash || !hasHydrated) {

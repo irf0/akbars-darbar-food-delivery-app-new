@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useMenuSearchStore } from "../store/useMenuSearchStore";
+import { useMenuStore } from "@store/useMenuStore";
 
 
 export const useMenuSearch = () => {
-    const items = useMenuSearchStore((state) => state.items);
-    const loading = useMenuSearchStore((state) => state.isLoading);
+    const items = useMenuStore((state) => state.items);
+    const loading = useMenuStore((state) => state.isLoading);
     const [searchQuery, setSearchQuery] = useState('')
 
     const filteredItems = useMemo(() => {

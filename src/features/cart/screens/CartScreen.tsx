@@ -1,21 +1,23 @@
 import { FlatList, StyleSheet, Text, View, Pressable, Alert, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
-import { useCartStore } from '@store/useCartStore'
 import { Image } from 'expo-image'
 import { getPriceForPortion } from '@utils/getPriceForPortion'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
-import QuantityStepper from '@components/QuantityStepper'
 import { Ionicons } from '@expo/vector-icons'
-import { PortionType } from 'types'
-import CustomDeleteModal from '@components/CustomDeleteModal'
+
+import CustomDeleteModal from 'src/global/components/CustomDeleteModal'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AppStackParamList, BottomTabsParamList } from '@navigation/types'
 import { CompositeScreenProps } from '@react-navigation/native'
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import ClearCartModal from 'src/global/components/ClearCartModal'
+import { AddressItem, AddressSelectModal } from 'src/global/components/AddressSelectModal'
+import { useUserAddress } from '../hooks/useUserAddress'
+import { useCartStore } from '@store/useCartStore'
+import QuantityStepper from 'src/global/components/QuantityStepper'
 import { useCartTotal } from '@hooks/useCartTotal'
-import ClearCartModal from '@components/ClearCartModal'
-
+import { PortionType } from '@types'
 type Props = CompositeScreenProps<
     NativeStackScreenProps<AppStackParamList, 'Cart'>,
     BottomTabScreenProps<BottomTabsParamList>
@@ -25,8 +27,21 @@ const CartScreen = ({ navigation }: Props) => {
     const orderType = useOrderTypeStore(state => state.orderType) as 'delivery' | 'takeaway'
     const { items, incrementItem, decrementItem, removeItem, clearCart } = useCartStore()
     const [activeItem, setActiveItem] = useState<{ id: string; portion: PortionType; name: string } | null>(null)
-    const [clearCartModalVisible, setClearCartModalVisible] = useState(false)
+    const [clearCartModalVisible, setClearCartModalVisible] = useState<boolean>(false)
     const cartTotal = useCartTotal()
+    const { addresses, defaultAddressId } = useUserAddress()
+
+
+    const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
+    const [selectedAddress, setSelectedAddress] = useState<AddressItem | null>(null)
+
+    const handleCheckoutPress = () => {
+        if (orderType === 'delivery') {
+            setIsAddressModalOpen(true);
+        } else {
+            Alert.alert('Takeaway', 'Time picker modal will go here next!');
+        }
+    };
 
 
 
@@ -93,6 +108,28 @@ const CartScreen = ({ navigation }: Props) => {
                             </View>
                         )}
                     />
+                    {selectedAddress && (
+                        <Text style={{ marginBottom: 20, textAlign: 'center' }}>
+                            Delivering to: {selectedAddress.label} — {selectedAddress.addressLine}
+                        </Text>
+                    )}
+
+                    <AddressSelectModal
+                        isVisible={isAddressModalOpen}
+                        onClose={() => setIsAddressModalOpen(false)}
+                        addresses={addresses}
+                        defaultAddressId={defaultAddressId}
+                        onAddNewAddress={() => {
+                            setIsAddressModalOpen(false)
+                            // navigate to add-address screen
+                        }}
+                        onAddressConfirm={(address) => {
+                            setSelectedAddress(address)
+                            setIsAddressModalOpen(false)
+                        }}
+                    />
+
+
                     <ClearCartModal
                         visible={clearCartModalVisible}
                         onCancel={() => setClearCartModalVisible(false)}
@@ -113,8 +150,18 @@ const CartScreen = ({ navigation }: Props) => {
                             }
                         }}
                     />
+
                     <Text>Total Price: {cartTotal}</Text>
+                    <TouchableOpacity
+                        onPress={() => handleCheckoutPress()}
+                        activeOpacity={0.7}
+                        style={{ backgroundColor: "green", padding: 20 }}
+                    >
+                        <Text style={{ textAlign: "center" }}>Select Address</Text>
+                    </TouchableOpacity>
                 </View>
+
+
             }
         </SafeAreaView>
     )

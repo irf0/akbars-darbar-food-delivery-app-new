@@ -1,4 +1,4 @@
-import { DarbarUser } from '../../../../types/index'
+import { DarbarUser } from '../../../types/index'
 
 export interface AuthState {
     token: string | null

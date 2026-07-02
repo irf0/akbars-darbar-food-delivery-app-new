@@ -9,12 +9,13 @@ import { useAdminSettings } from '@hooks/useAdminSettings'
 import { shopClosedStyles } from '../styles'
 import { formatTime } from '@utils/formatTime'
 import { getTimeUntilOpening } from '@utils/getTimeUntilOpening'
+import { useAdminSettingsStore } from '@store/useAdminSettingsStore'
 
 
 export default function ShopClosedScreen() {
     const [countdown, setCountdown] = useState('')
 
-    const { settings } = useAdminSettings()
+    const { settings } = useAdminSettingsStore()
 
     const fadeAnim = useRef(new Animated.Value(0)).current
     const slideAnim = useRef(new Animated.Value(30)).current

@@ -8,7 +8,7 @@ import HomeScreen from '@features/home/screens/HomeScreen';
 import NotificationScreen from '@features/notifications/screens/NotificationScreen';
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
 import MenuScreen from '@features/menu/screens/MenuScreen';
-import { theme } from '@theme';
+import { theme } from 'src/theme';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
