@@ -82,6 +82,7 @@ const MenuRow = React.memo(({ item }: MenuRowProps) => {
 
 const SearchScreen = () => {
     const { filteredItems, searchQuery, setSearchQuery, loading } = useMenuSearch()
+    // console.log(filteredItems)
     const navigation = useNavigation()
     const theme = useTheme()
     const [isFocused, setIsFocused] = useState(false)
@@ -109,7 +110,7 @@ const SearchScreen = () => {
     )
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Pressable onPress={() => navigation.goBack()}>

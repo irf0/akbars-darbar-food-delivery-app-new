@@ -51,6 +51,7 @@ const BestSellerList = ({ onItemPress }: Props) => {
                                 <Image
                                     cachePolicy={'memory-disk'}
                                     source={{ uri: item?.image }}
+                                    contentFit='cover'
                                     style={{ width: 140, height: 140, borderRadius: 12 }}
                                 />
                                 <DietBadge type={item.item_type} />

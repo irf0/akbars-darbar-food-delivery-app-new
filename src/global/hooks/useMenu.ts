@@ -13,9 +13,18 @@ export const useMenu = () => {
         const unsubscribe = Collections.menu.onSnapshot((querySnapshot) => {
             const items: MenuItem[] = []
             querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.id && data.id !== doc.id) {
+                    console.warn("ID mismatch", {
+                        firestoreDocId: doc.id,
+                        storedId: data.id,
+                        name: data.name
+                    });
+                }
+
                 items.push({
                     id: doc.id,
-                    ...doc.data()
+                    ...doc.data(),
                 } as MenuItem)
             })
             setItems(items);

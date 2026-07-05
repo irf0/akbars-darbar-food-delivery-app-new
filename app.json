@@ -3,7 +3,7 @@
     "name": "akbarsdabar",
     "slug": "akbars-dabar",
     "scheme": "myapp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -18,7 +18,11 @@
       "bundleIdentifier": "com.irfandarbar24.Darbar",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Akbar's Darbar uses your location to find your delivery address and show accurate delivery availability."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyDp5NDRqci_b8gzL0n0LxtCEIq4aEI74j4"
       }
     },
     "android": {
@@ -29,7 +33,16 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.irfandarbar24.Darbar"
+      "package": "com.irfandarbar24.Darbar",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDOBRiCD9AvM6cWch10CpYh6NNgbXAiWfw"
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,12 +52,19 @@
       "expo-font",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/messaging"
+      "@react-native-firebase/messaging",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Akbar's Darbar uses your location to find your delivery address and show accurate delivery availability."
+        }
+      ]
     ],
     "extra": {
       "eas": {
         "projectId": "4bafa7e4-ad17-495c-a00b-7f06b14b59f4"
       }
-    }
+    },
+    "owner": "irfandarbar24"
   }
 }
