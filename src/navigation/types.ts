@@ -17,6 +17,8 @@ export type BottomTabsParamList = {
 }
 
 export type AppStackParamList = {
+    OrderType: undefined
+    AddressPicker: undefined
     MainTabs: NavigatorScreenParams<BottomTabsParamList>
     MenuDetail: { item: MenuItem }
     Search: undefined

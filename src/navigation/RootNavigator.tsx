@@ -8,7 +8,6 @@ import { AuthStack } from './stacks/AuthStack'
 import { linkingConfig } from './linkingConfig'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen'
-import OrderTypeScreen from '@features/auth/screens/OrderTypeScreen'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
 import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal'
 import { useAddressMigration } from '@hooks/useAddressMigration'
@@ -51,9 +50,7 @@ export default function RootNavigator() {
                 {isShopClosed
                     ? <ShopClosedScreen />
                     : showApp
-                        ? !orderType
-                            ? <OrderTypeScreen />
-                            : <AppStack />
+                        ? <AppStack initialRouteName={orderType ? 'MainTabs' : 'OrderType'} />
                         : <AuthStack />
                 }
             </NavigationContainer>

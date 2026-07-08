@@ -1,8 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { theme } from 'src/theme'
 import { useOrderTypeStore } from '@store/useOrderTypeStore'
+import { Ionicons } from '@expo/vector-icons'
+import CustomLocationAccesModal from '@features/geolocation/components/CustomLocationAccessModal'
+import { checkLocationPermission } from '@utils/permissions/expopermissions'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { AppStackParamList } from '@navigation/types'
+import { useNavigation } from '@react-navigation/native'
 
 const t = theme
 
@@ -21,14 +27,42 @@ const OPTIONS = [
     },
 ]
 
+type OrderTypeNavigationProp = NativeStackNavigationProp<AppStackParamList, 'OrderType'>
+
+
 const OrderTypeScreen = () => {
-    const { setOrderType, orderType } = useOrderTypeStore()
-    console.log(orderType)
+    const navigation = useNavigation<OrderTypeNavigationProp>()
+    const { setOrderType } = useOrderTypeStore()
+    const [modalVisible, setModalVisible] = useState(false)
+
+
+    const handleChooseOrderType = async (type: 'delivery' | 'takeaway') => {
+        if (type === 'takeaway') {
+            setOrderType(type)
+            return
+        }
+
+        const { status } = await checkLocationPermission()
+        if (status === 'granted') {
+            setOrderType('delivery')
+            navigation.navigate('AddressPicker')
+            return
+        }
+
+        setModalVisible(true)
+    }
+
+    const handleContinueWithLocation = () => {
+        setModalVisible(false)
+        setOrderType('delivery')
+        navigation.navigate('AddressPicker')
+    }
+
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
 
-            {/* ── Hero Banner — matches HomeScreen hero ── */}
+            {/* ── Hero Banner ── */}
             <View style={styles.hero}>
                 <Text style={styles.heroRestaurant}>Akbar's Darbar</Text>
                 <Text style={styles.heroTagline}>✦ Enjoy the Royale Taste ✦</Text>
@@ -42,26 +76,37 @@ const OrderTypeScreen = () => {
                     <TouchableOpacity
                         key={type}
                         style={styles.card}
-                        onPress={() => setOrderType(type)}
+                        onPress={() => handleChooseOrderType(type)}
                         activeOpacity={0.85}
                     >
-                        {/* Icon area — red box like the + button in BestSeller cards */}
                         <View style={styles.cardIconBox}>
                             <Text style={styles.cardEmoji}>{emoji}</Text>
                         </View>
 
-                        {/* Text */}
                         <View style={styles.cardText}>
                             <Text style={styles.cardLabel}>{label}</Text>
                             <Text style={styles.cardSubtitle}>{subtitle}</Text>
                         </View>
 
-                        {/* Arrow — red like "See all" / "View all" in HomeScreen */}
                         <Text style={styles.cardArrow}>›</Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
+            <CustomLocationAccesModal
+                visible={modalVisible}
+                title="Location Access"
+                message="We use your location to check if we deliver to your area."
+                icon={
+                    <Ionicons
+                        name="location"
+                        size={30}
+                        color={theme.colors.primary}
+                    />
+                }
+                confirmText="Continue"
+                onConfirm={handleContinueWithLocation}
+            />
 
         </SafeAreaView>
     )
@@ -70,12 +115,7 @@ const OrderTypeScreen = () => {
 export default OrderTypeScreen
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: t.colors.surface,
-    },
-
-    // ── Hero — same style as HomeScreen HeroBanner ────────────────────────────
+    container: { flex: 1, backgroundColor: t.colors.surface },
     hero: {
         backgroundColor: t.colors.primary,
         marginHorizontal: 16,
@@ -83,42 +123,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 24,
         paddingVertical: 32,
-        // remove gap: 8
     },
-    heroRestaurant: {
-        fontSize: 28,
-        fontWeight: '900',
-        color: '#fff',
-        letterSpacing: 0.5,
-        // no margin
-    },
+    heroRestaurant: { fontSize: 28, fontWeight: '900', color: '#fff', letterSpacing: 0.5 },
     heroTagline: {
         fontSize: 13,
         color: '#EAB308',
         fontStyle: 'italic',
         fontWeight: '600',
         letterSpacing: 0.5,
-        marginBottom: 16, // space before divider
+        marginBottom: 16,
     },
-    heroDivider: {
-        width: 40,
-        height: 2,
-        backgroundColor: 'rgba(255,255,255,0.3)',
-        marginBottom: 12, // space after divider
-    },
-    heroWelcome: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.85)',
-        lineHeight: 24,
-        fontWeight: '400',
-    },
-
-    // ── Cards — same style as BestSeller cards ────────────────────────────────
-    cardsContainer: {
-        paddingHorizontal: 16,
-        paddingTop: 24,
-        gap: 12,
-    },
+    heroDivider: { width: 40, height: 2, backgroundColor: 'rgba(255,255,255,0.3)', marginBottom: 12 },
+    heroWelcome: { fontSize: 16, color: 'rgba(255,255,255,0.85)', lineHeight: 24, fontWeight: '400' },
+    cardsContainer: { paddingHorizontal: 16, paddingTop: 24, gap: 12 },
     card: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -140,34 +157,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    cardEmoji: {
-        fontSize: 26,
-    },
+    cardEmoji: { fontSize: 26 },
     cardText: {
         flex: 1,
-        gap: 3,
+        gap: 3
     },
     cardLabel: {
         fontSize: 16,
         fontWeight: '700',
-        color: t.colors.text,
+        color: t.colors.text
+
     },
     cardSubtitle: {
+
         fontSize: 12,
         color: t.colors.textSecondary,
-        lineHeight: 16,
+        lineHeight: 16
     },
     cardArrow: {
         fontSize: 26,
         color: t.colors.primary,
-        fontWeight: '300',
-    },
-
-    // ── Footer ────────────────────────────────────────────────────────────────
-    footer: {
-        textAlign: 'center',
-        fontSize: 12,
-        color: t.colors.textSecondary,
-        marginTop: 20,
+        fontWeight: '300'
     },
 })

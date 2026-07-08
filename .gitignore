@@ -6,6 +6,9 @@ dev
 # dependencies
 node_modules/
 
+#Firebase functions
+functions-v2/src/serviceAccountKey.json
+
 # Expo
 .expo/
 dist/

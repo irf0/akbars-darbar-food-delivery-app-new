@@ -8,7 +8,7 @@ interface OrderTypeStore {
 }
 
 export const useOrderTypeStore = create<OrderTypeStore>((set) => ({
-    orderType: null,
+    orderType: null, //needed to check truthy/false at RootNav
     setOrderType: (type) => set({ orderType: type }),
     clearOrderType: () => set({ orderType: null }),
 }))
