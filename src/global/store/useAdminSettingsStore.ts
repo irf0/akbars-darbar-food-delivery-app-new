@@ -8,6 +8,7 @@ interface AdminStoreState {
     setLoading: (isLoading: boolean) => void
 }
 
+
 export const useAdminSettingsStore = create<AdminStoreState>((set) => ({
     settings: null,
     isLoading: true,

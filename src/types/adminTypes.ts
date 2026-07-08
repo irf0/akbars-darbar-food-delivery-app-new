@@ -12,4 +12,6 @@ export type AdminConfig = {
     deliveryDiscountPercentage: number
     takeawayDiscountPercentage: number
     hikedPercentage: number
+    restaurantLat: number
+    restaurantLng: number
 }

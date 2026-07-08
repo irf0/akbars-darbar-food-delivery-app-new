@@ -1,41 +1,125 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useAddressStore } from '../store/useAddressStore';
-import { requestLocation } from '@utils/permissions/expopermissions';
+import React from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import MapView, { Circle } from 'react-native-maps';
+import { Entypo } from '@expo/vector-icons';
+import { theme } from '@theme';
+import { restaurantConfig } from '@config/restaurant.config';
+import CustomAlertModal from '@components/CustomAlertModal';
+import { AddressPickerForm } from '../components/AddressPickerForm';
+import { useAddressPicker } from '../hooks/useAddressPicker';
+
 
 const AddressPickerScreen = () => {
-    const { latitude, longitude, setLatitude, setLongitude, flatNum, setFlatNum, landmark, setLandMark, street, setStreet } = useAddressStore();
+    const {
+        bottomSheetRef,
+        snapPoints,
+        isLoadingGPS,
+        addressInfoMessage,
+        isServiceable,
+        flatNum,
+        landmark,
+        street,
+        latitude,
+        longitude,
+        setFlatNum,
+        setLandMark,
+        setIsServiceable,
+        showServiceabilityModal,
+        setShowServiceabilityModal,
+        setOrderType,
+        debouncedLocationUpdate,
+        handleConfirmPress,
+        handleModalConfirmPress
+    } = useAddressPicker();
 
-    const [isLoadingGPS, setIsLoadingGPS] = useState(true);
+    if (isLoadingGPS || latitude == null || longitude == null) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
 
-    //TODO: Task tomorrow
-    //USE DEBOUNCE FOR PIN DRAG!
-    //1.show permission modal (handle loading, error states)
-    //2.if gps granted -> show pin centered on user location
-    //3.if gps denied -> show pin centered on restaurant with a 5km blue visual circle.
-    //4. show a bottom sheet (regardless of gps permission) with input fields - flat no, landmark and the street is collected by reversegeocode() and store in zustand using setStreet. 
-    //5. after pin drag done, show full address together in the bottom sheet like, 
-    //street, flatnum, landmark etc.
-    //6.onPressing Confirm Address btn -> runs serviceability check function in the server 
-    //7.if NOT serviceable -> warning modal (you're outside..) and prompt to either change adddress or choose takeaway.
-    //8.onPressing change address btn -> lower the bottom sheet, show an alert modal saying you need to be inside this circle
-    //9.if everything okay -> navigate to home
-
-
-
-    useEffect(() => {
-
-        requestLocation()
-    }, [])
 
 
     return (
-        <View>
-            <Text>AddressPickerScreen</Text>
+        <View style={styles.container}>
+            <MapView
+                style={styles.map}
+                initialRegion={{ latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}
+                onRegionChangeComplete={(region) => {
+                    debouncedLocationUpdate(region.latitude, region.longitude);
+                }}
+            >
+                <Circle
+                    center={{
+                        latitude: restaurantConfig.restaurantLat,
+                        longitude: restaurantConfig.restaurantLong,
+                    }}
+                    radius={restaurantConfig.deliveryRadius * 1000}
+                    strokeColor="rgba(0, 122, 255, 0.5)"
+                    fillColor="rgba(0, 122, 255, 0.1)"
+                    strokeWidth={5}
+                />
+            </MapView>
+
+            <View style={styles.centerPinContainer}>
+                <Entypo name='location-pin' size={55} color={theme.colors.primary} />
+            </View>
+
+            <AddressPickerForm
+                bottomSheetRef={bottomSheetRef}
+                snapPoints={snapPoints}
+                street={street}
+                addressInfoMessage={addressInfoMessage}
+                flatNum={flatNum}
+                setFlatNum={setFlatNum}
+                landmark={landmark}
+                setLandMark={setLandMark}
+                onConfirm={handleConfirmPress}
+            />
+
+            {!isServiceable && (
+                <CustomAlertModal
+                    visible={showServiceabilityModal}
+                    title="Uh! Oh! You are outside our delivery range."
+                    message="You can move the pin or takeaway instead."
+                    icon={<Text style={styles.modalIcon}>📍</Text>}
+                    cancelText='Change Location'
+                    confirmText='Takeaway Instead'
+                    onCancel={() => setShowServiceabilityModal(true)}
+                    onConfirm={() => handleModalConfirmPress()}
+                />
+            )}
         </View>
-    )
-}
+    );
+};
 
-export default AddressPickerScreen
+export default AddressPickerScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    map: {
+        flex: 1,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    centerPinContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        pointerEvents: 'none',
+    },
+    modalIcon: {
+        fontSize: 30,
+    },
+});

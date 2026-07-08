@@ -9,12 +9,13 @@ export const useAdminSettings = () => {
     const setLoading = useAdminSettingsStore((state) => state.setLoading)
     const setAdminSettings = useAdminSettingsStore((state) => state.setAdminSettings)
 
+
     useEffect(() => {
         setLoading(true)
         const unsubscribe = adminDoc(SHOP_CONFIG_DOC_ID)
             .onSnapshot(
                 (doc) => {
-                    if (doc) {
+                    if (doc.exists()) {
                         setAdminSettings(doc.data() as AdminConfig)
                     }
                     setLoading(false)

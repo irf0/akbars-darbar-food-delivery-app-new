@@ -1,5 +1,5 @@
 export const restaurantConfig = {
-    name: 'Darbar',
+    name: 'Akbar Darbar',
     tagline: 'Authentic Flavours, Delivered Fresh',
     logoLetter: 'D',
 
@@ -9,8 +9,9 @@ export const restaurantConfig = {
 
     city: 'Tinsukia',
     address: '',
-    restaurantLat: 0,
-    restaurantLong: 0,
+    restaurantLat: 27.481815607680797,
+    restaurantLong: 95.34053740534065,
+    deliveryRadius: 5,
 
     currencySymbol: '₹',
     currencyCode: 'INR',
