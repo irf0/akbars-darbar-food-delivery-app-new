@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Animated, Easing } from 'react-native';
-import { useAdminSettings } from '@hooks/useAdminSettings';
 import { shopClosedStyles } from '../styles';
-import { formatTime } from '@utils/formatTime';
 import { getTimeUntilOpening } from '@utils/getTimeUntilOpening';
 import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
@@ -11,9 +9,11 @@ export default function ShopClosedScreen() {
 
   const { settings } = useAdminSettingsStore();
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  // ✅ THE LAZY STATE PATTERN: Instantiates the exact same persistent animation
+  // objects once on mount. Zero references to ".current", keeping ESLint perfectly happy.
+  const [fadeAnim] = useState(() => new Animated.Value(0));
+  const [slideAnim] = useState(() => new Animated.Value(30));
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     if (!settings) return;
@@ -24,6 +24,7 @@ export default function ShopClosedScreen() {
   }, [settings]);
 
   useEffect(() => {
+    // ✅ PASS VALUES DIRECTLY: Since these are state objects, pass them straight into the driver
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -55,12 +56,13 @@ export default function ShopClosedScreen() {
         }),
       ]),
     ).start();
-  }, []);
+  }, [fadeAnim, slideAnim, pulseAnim]); // Added dependency tracking arrays to satisfy hook rules
 
   return (
     <View style={shopClosedStyles.container}>
       <View style={shopClosedStyles.arc} />
 
+      {/* ✅ CLEAN IMPORTS: Pass variables without `.current` directly into layout properties */}
       <Animated.View
         style={[
           shopClosedStyles.content,
@@ -70,7 +72,6 @@ export default function ShopClosedScreen() {
           🍛
         </Animated.Text>
 
-        {/* TODO: replace with proper shared Badge component later */}
         <View
           style={{
             backgroundColor: '#C62828',
@@ -81,9 +82,8 @@ export default function ShopClosedScreen() {
           <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>Currently Closed</Text>
         </View>
 
-        <Text style={shopClosedStyles.title}>We'll Be Back{'\n'}Very Soon!</Text>
+        <Text style={shopClosedStyles.title}>{"We'll Be Back\nVery Soon!"}</Text>
 
-        {/* TODO: replace with proper shared Card component later */}
         {settings && (
           <View
             style={{

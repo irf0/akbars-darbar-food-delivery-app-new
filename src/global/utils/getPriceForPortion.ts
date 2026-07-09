@@ -1,4 +1,4 @@
-import { CartItem, OrderType } from '@types';
+import { CartItem } from '@types';
 
 export function getPriceForPortion(item: CartItem, orderType: 'delivery' | 'takeaway'): number {
   return item.portion === 'half'

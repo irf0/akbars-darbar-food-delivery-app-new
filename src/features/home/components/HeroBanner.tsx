@@ -12,7 +12,7 @@ export const HeroBanner = ({ onPress }: Props) => {
   return (
     <View style={styles.heroBanner}>
       <View style={styles.heroContent}>
-        <Text style={styles.heroEyebrow}>TODAY'S SPECIAL</Text>
+        <Text style={styles.heroEyebrow}>{"TODAY'S SPECIAL"}</Text>
         <Text style={styles.heroTitle}>
           Dum Biryani{'\n'}
           <Text style={styles.heroAccent}>Made Fresh Daily</Text>

@@ -1,16 +1,9 @@
 import { useState } from 'react';
-import {
-  getAuth,
-  PhoneAuthProvider,
-  signInWithCredential,
-  getIdToken,
-  FirebaseAuthTypes,
-} from '@react-native-firebase/auth';
+import { getAuth, getIdToken, FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore';
-import { useAuthStore } from '../store/useAuthStore';
-import { DarbarUser } from '../../../types/index';
+import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { DarbarUser } from '@types';
 import { setConfirmation, clearConfirmation } from '../store/confirmationRef';
-import { userDoc as getUserDocRef } from '@config/firebase';
 
 export const useOTP = () => {
   const [loading, setLoading] = useState(false);

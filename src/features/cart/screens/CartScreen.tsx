@@ -51,7 +51,7 @@ const CartScreen = ({ navigation }: Props) => {
       <Text style={styles.headerText}>Your Cart</Text>
       {items.length < 1 ? (
         <View style={{ justifyContent: 'center', alignSelf: 'center', marginTop: '50%' }}>
-          <Text>Uh! Oh You don't have anything in the Cart yet.</Text>
+          <Text>{"Uh! Oh. You don't have anything in the Cart yet."}</Text>
           <TouchableOpacity
             style={{ backgroundColor: 'red', padding: 15 }}
             activeOpacity={0.7}

@@ -23,9 +23,9 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
   const { seconds, canResend, reset } = useOTPTimer(60);
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const inputs = useRef<Array<TextInput | null>>([]);
+  const inputs = useRef<(TextInput | null)[]>([]);
   const styles = createStyles(theme);
-  const { colors, spacing } = theme;
+  const { colors } = theme;
 
   const handleChange = (text: string, index: number) => {
     clearError();

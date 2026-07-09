@@ -13,7 +13,6 @@ export const useMenu = () => {
       (querySnapshot) => {
         const items: MenuItem[] = [];
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
           items.push({
             id: doc.id,
             ...doc.data(),

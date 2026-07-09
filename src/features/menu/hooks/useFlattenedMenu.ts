@@ -18,9 +18,9 @@ const useFlattenedMenu = () => {
     subCategories.sort(compareSubcategories);
 
     // 3. build the flattened array: header, then its items, repeat
-    const result: Array<
+    const result: (
       { type: 'header'; subCategory: string } | { type: 'item'; data: (typeof items)[0] }
-    > = [];
+    )[] = [];
 
     subCategories.forEach((subCategory) => {
       result.push({ type: 'header', subCategory });

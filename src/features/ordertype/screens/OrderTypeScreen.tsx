@@ -60,7 +60,7 @@ const OrderTypeScreen = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* ── Hero Banner ── */}
       <View style={styles.hero}>
-        <Text style={styles.heroRestaurant}>Akbar's Darbar</Text>
+        <Text style={styles.heroRestaurant}>{"Akbar's Darbar"}</Text>
         <Text style={styles.heroTagline}>✦ Enjoy the Royale Taste ✦</Text>
         <View style={styles.heroDivider} />
         <Text style={styles.heroWelcome}>

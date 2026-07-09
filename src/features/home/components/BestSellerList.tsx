@@ -1,8 +1,7 @@
-import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Image } from 'expo-image';
 import useBestSellers from '@hooks/useBestSellers';
-import { theme } from 'src/theme';
 import { MenuItem } from '@types';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { getDisplayPrice } from '@utils/getDisplayPrice';
@@ -70,25 +69,3 @@ const BestSellerList = ({ onItemPress }: Props) => {
 };
 
 export default BestSellerList;
-
-const styles = StyleSheet.create({
-  dietDot: {
-    width: 16,
-    height: 16,
-    borderWidth: 1.5,
-    borderRadius: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: theme.spacing.xs,
-  },
-  dietBadgeContainer: {
-    flexDirection: 'row',
-    gap: 5,
-    alignItems: 'center',
-  },
-  dietDotInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-});

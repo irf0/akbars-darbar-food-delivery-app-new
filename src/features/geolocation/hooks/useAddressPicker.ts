@@ -38,15 +38,14 @@ export const useAddressPicker = () => {
   const setLatitude = useAddressStore((state) => state.setLatitude);
   const setLongitude = useAddressStore((state) => state.setLongitude);
 
-  const [isLoadingGPS, setIsLoadingGPS] = useState(false);
+  const [isLoadingGPS, setIsLoadingGPS] = useState(true);
   const [addressInfoMessage, setAddressInfoMessage] = useState<string | null>(null);
   const [isServiceable, setIsServiceable] = useState(true);
   const [showServiceabilityModal, setShowServiceabilityModal] = useState(false);
 
   //request permission and feed zustand store
-  const fetchLocation = async () => {
+  const fetchLocation = useCallback(async () => {
     try {
-      setIsLoadingGPS(true);
       const { status } = await requestLocation();
 
       if (status === 'granted') {
@@ -62,29 +61,30 @@ export const useAddressPicker = () => {
     } finally {
       setIsLoadingGPS(false);
     }
-  };
+  }, [setLatitude, setLongitude]);
 
   useEffect(() => {
     fetchLocation();
-  }, []);
+  }, [fetchLocation]);
 
   //debounce to prevent pin drag spam
-  const debouncedLocationUpdate = useCallback(
-    debounce(async (lat: number, lng: number) => {
-      setLatitude(lat);
-      setLongitude(lng);
+  const debouncedLocationUpdate = useMemo(
+    () =>
+      debounce(async (lat: number, lng: number) => {
+        setLatitude(lat);
+        setLongitude(lng);
 
-      const { granted } = await checkLocationPermission();
-      if (!granted) {
-        setStreet('');
-        setAddressInfoMessage("Location off. We'll use your pinned map location instead.");
-        return;
-      }
+        const { granted } = await checkLocationPermission();
+        if (!granted) {
+          setStreet('');
+          setAddressInfoMessage("Location off. We'll use your pinned map location instead.");
+          return;
+        }
 
-      const address = await reverseGeocode(lat, lng);
-      setStreet(address ?? "Couldn't load address. Please confirm your pin position.");
-    }, DEBOUNCE_DELAY_MS),
-    [setLatitude, setLongitude, setStreet],
+        const address = await reverseGeocode(lat, lng);
+        setStreet(address ?? "Couldn't load address. Please confirm your pin position.");
+      }, DEBOUNCE_DELAY_MS),
+    [setLatitude, setLongitude, setStreet, setAddressInfoMessage],
   );
 
   useEffect(() => {
@@ -105,15 +105,16 @@ export const useAddressPicker = () => {
         restaurantConfig.restaurantLong,
         SERVICEABILITY_RADIUS_KM,
       );
-      setIsServiceable(result?.serviceable);
+      const serviceable = Boolean(result?.serviceable);
+      setIsServiceable(serviceable);
 
-      if (result?.serviceable) {
+      if (serviceable) {
         setShowServiceabilityModal(false);
         setOrderType('delivery');
         navigation.navigate('MainTabs', { screen: 'Home' });
       }
 
-      setShowServiceabilityModal(!result?.serviceable);
+      setShowServiceabilityModal(!serviceable);
     } catch (error) {
       console.error('Something went wrong during serviceability confirmation:', error);
     } finally {
@@ -149,3 +150,5 @@ export const useAddressPicker = () => {
     handleModalConfirmPress,
   };
 };
+
+// useCallback memoizes fetchLocation so it's stable across renders — required since it's a useEffect dependency, otherwise the effect would re-fire in an infinite loop

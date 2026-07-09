@@ -15,7 +15,7 @@ const CustomDeleteModal = ({ visible, itemName, onCancel, onConfirm }: CustomDel
         <View style={styles.alertCard}>
           <Text style={styles.titleText}>Remove Item</Text>
           <Text style={styles.messageText}>
-            Are you sure you want to remove <Text style={styles.boldText}>"{itemName}"</Text> from
+            Are you sure you want to remove <Text style={styles.boldText}>{itemName}</Text> from
             your cart?
           </Text>
 

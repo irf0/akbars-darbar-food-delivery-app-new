@@ -22,7 +22,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
   const [errorDismissed, setErrorDismissed] = useState(false);
   const { sendOTP, loading, error } = useLogin();
   const activeTheme = theme;
-  const { colors, spacing, shadow } = activeTheme;
+  const { colors, shadow } = activeTheme;
   const styles = createStyles(activeTheme);
 
   const handleChangeText = (value: string) => {
@@ -62,7 +62,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
             <View style={styles.errorBanner}>
               <Text style={styles.errorIcon}>⚠</Text>
               <View style={styles.errorContent}>
-                <Text style={styles.errorTitle}>Couldn't send the code</Text>
+                <Text style={styles.errorTitle}>{`Couldn't send the code`}</Text>
                 <Text style={styles.errorSubtitle}>Check your number and try again.</Text>
               </View>
               <TouchableOpacity

@@ -1,20 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { theme } from 'src/theme';
-import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
-import { AppStackParamList } from '@navigation/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type ParentNavigationProp = NativeStackNavigationProp<AppStackParamList>;
-
 export default function ProfileScreen() {
-  const navigation = useNavigation<ParentNavigationProp>();
   const { user, logout } = useAuthStore();
   const activeTheme = theme;
-  const { colors, spacing, radius, fontSize, fontWeight } = activeTheme;
+  const { colors } = activeTheme;
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to log out?', [

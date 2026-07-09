@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import useFlattenedMenu from '@features/menu/hooks/useFlattenedMenu';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { getDisplayPrice } from '@utils/getDisplayPrice';

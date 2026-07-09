@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { useAdminSettings } from '@hooks/useAdminSettings';
 import { AppStack } from './stacks/AppStack';
 import { AuthStack } from './stacks/AuthStack';
 import { linkingConfig } from './linkingConfig';

@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from 'src/theme';
 import { DeliveryBadge } from './DeliveryBadge';
-import { AdminConfig } from '@types';
-import { DarbarUser } from '../../../types/index';
+import { AdminConfig, DarbarUser } from '@types';
 
 const t = theme;
 

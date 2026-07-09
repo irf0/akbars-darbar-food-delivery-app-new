@@ -26,7 +26,9 @@ type MenuRowProps = {
   item: MenuItem;
 };
 
-const MenuRow = React.memo(({ item }: MenuRowProps) => {
+// React.memo skips re-rendering this component if its props haven't changed (shallow comparison).
+
+const MenuRow = React.memo(function MenuRow({ item }: MenuRowProps) {
   return (
     <Pressable style={styles.item}>
       {!!item.image ? (

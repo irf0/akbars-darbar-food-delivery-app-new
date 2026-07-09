@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-} from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 export interface AddressItem {
   id: string;
@@ -36,8 +28,8 @@ export const AddressSelectModal: React.FC<AddressSelectModalProps> = ({
 
   // Reset selection to the default address whenever the modal opens
   useEffect(() => {
-    if (isVisible) {
-      setSelectedId(defaultAddressId);
+    if (isVisible && defaultAddressId) {
+      Promise.resolve().then(() => setSelectedId(defaultAddressId));
     }
   }, [isVisible, defaultAddressId]);
 
@@ -63,7 +55,7 @@ export const AddressSelectModal: React.FC<AddressSelectModalProps> = ({
           {/* Address List */}
           {addresses.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>You don't have any saved addresses yet.</Text>
+              <Text style={styles.emptyText}>{"You don't have any saved addresses yet."}</Text>
             </View>
           ) : (
             <FlatList

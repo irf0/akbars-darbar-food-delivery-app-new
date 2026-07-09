@@ -1,9 +1,9 @@
 import { theme } from 'src/theme';
-import { memo } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MenuItem } from '@types';
 
-export const DietBadge = memo(({ type }: { type: MenuItem['item_type'] }) => {
+export const DietBadge = React.memo(function DietBadge({ type }: { type: MenuItem['item_type'] }) {
   const color = type === 'Veg' ? '#388E3C' : '#C62828';
   return (
     <View style={[styles.dietDot, { borderColor: color }]}>

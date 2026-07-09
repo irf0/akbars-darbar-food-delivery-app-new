@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, TouchableOpacity, Animated, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
-import { useAdminSettings } from '@hooks/useAdminSettings';
 import { theme } from 'src/theme';
 import HeroBanner from '../components/HeroBanner';
 import { CategoryList } from '../components/CategoryList';
@@ -30,8 +29,8 @@ export default function HomeScreen({ navigation }: Props) {
   const { settings } = useAdminSettingsStore();
   const totalItems = useCartStore((s) => s.totalItems());
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(0));
+  const [slideAnim] = useState(() => new Animated.Value(20));
 
   // console.log(user)
   useEffect(() => {
@@ -47,7 +46,7 @@ export default function HomeScreen({ navigation }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   return (
     <SafeAreaView style={createStyles.container} edges={['top']}>
