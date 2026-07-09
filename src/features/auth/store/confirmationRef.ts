@@ -1,13 +1,13 @@
-import { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-let confirmation: FirebaseAuthTypes.ConfirmationResult | null = null
+let confirmation: FirebaseAuthTypes.ConfirmationResult | null = null;
 
 export const setConfirmation = (c: FirebaseAuthTypes.ConfirmationResult) => {
-    confirmation = c
-}
+  confirmation = c;
+};
 
-export const getConfirmation = () => confirmation
+export const getConfirmation = () => confirmation;
 
 export const clearConfirmation = () => {
-    confirmation = null
-}
+  confirmation = null;
+};

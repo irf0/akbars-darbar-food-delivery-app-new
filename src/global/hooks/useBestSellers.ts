@@ -1,15 +1,14 @@
-import { useMenuStore } from "@store/useMenuStore"
-import { useMemo } from "react"
-
+import { useMenuStore } from '@store/useMenuStore';
+import { useMemo } from 'react';
 
 const useBestSellers = () => {
-    const items = useMenuStore((state) => state.items)
+  const items = useMenuStore((state) => state.items);
 
-    const bestSellers = useMemo(() => {
-        const bestSellerItems = items?.filter((item) => item.bestSeller)
-        return bestSellerItems
-    }, [items])
-    return { bestSellers }
-}
+  const bestSellers = useMemo(() => {
+    const bestSellerItems = items?.filter((item) => item.bestSeller);
+    return bestSellerItems;
+  }, [items]);
+  return { bestSellers };
+};
 
-export default useBestSellers
+export default useBestSellers;

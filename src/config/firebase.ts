@@ -1,31 +1,27 @@
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
-import messaging from '@react-native-firebase/messaging'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import messaging from '@react-native-firebase/messaging';
 
 //Collections
 export const Collections = {
-    menu: firestore().collection('menu'),
-    extraMenu: firestore().collection('extramenu'),
-    orders: firestore().collection('orders'),
-    users: firestore().collection('users'),
-    adminSettings: firestore().collection('adminSettings'),
-    favorites: firestore().collection('favorites'),
-} as const
+  menu: firestore().collection('menu'),
+  extraMenu: firestore().collection('extramenu'),
+  orders: firestore().collection('orders'),
+  users: firestore().collection('users'),
+  adminSettings: firestore().collection('adminSettings'),
+  favorites: firestore().collection('favorites'),
+} as const;
 
 //Documents
-export const menuDoc = (id: string) =>
-    firestore().collection('menu').doc(id)
+export const menuDoc = (id: string) => firestore().collection('menu').doc(id);
 
-export const orderDoc = (id: string) =>
-    firestore().collection('orders').doc(id)
+export const orderDoc = (id: string) => firestore().collection('orders').doc(id);
 
-export const userDoc = (uid: string) =>
-    firestore().collection('users').doc(uid)
+export const userDoc = (uid: string) => firestore().collection('users').doc(uid);
 
-export const adminDoc = (uid: string) =>
-    firestore().collection('adminSettings').doc(uid)
+export const adminDoc = (uid: string) => firestore().collection('adminSettings').doc(uid);
 
 //Auth + Messaging exports
 
-export const firebaseAuth = auth()
-export const firebaseMessaging = messaging()
+export const firebaseAuth = auth();
+export const firebaseMessaging = messaging();

@@ -1,23 +1,23 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-     "strict": true,
-     "ignoreDeprecations": "6.0",
+    "strict": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "paths": {
       "@components/*": ["src/global/components/*"],
-      "@ui/*":         ["src/global/components/ui/*"],
-      "@features/*":   ["src/features/*"],
-      "@hooks/*":      ["src/global/hooks/*"],
-      "@store/*":      ["src/global/store/*"],
-      "@utils/*":      ["src/global/utils/*"],
-      "@services/*":   ["src/services/*"],
-      "@schemas":      ["src/schemas/*"],
-      "@theme":        ["src/theme"],
-      "@types":        ["src/types/index"],
-      "@types/*":      ["src/types/*"],
-      "@config/*":     ["src/config/*"],
-      "@dev/*":        ["dev/playground/*"],
+      "@ui/*": ["src/global/components/ui/*"],
+      "@features/*": ["src/features/*"],
+      "@hooks/*": ["src/global/hooks/*"],
+      "@store/*": ["src/global/store/*"],
+      "@utils/*": ["src/global/utils/*"],
+      "@services/*": ["src/services/*"],
+      "@schemas": ["src/schemas/*"],
+      "@theme": ["src/theme"],
+      "@types": ["src/types/index"],
+      "@types/*": ["src/types/*"],
+      "@config/*": ["src/config/*"],
+      "@dev/*": ["dev/playground/*"],
       "@navigation/*": ["src/navigation/*"]
     }
   }
