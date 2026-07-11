@@ -7,7 +7,7 @@ dev
 node_modules/
 
 #Firebase functions
-functions-v2/src/serviceAccountKey.json
+functions-v2/
 
 # Expo
 .expo/

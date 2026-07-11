@@ -48,12 +48,14 @@ const MenuScreen = ({ navigation, route }: Props) => {
           <>
             <Pressable onPress={() => navigation.navigate('MenuDetail', { item: item.data })}>
               <Image
-                cachePolicy={'memory-disk'}
+                cachePolicy="disk"
                 source={{ uri: item.data.image }}
-                style={styles.itemImage}
+                style={[styles.itemImage, { backgroundColor: '#ced0d3' }]}
                 contentFit="cover"
-                transition={200}
+                recyclingKey={item.data.image}
+                transition={150}
               />
+
               <DietBadge type={item.data.item_type} />
               <Text>{item.data.name}</Text>
               <Text>{getDisplayPrice(item.data, orderType)}</Text>

@@ -35,7 +35,7 @@ export const BottomTabs = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        // 3. Apply your brand palette
+
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {

@@ -2,20 +2,17 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MenuItem } from '@types';
 
+export type RootStackParamList = {
+  Auth: NavigatorScreenParams<AuthStackParamList>;
+  App: NavigatorScreenParams<AppStackParamList>;
+};
+
 export type AuthStackParamList = {
   Phone: undefined;
   OTP: { phoneNumber: string };
   Register: { phoneNumber: string };
   Welcome: undefined;
 };
-
-export type BottomTabsParamList = {
-  Home: undefined;
-  Menu: { category?: string };
-  Notifications: undefined;
-  Profile: undefined;
-};
-
 export type AppStackParamList = {
   OrderType: undefined;
   AddressPicker: undefined;
@@ -23,11 +20,18 @@ export type AppStackParamList = {
   MenuDetail: { item: MenuItem };
   Search: undefined;
   Cart: undefined;
+  Profile: undefined;
+};
+export type OrderTypeStackParamList = {
+  OrderType: undefined;
+  AddressPicker: undefined;
 };
 
-export type RootStackParamList = {
-  Auth: NavigatorScreenParams<AuthStackParamList>;
-  App: NavigatorScreenParams<AppStackParamList>;
+export type BottomTabsParamList = {
+  Home: undefined;
+  Menu: { category?: string };
+  Notifications: undefined;
+  Profile: undefined;
 };
 
 export type AuthScreenProps<T extends keyof AuthStackParamList> = NativeStackScreenProps<

@@ -9,39 +9,53 @@ import {
   requestLocation,
   reverseGeocode,
 } from '@utils/permissions/expopermissions';
-import { checkServiceabilityClient } from '@utils/clientServiceability';
-import { restaurantConfig } from '@config/restaurant.config';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '@navigation/types';
+import { checkServiceability } from 'src/global/services/serviceabilityCheckService';
+import { saveUserAddressToDb } from 'src/global/services/addressService';
+import auth from '@react-native-firebase/auth';
+import { getDistanceKm } from '@utils/getDistance';
+import { formatAddress } from '@utils/formatAddress';
 
+const FALLBACK_PROXIMITY_THRESHOLD_KM = 0.5;
 const FALLBACK_LAT = 27.481815607680797;
 const FALLBACK_LNG = 95.34053740534065;
-const SERVICEABILITY_RADIUS_KM = 5;
 const DEBOUNCE_DELAY_MS = 800;
 
 export const useAddressPicker = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const bottomSheetRef = useRef<BottomSheet | null>(null);
-  const snapPoints = useMemo(() => ['33%'], []);
+  const snapPoints = useMemo(() => ['42%', '20%'], []);
 
-  const setOrderType = useOrderTypeStore((state) => state.setOrderType);
+  const orderType = useOrderTypeStore((state) => state.orderType);
+  const currentAddress = useOrderTypeStore((state) => state.address);
 
   const flatNum = useAddressStore((state) => state.flatNum);
   const landmark = useAddressStore((state) => state.landmark);
   const street = useAddressStore((state) => state.street);
+  const label = useAddressStore((state) => state.label);
   const latitude = useAddressStore((state) => state.latitude);
   const longitude = useAddressStore((state) => state.longitude);
+
+  const setPickup = useOrderTypeStore((state) => state.setPickup);
+  const setDelivery = useOrderTypeStore((state) => state.setDelivery);
 
   const setFlatNum = useAddressStore((state) => state.setFlatNum);
   const setLandMark = useAddressStore((state) => state.setLandMark);
   const setStreet = useAddressStore((state) => state.setStreet);
+  const setLabel = useAddressStore((state) => state.setLabel);
   const setLatitude = useAddressStore((state) => state.setLatitude);
   const setLongitude = useAddressStore((state) => state.setLongitude);
 
   const [isLoadingGPS, setIsLoadingGPS] = useState(true);
   const [addressInfoMessage, setAddressInfoMessage] = useState<string | null>(null);
-  const [isServiceable, setIsServiceable] = useState(true);
-  const [showServiceabilityModal, setShowServiceabilityModal] = useState(false);
+  const [showServiceabilityModal, setShowServiceabilityModal] = useState<boolean>(false);
+  const [showMapSelectionWarningModal, setShowMapSelectionWarningModal] = useState<boolean>(false);
+
+  const wasAlreadyValidOrderType =
+    orderType === 'takeaway' || (orderType === 'delivery' && !!currentAddress);
+
+  const currentUserId = auth().currentUser?.uid;
 
   //request permission and feed zustand store
   const fetchLocation = useCallback(async () => {
@@ -77,7 +91,7 @@ export const useAddressPicker = () => {
         const { granted } = await checkLocationPermission();
         if (!granted) {
           setStreet('');
-          setAddressInfoMessage("Location off. We'll use your pinned map location instead.");
+          setAddressInfoMessage('Location permissions are off. Move the pin or type below.');
           return;
         }
 
@@ -91,39 +105,66 @@ export const useAddressPicker = () => {
     return () => debouncedLocationUpdate.cancel();
   }, [debouncedLocationUpdate]);
 
-  //calls seviceability function from backend returns boolean result
   const handleConfirmPress = async () => {
+    if (isLoadingGPS) return; // guard from double-tap
+
+    if (latitude == null || longitude == null) return;
+
+    setIsLoadingGPS(true);
+
     try {
-      setIsLoadingGPS(true);
-      if (latitude == null || longitude == null) return;
-
-      const result = checkServiceabilityClient(
-        //TODO:replace this block with server result.
-        latitude,
-        longitude,
-        restaurantConfig.restaurantLat,
-        restaurantConfig.restaurantLong,
-        SERVICEABILITY_RADIUS_KM,
-      );
-      const serviceable = Boolean(result?.serviceable);
-      setIsServiceable(serviceable);
-
-      if (serviceable) {
-        setShowServiceabilityModal(false);
-        setOrderType('delivery');
-        navigation.navigate('MainTabs', { screen: 'Home' });
+      const { granted } = await checkLocationPermission();
+      if (!granted) {
+        const distanceFromFallback = getDistanceKm(latitude, longitude, FALLBACK_LAT, FALLBACK_LNG);
+        if (
+          distanceFromFallback < FALLBACK_PROXIMITY_THRESHOLD_KM &&
+          (!street || street.trim() === '')
+        ) {
+          setShowMapSelectionWarningModal(true);
+          return;
+        }
       }
 
-      setShowServiceabilityModal(!serviceable);
+      const result = await checkServiceability(latitude, longitude);
+      const serviceable = Boolean(result?.serviceable);
+
+      if (!serviceable) {
+        setShowServiceabilityModal(true);
+        return; // finally will handle setIsLoadingGPS(false)
+      }
+
+      // Only commit orderType after the address is actually persisted
+      await saveUserAddressToDb(currentUserId, {
+        latitude,
+        longitude,
+        label: label || 'Home',
+        street: street || '',
+        flatNum: flatNum || '',
+        landmark: landmark || '',
+      });
+
+      setDelivery({
+        lat: latitude,
+        lng: longitude,
+        formattedAddress: formatAddress(flatNum, street, landmark),
+      });
+      setShowServiceabilityModal(false);
+
+      if (wasAlreadyValidOrderType && navigation.canGoBack()) {
+        navigation.goBack();
+      }
+
+      //no need for navigation here anymore since ordertype decides the stack swap
     } catch (error) {
       console.error('Something went wrong during serviceability confirmation:', error);
+      // TODO: showToast('Something went wrong. Please try again.');
     } finally {
       setIsLoadingGPS(false);
     }
   };
 
   const handleModalConfirmPress = () => {
-    setOrderType('takeaway');
+    setPickup();
     setShowServiceabilityModal(false);
     navigation.navigate('MainTabs', { screen: 'Home' });
   };
@@ -133,18 +174,22 @@ export const useAddressPicker = () => {
     snapPoints,
     isLoadingGPS,
     addressInfoMessage,
-    isServiceable,
     showServiceabilityModal,
-    setShowServiceabilityModal,
+    showMapSelectionWarningModal,
     flatNum,
     landmark,
     street,
+    label,
     latitude,
     longitude,
+    setLabel,
+    setStreet,
     setFlatNum,
     setLandMark,
-    setIsServiceable,
-    setOrderType,
+    setDelivery,
+    setPickup,
+    setShowMapSelectionWarningModal,
+    setShowServiceabilityModal,
     debouncedLocationUpdate,
     handleConfirmPress,
     handleModalConfirmPress,

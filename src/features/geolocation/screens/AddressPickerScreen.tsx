@@ -1,12 +1,14 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import MapView, { Circle } from 'react-native-maps';
+import MapView, { Circle, Marker } from 'react-native-maps';
 import { Entypo } from '@expo/vector-icons';
 import { theme } from '@theme';
 import { restaurantConfig } from '@config/restaurant.config';
 import CustomAlertModal from '@components/CustomAlertModal';
 import { AddressPickerForm } from '../components/AddressPickerForm';
 import { useAddressPicker } from '../hooks/useAddressPicker';
+import CustomLocationAccesModal from '../components/CustomLocationAccessModal';
+import { customMapStyles } from '@utils/customMapStyles';
 
 const AddressPickerScreen = () => {
   const {
@@ -14,16 +16,20 @@ const AddressPickerScreen = () => {
     snapPoints,
     isLoadingGPS,
     addressInfoMessage,
-    isServiceable,
     flatNum,
     landmark,
     street,
+    label,
     latitude,
     longitude,
+    setLabel,
+    setStreet,
     setFlatNum,
     setLandMark,
     showServiceabilityModal,
     setShowServiceabilityModal,
+    showMapSelectionWarningModal,
+    setShowMapSelectionWarningModal,
     debouncedLocationUpdate,
     handleConfirmPress,
     handleModalConfirmPress,
@@ -40,19 +46,42 @@ const AddressPickerScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
+        onPanDrag={() => bottomSheetRef.current?.snapToIndex(0)} //shrinks the sheet on map drag
+        userInterfaceStyle="light"
+        customMapStyle={customMapStyles}
         style={styles.map}
         initialRegion={{ latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }}
         onRegionChangeComplete={(region) => {
           debouncedLocationUpdate(region.latitude, region.longitude);
+          bottomSheetRef.current?.snapToIndex(1);
         }}>
+        <Marker
+          coordinate={{
+            latitude: restaurantConfig.restaurantLat,
+            longitude: restaurantConfig.restaurantLong,
+          }}
+          anchor={{ x: 0.5, y: 1 }}>
+          <View style={styles.restaurantMarkerWrapper}>
+            <View style={styles.restaurantIconBadge}>
+              <Entypo name="shop" size={24} color="#ffffff" />
+            </View>
+
+            <View style={styles.restaurantNameBubble}>
+              <Text style={styles.restaurantNameText} numberOfLines={1}>
+                {restaurantConfig.name || 'Our Restaurant'}
+              </Text>
+            </View>
+          </View>
+        </Marker>
+
         <Circle
           center={{
             latitude: restaurantConfig.restaurantLat,
             longitude: restaurantConfig.restaurantLong,
           }}
           radius={restaurantConfig.deliveryRadius * 1000}
-          strokeColor="rgba(0, 122, 255, 0.5)"
-          fillColor="rgba(0, 122, 255, 0.1)"
+          strokeColor="rgba(231, 69, 69, 0.5)"
+          fillColor="rgba(244, 244, 245, 0.63)"
           strokeWidth={5}
         />
       </MapView>
@@ -67,13 +96,16 @@ const AddressPickerScreen = () => {
         street={street}
         addressInfoMessage={addressInfoMessage}
         flatNum={flatNum}
+        label={label}
+        setLabel={setLabel}
+        setStreet={setStreet}
         setFlatNum={setFlatNum}
         landmark={landmark}
         setLandMark={setLandMark}
         onConfirm={handleConfirmPress}
       />
 
-      {!isServiceable && (
+      {showServiceabilityModal && ( //TODO: not visible when keyboard opens if 33% fix the bug.
         <CustomAlertModal
           visible={showServiceabilityModal}
           title="Uh! Oh! You are outside our delivery range."
@@ -83,6 +115,17 @@ const AddressPickerScreen = () => {
           confirmText="Takeaway Instead"
           onCancel={() => setShowServiceabilityModal(true)}
           onConfirm={() => handleModalConfirmPress()}
+        />
+      )}
+      {showMapSelectionWarningModal && (
+        <CustomLocationAccesModal
+          visible={showMapSelectionWarningModal}
+          title="Please Select a Location"
+          message="Drag the map pin to your building or street location to continue"
+          icon={<Text style={styles.modalIcon}>📍</Text>}
+          // cancelText="Cancel"
+          confirmText="Got it"
+          onConfirm={() => setShowMapSelectionWarningModal(false)}
         />
       )}
     </View>
@@ -115,5 +158,53 @@ const styles = StyleSheet.create({
   },
   modalIcon: {
     fontSize: 30,
+  },
+
+  restaurantMarkerContainer: {
+    backgroundColor: '#ffffff',
+    padding: 6,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  restaurantMarkerWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 2,
+  },
+  restaurantIconBadge: {
+    backgroundColor: theme.colors.primary,
+    padding: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  restaurantNameBubble: {
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 4,
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+    elevation: 3,
+  },
+  restaurantNameText: {
+    color: '#1a1a1a',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });

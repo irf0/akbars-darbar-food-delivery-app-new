@@ -5,54 +5,52 @@ import { theme } from 'src/theme';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { Ionicons } from '@expo/vector-icons';
 import CustomLocationAccesModal from '@features/geolocation/components/CustomLocationAccessModal';
-import { checkLocationPermission } from '@utils/permissions/expopermissions';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AppStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 
 const t = theme;
 
-const OPTIONS = [
-  {
-    type: 'delivery' as const,
-    emoji: '🛵',
-    label: 'Delivery',
-    subtitle: 'Get it delivered to your door',
-  },
-  {
-    type: 'takeaway' as const,
-    emoji: '🥡',
-    label: 'Takeaway',
-    subtitle: 'Pick it up from the restaurant',
-  },
-];
+// const OPTIONS = [
+//   {
+//     type: 'delivery' as const,
+//     emoji: '🛵',
+//     label: 'Delivery',
+//     subtitle: 'Get it delivered to your door',
+//   },
+//   {
+//     type: 'takeaway' as const,
+//     emoji: '🥡',
+//     label: 'Takeaway',
+//     subtitle: 'Pick it up from the restaurant',
+//   },
+// ];
 
 type OrderTypeNavigationProp = NativeStackNavigationProp<AppStackParamList, 'OrderType'>;
 
 const OrderTypeScreen = () => {
   const navigation = useNavigation<OrderTypeNavigationProp>();
-  const { setOrderType } = useOrderTypeStore();
+  const { setPickup } = useOrderTypeStore();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleChooseOrderType = async (type: 'delivery' | 'takeaway') => {
-    if (type === 'takeaway') {
-      setOrderType(type);
-      return;
-    }
+  // const handleChooseOrderType = async (type: 'delivery' | 'takeaway') => {
+  //   if (type === 'takeaway') {
+  //     setPickup();
+  //     return;
+  //   } else if(t) {
+  //     setModalVisible(true);
+  //     return;
+  //   }
+  // };
 
-    const { status } = await checkLocationPermission();
-    if (status === 'granted') {
-      setOrderType('delivery');
-      navigation.navigate('AddressPicker');
-      return;
-    }
-
-    setModalVisible(true);
+  const handleContinueWithTakeaway = () => {
+    console.log('🟢 takeaway tapped');
+    setModalVisible(false);
+    setPickup();
   };
 
   const handleContinueWithLocation = () => {
     setModalVisible(false);
-    setOrderType('delivery');
     navigation.navigate('AddressPicker');
   };
 
@@ -68,26 +66,21 @@ const OrderTypeScreen = () => {
         </Text>
       </View>
 
-      {/* ── Cards ── */}
       <View style={styles.cardsContainer}>
-        {OPTIONS.map(({ type, emoji, label, subtitle }) => (
+        <>
           <TouchableOpacity
-            key={type}
+            onPress={() => setModalVisible(true)}
             style={styles.card}
-            onPress={() => handleChooseOrderType(type)}
             activeOpacity={0.85}>
-            <View style={styles.cardIconBox}>
-              <Text style={styles.cardEmoji}>{emoji}</Text>
-            </View>
-
-            <View style={styles.cardText}>
-              <Text style={styles.cardLabel}>{label}</Text>
-              <Text style={styles.cardSubtitle}>{subtitle}</Text>
-            </View>
-
-            <Text style={styles.cardArrow}>›</Text>
+            <Text style={styles.cardArrow}>Delivery ›</Text>
           </TouchableOpacity>
-        ))}
+          <TouchableOpacity
+            onPress={handleContinueWithTakeaway}
+            style={styles.card}
+            activeOpacity={0.85}>
+            <Text style={styles.cardArrow}>Takeaway ›</Text>
+          </TouchableOpacity>
+        </>
       </View>
 
       <CustomLocationAccesModal

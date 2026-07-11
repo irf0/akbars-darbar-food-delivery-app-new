@@ -2,25 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
+import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { AppStack } from './stacks/AppStack';
 import { AuthStack } from './stacks/AuthStack';
+import { OrderTypeStack } from './stacks/OrderTypeStack';
 import { linkingConfig } from './linkingConfig';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen';
-import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal';
 import { useAddressMigration } from '@hooks/useAddressMigration';
 import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function RootNavigator() {
-  const { orderType } = useOrderTypeStore();
   const [showSplash, setShowSplash] = useState(true);
-  const { hasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore();
+  const { authHasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore();
+  const { orderType, address, orderTypeHasHydrated } = useOrderTypeStore();
   const { settings } = useAdminSettingsStore();
   const { migrateLegacyAddress } = useAddressMigration();
 
   const showApp = isAuthenticated && hasCompletedOnboarding;
   const isShopClosed = settings?.isShopClosed ?? false;
+
+  const hasValidOrderType = orderType === 'takeaway' || (orderType === 'delivery' && !!address);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 1500);
@@ -33,7 +36,7 @@ export default function RootNavigator() {
   }, []);
 
   // TODO: replace with proper AppSplashScreen once shared components are rebuilt
-  if (showSplash || !hasHydrated) {
+  if (showSplash || !authHasHydrated || !orderTypeHasHydrated) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -44,10 +47,14 @@ export default function RootNavigator() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer linking={linkingConfig}>
-        {isShopClosed ? (
+        {isShopClosed ? ( //if shop closed, show this scn
           <ShopClosedScreen />
-        ) : showApp ? (
-          <AppStack initialRouteName={orderType ? 'MainTabs' : 'OrderType'} />
+        ) : showApp ? ( //if show app true (logged user)
+          hasValidOrderType ? ( //setOrderType: takeaway - on the spot, delivery- in addressscrn
+            <AppStack />
+          ) : (
+            <OrderTypeStack />
+          )
         ) : (
           <AuthStack />
         )}

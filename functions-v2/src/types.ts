@@ -5,8 +5,8 @@ export interface DeliverySlab {
 }
 
 export interface DeliverySettings {
-  latitude: number;
-  longitude: number;
+  restaurantLat: number;
+  restaurantLng: number;
   delivery_radius_km: number;
   delivery_slabs: DeliverySlab[];
 }

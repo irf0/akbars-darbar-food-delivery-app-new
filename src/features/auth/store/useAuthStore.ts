@@ -1,9 +1,19 @@
-// src/features/auth/store/useAuthStore.ts
-
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as SecureStore from 'expo-secure-store';
-import { AuthState } from './types';
+import { DarbarUser } from '@types';
+
+export interface AuthState {
+  token: string | null;
+  user: DarbarUser | null;
+  isAuthenticated: boolean;
+  authHasHydrated: boolean;
+  hasCompletedOnboarding: boolean;
+  setAuthHasHydrated: (val: boolean) => void;
+  setAuth: (token: string, user: DarbarUser) => void;
+  completeOnboarding: () => void;
+  logout: () => void;
+}
 
 const secureStorage = {
   getItem: async (name: string): Promise<string | null> => {
@@ -23,9 +33,9 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       isAuthenticated: false,
-      hasHydrated: false,
+      authHasHydrated: false,
       hasCompletedOnboarding: false,
-      setHasHydrated: (val) => set({ hasHydrated: val }),
+      setAuthHasHydrated: (val) => set({ authHasHydrated: val }),
       setAuth: (token, user) =>
         set({
           token,
@@ -48,7 +58,7 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage',
       storage: createJSONStorage(() => secureStorage),
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+        state?.setAuthHasHydrated(true);
       },
     },
   ),

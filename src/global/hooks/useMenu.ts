@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { MenuItem } from '@types';
 import { useMenuStore } from '@store/useMenuStore';
-import { Collections } from '@config/firebase';
+import { subscribeToMenu } from 'src/global/services/menuService';
 
 export const useMenu = () => {
   const setLoading = useMenuStore((state) => state.setLoading);
@@ -9,15 +8,10 @@ export const useMenu = () => {
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribe = Collections.menu.onSnapshot(
-      (querySnapshot) => {
-        const items: MenuItem[] = [];
-        querySnapshot.forEach((doc) => {
-          items.push({
-            id: doc.id,
-            ...doc.data(),
-          } as MenuItem);
-        });
+
+    // Call the isolated data service layer
+    const unsubscribe = subscribeToMenu(
+      (items) => {
         setItems(items);
         setLoading(false);
       },
@@ -27,8 +21,7 @@ export const useMenu = () => {
       },
     );
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    // Provide the clean unsubscriber function to React for cleanup
+    return () => unsubscribe();
+  }, [setLoading, setItems]);
 };

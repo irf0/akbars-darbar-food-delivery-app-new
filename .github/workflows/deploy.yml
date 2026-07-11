@@ -9,26 +9,26 @@ jobs:
   deploy_app:
     runs-on: ubuntu-latest
     steps:
-      - name: 🏗️ Get Code from GitHub
+      - name: Get Code from GitHub
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: 📦 Install Packages
+      - name: Install Packages
         run: npm ci
 
-      - name: 🧪 Check for TypeScript Errors
+      - name: Check for TypeScript Errors
         run: npx tsc --noEmit
 
-      - name: 🚀 Connect to Expo
+      - name: Connect to Expo
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: 📱 Build & Submit to Google Play
-        run: eas build --platform android --profile production --non-interactive --auto-submit
+      - name: Submit to Google Play & App Store
+        run: eas build --platform all --profile production --non-interactive --auto-submit

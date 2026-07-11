@@ -12,5 +12,6 @@ export const checkServiceability = async (
 ): Promise<ServiceabilityResponse> => {
   const callable = functions().httpsCallable('serviceability');
   const result = await callable({ lat, lng });
+  // console.log(result.data);
   return result.data as ServiceabilityResponse;
 };

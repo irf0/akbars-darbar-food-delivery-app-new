@@ -13,9 +13,7 @@ export const useAdminSettings = () => {
     setLoading(true);
     const unsubscribe = adminDoc(SHOP_CONFIG_DOC_ID).onSnapshot(
       (doc) => {
-        if (doc.exists()) {
-          setAdminSettings(doc.data() as AdminConfig);
-        }
+        setAdminSettings(doc.data() as AdminConfig);
         setLoading(false);
       },
       (error) => {

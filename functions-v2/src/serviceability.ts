@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions/v1';
+import { onCall, HttpsError } from 'firebase-functions/v2/https'; // Changed to v2
 import * as admin from 'firebase-admin';
 import { DeliverySettings, ServiceabilityRequest, ServiceabilityResponse } from './types';
 
@@ -18,9 +18,13 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
-export const serviceability = functions.https.onCall(
-  async (data: ServiceabilityRequest): Promise<ServiceabilityResponse> => {
-    const { lat, lng } = data;
+if (admin.apps.length === 0) {
+  admin.initializeApp();
+}
+
+export const serviceability = onCall<ServiceabilityRequest>(
+  async (request): Promise<ServiceabilityResponse> => {
+    const { lat, lng } = request.data;
 
     if (
       typeof lat !== 'number' ||
@@ -28,21 +32,32 @@ export const serviceability = functions.https.onCall(
       Number.isNaN(lat) ||
       Number.isNaN(lng)
     ) {
-      throw new functions.https.HttpsError('invalid-argument', 'lat and lng must be valid numbers');
+      throw new HttpsError('invalid-argument', 'lat and lng must be valid numbers');
     }
 
+    //ref to the doc
     const settingsDoc = await admin.firestore().collection('adminSettings').doc('delivery').get();
 
     if (!settingsDoc.exists) {
-      throw new functions.https.HttpsError(
-        'failed-precondition',
-        'Delivery settings not configured',
-      );
+      throw new HttpsError('failed-precondition', 'Delivery settings not configured');
     }
 
     const settings = settingsDoc.data() as DeliverySettings;
 
-    const distanceKm = haversineDistance(settings.latitude, settings.longitude, lat, lng);
+    if (
+      typeof settings.restaurantLat !== 'number' ||
+      typeof settings.restaurantLng !== 'number' ||
+      Number.isNaN(settings.restaurantLat) ||
+      Number.isNaN(settings.restaurantLng)
+    ) {
+      throw new HttpsError(
+        'failed-precondition',
+        'Delivery settings has invalid restaurant coordinates',
+      );
+    }
+
+    //pass restaurantLat, restaurantLng & userLat, userLng
+    const distanceKm = haversineDistance(settings.restaurantLat, settings.restaurantLng, lat, lng);
 
     if (distanceKm > settings.delivery_radius_km) {
       return { serviceable: false, fee: null, distance_km: distanceKm };
