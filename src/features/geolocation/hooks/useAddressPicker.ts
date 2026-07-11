@@ -59,6 +59,7 @@ export const useAddressPicker = () => {
 
   //request permission and feed zustand store
   const fetchLocation = useCallback(async () => {
+    console.log('🟡 fetchLocation CALLED — component mounted or re-triggered');
     try {
       const { status } = await requestLocation();
 
@@ -149,6 +150,13 @@ export const useAddressPicker = () => {
         formattedAddress: formatAddress(flatNum, street, landmark),
       });
       setShowServiceabilityModal(false);
+
+      console.log(
+        '🟣 confirm reached end. wasAlreadyValidOrderType:',
+        wasAlreadyValidOrderType,
+        'canGoBack:',
+        navigation.canGoBack(),
+      );
 
       if (wasAlreadyValidOrderType && navigation.canGoBack()) {
         navigation.goBack();

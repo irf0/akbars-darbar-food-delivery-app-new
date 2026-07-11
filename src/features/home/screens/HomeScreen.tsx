@@ -16,6 +16,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCartStore } from '@store/useCartStore';
 import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
+import { OrderTypeBar } from '../components/OrderTypeModal';
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<BottomTabsParamList, 'Home'>,
@@ -61,6 +62,8 @@ export default function HomeScreen({ navigation }: Props) {
           onCartPress={() => navigation.navigate('Cart')}
         />
       </Animated.View>
+
+      <OrderTypeBar />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* ── Search Bar ── */}

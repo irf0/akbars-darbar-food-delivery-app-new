@@ -23,6 +23,7 @@ export default function RootNavigator() {
   const showApp = isAuthenticated && hasCompletedOnboarding;
   const isShopClosed = settings?.isShopClosed ?? false;
 
+  // Gate: takeaway alone is valid, delivery needs an address alongside it
   const hasValidOrderType = orderType === 'takeaway' || (orderType === 'delivery' && !!address);
 
   useEffect(() => {
@@ -44,13 +45,21 @@ export default function RootNavigator() {
     );
   }
 
+  const navigatorKey = isShopClosed
+    ? 'shop-closed'
+    : showApp
+      ? hasValidOrderType
+        ? 'app'
+        : 'order-type'
+      : 'auth';
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer linking={linkingConfig}>
-        {isShopClosed ? ( //if shop closed, show this scn
+      <NavigationContainer key={navigatorKey} linking={linkingConfig}>
+        {isShopClosed ? (
           <ShopClosedScreen />
-        ) : showApp ? ( //if show app true (logged user)
-          hasValidOrderType ? ( //setOrderType: takeaway - on the spot, delivery- in addressscrn
+        ) : showApp ? (
+          hasValidOrderType ? (
             <AppStack />
           ) : (
             <OrderTypeStack />

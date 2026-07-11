@@ -32,23 +32,19 @@ export const AddressPickerForm = ({
   setLandMark,
   onConfirm,
 }: FormProps) => {
-  // const [addressLabel, setAddressLabel] = useState<string>('Home');
-
+  const isFormValid = street.trim() !== '' && flatNum.trim() !== '';
   return (
     <BottomSheet ref={bottomSheetRef} snapPoints={snapPoints} index={0}>
       <BottomSheetView style={styles.sheetContainer}>
-        <Text style={styles.addressHeadline}>
-          {street || addressInfoMessage || 'Move the map to set your location'}
-        </Text>
-        {addressInfoMessage && (
-          <BottomSheetTextInput
-            placeholder="Street / Area name (Required)"
-            placeholderTextColor="#757575"
-            value={street}
-            onChangeText={setStreet}
-            style={styles.input}
-          />
-        )}
+        <Text style={styles.addressHeadline}>{'Move the map to set your location'}</Text>
+
+        <BottomSheetTextInput
+          placeholder="Street / Area name (Required)"
+          placeholderTextColor="#757575"
+          value={street}
+          onChangeText={setStreet}
+          style={styles.input}
+        />
 
         <BottomSheetTextInput
           placeholder="Flat / House No., Building, Floor (Required)"
@@ -88,8 +84,8 @@ export const AddressPickerForm = ({
         </View>
 
         <TouchableOpacity
-          style={[styles.confirmButton, !flatNum && styles.disabledButton]}
-          disabled={!flatNum}
+          style={[styles.confirmButton, !isFormValid && styles.disabledButton]}
+          disabled={!isFormValid}
           onPress={() => onConfirm(label ?? 'Home')}
           activeOpacity={0.8}>
           <Text style={styles.confirmText}>Confirm Address</Text>
