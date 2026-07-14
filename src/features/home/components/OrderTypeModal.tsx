@@ -21,17 +21,15 @@ export const OrderTypeBar = () => {
   const isDelivery = orderType === 'delivery';
 
   const label = isDelivery
-    ? address?.formattedAddress || 'Delivering to your location'
+    ? `Delivering to,  ${address?.formattedAddress}` || 'Delivering to your location'
     : 'Takeaway from restaurant';
 
   const handleSwitchConfirm = () => {
     setShowSwitchModal(false);
     if (isDelivery) {
-      // delivery -> takeaway: single call, no address needed, safe to do immediately
       setPickup();
     } else {
-      // takeaway -> delivery: needs an address, so go through AddressPicker
-      navigation.navigate('AddressPicker');
+      navigation.navigate('AddressList');
     }
   };
 

@@ -16,6 +16,7 @@ export type AuthStackParamList = {
 export type AppStackParamList = {
   OrderType: undefined;
   AddressPicker: undefined;
+  AddressList: undefined;
   MainTabs: NavigatorScreenParams<BottomTabsParamList>;
   MenuDetail: { item: MenuItem };
   Search: undefined;
@@ -25,6 +26,7 @@ export type AppStackParamList = {
 export type OrderTypeStackParamList = {
   OrderType: undefined;
   AddressPicker: undefined;
+  AddressList: undefined;
 };
 
 export type BottomTabsParamList = {
