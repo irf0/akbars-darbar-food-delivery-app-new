@@ -14,46 +14,21 @@ import { useRegister } from '../hooks/useRegister';
 import { AuthScreenProps } from '@navigation/types';
 import { useAuthStore } from '../store/useAuthStore';
 
-type AddressForm = {
-  area: string;
-  building: string;
-  street: string;
-  city: string;
-  label?: string;
-};
-
 export default function RegisterScreen({ route, navigation }: AuthScreenProps<'Register'>) {
-  const { phoneNumber } = route.params;
+  // const { phoneNumber } = route.params;
   const { completeOnboarding } = useAuthStore();
   const { loading, error, registerUser } = useRegister();
 
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState<AddressForm>({
-    label: 'Home',
-    area: '',
-    building: '',
-    street: '',
-    city: 'Tinsukia',
-  });
 
   const t = theme;
   const styles = createStyles(t);
 
-  const isFormValid =
-    firstName.trim().length >= 2 &&
-    lastName.trim().length >= 1 &&
-    address.area.trim().length > 0 &&
-    address.building.trim().length > 0 &&
-    address.city.trim().length > 0;
-
-  const handleAddressChange = (field: keyof AddressForm, value: string) => {
-    setAddress((prev) => ({ ...prev, [field]: value }));
-  };
+  const isFormValid = firstName.trim().length >= 2;
 
   const handleRegister = async () => {
     if (!isFormValid) return;
-    const success = await registerUser(firstName, lastName, address);
+    const success = await registerUser(firstName);
     if (success) {
       completeOnboarding();
     }
@@ -68,106 +43,33 @@ export default function RegisterScreen({ route, navigation }: AuthScreenProps<'R
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Create Profile</Text>
-          <Text style={styles.subtitle}>Just a few details to get you started.</Text>
+          <Text style={styles.title}>What should we call you?</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Personal Info</Text>
-
-          <View style={styles.row}>
-            <View style={styles.halfField}>
-              <Text style={styles.label}>First Name</Text>
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="John"
-                  value={firstName}
-                  onChangeText={setFirstName}
-                  placeholderTextColor={t.colors.textDisabled}
-                  autoCapitalize="words"
-                />
-              </View>
-            </View>
-
-            <View style={styles.halfField}>
-              <Text style={styles.label}>Last Name</Text>
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Doe"
-                  value={lastName}
-                  onChangeText={setLastName}
-                  placeholderTextColor={t.colors.textDisabled}
-                  autoCapitalize="words"
-                />
-              </View>
+        <View style={styles.row}>
+          <View style={styles.halfField}>
+            {/* <Text style={styles.label}>your good name</Text> */}
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder="Type your name here."
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholderTextColor={t.colors.textDisabled}
+                autoCapitalize="words"
+              />
             </View>
           </View>
-
-          <Text style={styles.label}>Phone Number</Text>
-          <View style={[styles.inputWrapper, styles.inputDisabled]}>
-            <TextInput
-              style={[styles.input, styles.inputTextDisabled]}
-              value={`+91 ${phoneNumber}`}
-              editable={false}
-            />
-          </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Delivery Address</Text>
-
-          <Text style={styles.label}>Area</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Borpathar"
-              value={address.area}
-              onChangeText={(v) => handleAddressChange('area', v)}
-              placeholderTextColor={t.colors.textDisabled}
-              autoCapitalize="words"
-            />
-          </View>
-
-          <Text style={styles.label}>Building / House</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Opposite road of Kalimandir"
-              value={address.building}
-              onChangeText={(v) => handleAddressChange('building', v)}
-              placeholderTextColor={t.colors.textDisabled}
-              autoCapitalize="sentences"
-            />
-          </View>
-
-          <Text style={styles.label}>
-            Street <Text style={styles.optional}>(optional)</Text>
-          </Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Main Street"
-              value={address.street}
-              onChangeText={(v) => handleAddressChange('street', v)}
-              placeholderTextColor={t.colors.textDisabled}
-              autoCapitalize="words"
-            />
-          </View>
-
-          <Text style={styles.label}>City</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              // placeholder="e.g. Tinsukia"
-              value="Tinsukia"
-              onChangeText={(v) => handleAddressChange('city', v)}
-              placeholderTextColor={t.colors.textDisabled}
-              autoCapitalize="words"
-            />
-          </View>
-        </View>
+        {/* <Text style={styles.label}></Text>
+        <View style={[styles.inputWrapper, styles.inputDisabled]}>
+          <TextInput
+            style={[styles.input, styles.inputTextDisabled]}
+            value={`+91 ${phoneNumber}`}
+            editable={false}
+          />
+        </View> */}
 
         {error && <Text style={styles.errorText}>{error}</Text>}
 
