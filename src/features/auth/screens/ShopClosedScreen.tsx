@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Animated, Easing } from 'react-native';
 import { shopClosedStyles } from '../styles';
-import { getTimeUntilOpening } from '@utils/getTimeUntilOpening';
+import { formatTime, getTimeUntilOpening } from '@utils/getTimeUntilOpening';
 import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function ShopClosedScreen() {
@@ -9,8 +9,6 @@ export default function ShopClosedScreen() {
 
   const { settings } = useAdminSettingsStore();
 
-  // ✅ THE LAZY STATE PATTERN: Instantiates the exact same persistent animation
-  // objects once on mount. Zero references to ".current", keeping ESLint perfectly happy.
   const [fadeAnim] = useState(() => new Animated.Value(0));
   const [slideAnim] = useState(() => new Animated.Value(30));
   const [pulseAnim] = useState(() => new Animated.Value(1));
@@ -18,13 +16,12 @@ export default function ShopClosedScreen() {
   useEffect(() => {
     if (!settings) return;
     const interval = setInterval(() => {
-      setCountdown(getTimeUntilOpening(settings.openingTime));
+      setCountdown(getTimeUntilOpening(settings?.openingTime));
     }, 1000);
     return () => clearInterval(interval);
   }, [settings]);
 
   useEffect(() => {
-    // ✅ PASS VALUES DIRECTLY: Since these are state objects, pass them straight into the driver
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -56,13 +53,12 @@ export default function ShopClosedScreen() {
         }),
       ]),
     ).start();
-  }, [fadeAnim, slideAnim, pulseAnim]); // Added dependency tracking arrays to satisfy hook rules
+  }, [fadeAnim, slideAnim, pulseAnim]);
 
   return (
     <View style={shopClosedStyles.container}>
       <View style={shopClosedStyles.arc} />
 
-      {/* ✅ CLEAN IMPORTS: Pass variables without `.current` directly into layout properties */}
       <Animated.View
         style={[
           shopClosedStyles.content,
@@ -95,7 +91,7 @@ export default function ShopClosedScreen() {
             }}>
             <Text style={shopClosedStyles.hoursTime}>{countdown}</Text>
             <Text style={shopClosedStyles.hoursSubLabel}>
-              Opening at {settings.openingTime}:00 {settings.openingTime < 12 ? 'AM' : 'PM'}
+              Opening at {formatTime(settings.openingTime)}
             </Text>
           </View>
         )}

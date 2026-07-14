@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet, Text, View, Pressable, Alert, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { FlatList, StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
 import { Image } from 'expo-image';
 import { getPriceForPortion } from '@utils/getPriceForPortion';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
@@ -12,12 +12,15 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ClearCartModal from 'src/global/components/ClearCartModal';
-import { AddressItem, AddressSelectModal } from 'src/global/components/AddressSelectModal';
-import { useUserAddress } from '../hooks/useUserAddress';
 import { useCartStore } from '@store/useCartStore';
 import QuantityStepper from 'src/global/components/QuantityStepper';
 import { useCartTotal } from '@hooks/useCartTotal';
 import { PortionType } from '@types';
+import CouponPicker from '../components/CouponPicker';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useCoupons } from '../hooks/useCoupons';
+import { useCouponStore } from '../store/useCouponStore';
+import { calculateCouponDiscount } from '@utils/calculateCouponDiscount';
 type Props = CompositeScreenProps<
   NativeStackScreenProps<AppStackParamList, 'Cart'>,
   BottomTabScreenProps<BottomTabsParamList>
@@ -33,17 +36,20 @@ const CartScreen = ({ navigation }: Props) => {
   } | null>(null);
   const [clearCartModalVisible, setClearCartModalVisible] = useState<boolean>(false);
   const cartTotal = useCartTotal();
-  const { addresses, defaultAddressId } = useUserAddress();
 
-  const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
-  const [selectedAddress, setSelectedAddress] = useState<AddressItem | null>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const { coupons } = useCoupons();
+
+  const applyCoupon = useCouponStore((state) => state.applyCoupon);
+  const appliedCoupon = useCouponStore((state) => state.appliedCoupon);
+
+  const couponDiscount = calculateCouponDiscount(cartTotal, appliedCoupon);
+
+  const payableAmount = cartTotal - couponDiscount;
 
   const handleCheckoutPress = () => {
-    if (orderType === 'delivery') {
-      setIsAddressModalOpen(true);
-    } else {
-      Alert.alert('Takeaway', 'Time picker modal will go here next!');
-    }
+    navigation.navigate('Checkout');
   };
 
   return (
@@ -83,7 +89,7 @@ const CartScreen = ({ navigation }: Props) => {
                       {item.name} ({item.portion})
                     </Text>
                     <Text style={styles.priceText}>
-                      price: {item.quantity * getPriceForPortion(item, orderType)}
+                      price: ₹{item.quantity * getPriceForPortion(item, orderType)}
                     </Text>
                   </View>
                 </View>
@@ -107,33 +113,13 @@ const CartScreen = ({ navigation }: Props) => {
               </View>
             )}
           />
-          {selectedAddress && (
-            <Text style={{ marginBottom: 20, textAlign: 'center' }}>
-              Delivering to: {selectedAddress.label} — {selectedAddress.addressLine}
-            </Text>
-          )}
-
-          <AddressSelectModal
-            isVisible={isAddressModalOpen}
-            onClose={() => setIsAddressModalOpen(false)}
-            addresses={addresses}
-            defaultAddressId={defaultAddressId}
-            onAddNewAddress={() => {
-              setIsAddressModalOpen(false);
-              // navigate to add-address screen
-            }}
-            onAddressConfirm={(address) => {
-              setSelectedAddress(address);
-              setIsAddressModalOpen(false);
-            }}
-          />
 
           <ClearCartModal
             visible={clearCartModalVisible}
             onCancel={() => setClearCartModalVisible(false)}
             onConfirm={() => {
               clearCart();
-              setClearCartModalVisible(true);
+              setClearCartModalVisible(false);
             }}
           />
 
@@ -149,12 +135,95 @@ const CartScreen = ({ navigation }: Props) => {
             }}
           />
 
-          <Text>Total Price: {cartTotal}</Text>
+          <CouponPicker
+            bottomSheetRef={bottomSheetRef}
+            coupons={coupons}
+            subtotal={cartTotal}
+            onApply={(coupon) => {
+              applyCoupon(coupon);
+              bottomSheetRef.current?.dismiss();
+            }}
+          />
+          <Pressable
+            onPress={() => bottomSheetRef.current?.present()}
+            style={{
+              marginHorizontal: 16,
+              marginVertical: 12,
+              padding: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: '#E5E7EB',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <View>
+              <Text style={{ fontSize: 16, fontWeight: '700' }}>Offers & Coupons</Text>
+
+              {appliedCoupon ? (
+                <Text style={{ color: 'green', marginTop: 4 }}>✓ {appliedCoupon.code} applied</Text>
+              ) : (
+                <Text style={{ color: '#666', marginTop: 4 }}>
+                  {coupons.length} offers available
+                </Text>
+              )}
+            </View>
+
+            <Ionicons name="chevron-forward" size={22} color="#999" />
+          </Pressable>
+
+          <View style={{ paddingHorizontal: 16, gap: 6 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text>Subtotal</Text>
+
+              <Text>₹{cartTotal.toFixed(1)}</Text>
+            </View>
+
+            {appliedCoupon && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text>Coupon ({appliedCoupon.code})</Text>
+
+                <Text style={{ color: 'green' }}>-₹{couponDiscount.toFixed(1)}</Text>
+              </View>
+            )}
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}>
+              <Text
+                style={{
+                  fontWeight: '700',
+                  fontSize: 16,
+                }}>
+                Total
+              </Text>
+
+              <Text
+                style={{
+                  fontWeight: '700',
+                  fontSize: 16,
+                }}>
+                ₹{payableAmount.toFixed(1)}
+              </Text>
+            </View>
+          </View>
+
           <TouchableOpacity
             onPress={() => handleCheckoutPress()}
             activeOpacity={0.7}
             style={{ backgroundColor: 'green', padding: 20 }}>
-            <Text style={{ textAlign: 'center' }}>Select Address</Text>
+            <Text style={{ textAlign: 'center' }}>Proceed to Checkout</Text>
           </TouchableOpacity>
         </View>
       )}

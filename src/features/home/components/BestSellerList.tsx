@@ -7,6 +7,7 @@ import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { getDisplayPrice } from '@utils/getDisplayPrice';
 import { DietBadge } from 'src/global/components/DietBadge';
 import { usePortionSelectorStore } from '@store/usePortionSelectorStore';
+import { useCartStore } from '@store/useCartStore';
 
 interface Props {
   onItemPress: (item: MenuItem) => void;
@@ -16,13 +17,14 @@ const BestSellerList = ({ onItemPress }: Props) => {
   const { bestSellers } = useBestSellers();
   const { orderType } = useOrderTypeStore();
   const openModal = usePortionSelectorStore((state) => state.openModal);
+  const { addItem } = useCartStore();
 
   const handleAddBtn = (item: MenuItem) => {
     const halfPrice =
       orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price;
 
     if (halfPrice === 0) {
-      console.log('Directly add to cart!');
+      addItem(item, 'full', 1);
     } else {
       openModal(item);
     }

@@ -36,17 +36,33 @@ export const saveUserAddressToDb = async (
 };
 
 //READ from DB
-export const getUserAddresses = async (
-  userId: string | undefined,
-): Promise<DarbarUserAddress[]> => {
-  const snapshot = await firestore().collection('users').doc(userId).collection('addresses').get();
+export const subscribeToUserAddresses = (
+  userId: string,
+  onData: (addresses: DarbarUserAddress[]) => void,
+  onError: (error: Error) => void,
+) => {
+  return firestore()
+    .collection('users')
+    .doc(userId)
+    .collection('addresses')
+    .onSnapshot(
+      (querySnapshot) => {
+        const addresses: DarbarUserAddress[] = [];
 
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      ...data,
-      createdAt: data?.createdAt?.toDate()?.toISOString() ?? '',
-    };
-  }) as DarbarUserAddress[];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+
+          addresses.push({
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate()?.toISOString() ?? '',
+          } as DarbarUserAddress);
+        });
+
+        onData(addresses);
+      },
+      (error) => {
+        onError(error);
+      },
+    );
 };

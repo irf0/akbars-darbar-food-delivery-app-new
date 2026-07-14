@@ -20,8 +20,9 @@ export type AppStackParamList = {
   MainTabs: NavigatorScreenParams<BottomTabsParamList>;
   MenuDetail: { item: MenuItem };
   Search: undefined;
-  Cart: undefined;
   Profile: undefined;
+  Cart: undefined;
+  Checkout: undefined;
 };
 export type OrderTypeStackParamList = {
   OrderType: undefined;

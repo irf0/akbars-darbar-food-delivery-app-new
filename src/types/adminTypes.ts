@@ -2,8 +2,8 @@
 
 export type AdminConfig = {
   isShopClosed: boolean;
-  openingTime: number;
-  closingTime: string; //TODO make this number
+  openingTime: string;
+  closingTime: string;
   deliveryEnabled: boolean;
   takeawayEnabled: boolean;
   isCODEnabled: boolean;
@@ -14,4 +14,6 @@ export type AdminConfig = {
   hikedPercentage: number;
   restaurantLat: number;
   restaurantLng: number;
+  cgstRate: number;
+  sgstRate: number;
 };

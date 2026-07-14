@@ -9,6 +9,9 @@ export const subscribeToAdminSettings = (
 ): (() => void) => {
   const unsubscribe = adminDoc(SHOP_CONFIG_DOC_ID).onSnapshot(
     (doc) => {
+      console.log('Snapshot exists:', doc.exists);
+      console.log('Snapshot data:', doc.data());
+
       onData(doc.data() as AdminConfig);
     },
     (error) => {

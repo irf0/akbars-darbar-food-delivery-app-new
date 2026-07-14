@@ -47,7 +47,7 @@ export const OrderTypeBar = () => {
         <Text style={styles.label} numberOfLines={1}>
           {label}
         </Text>
-        <Ionicons name="chevron-down" size={16} color={theme.colors.textSecondary} />
+        <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
       </TouchableOpacity>
 
       <CustomAlertModal

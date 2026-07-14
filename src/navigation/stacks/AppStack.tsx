@@ -7,6 +7,7 @@ import MenuDetailScreen from '@features/menu/screens/MenuDetailScreen';
 import CartScreen from '@features/cart/screens/CartScreen';
 import AddressPickerScreen from '@features/geolocation/screens/AddressPickerScreen';
 import AddressesListScreen from '@features/geolocation/screens/AdressListScreen';
+import CheckoutScreen from '@features/cart/screens/CheckoutScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -19,6 +20,7 @@ export const AppStack = () => {
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="MenuDetail" component={MenuDetailScreen} />
       <Stack.Screen name="Cart" component={CartScreen} />
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
     </Stack.Navigator>
   );
 };
