@@ -9,7 +9,6 @@ export const useMenu = () => {
   useEffect(() => {
     setLoading(true);
 
-    // Call the isolated data service layer
     const unsubscribe = subscribeToMenu(
       (items) => {
         setItems(items);
