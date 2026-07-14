@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
-import { AdminConfig } from '@types';
-import { adminDoc } from '@config/firebase';
-
-const SHOP_CONFIG_DOC_ID = 'vBwzYuteA3P4UHKPHrpP'; //TODO: Rename to shopconfig later.
+import { subscribeToAdminSettings } from 'src/global/services/adminSettingsService';
 
 export const useAdminSettings = () => {
   const setLoading = useAdminSettingsStore((state) => state.setLoading);
@@ -11,19 +8,17 @@ export const useAdminSettings = () => {
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribe = adminDoc(SHOP_CONFIG_DOC_ID).onSnapshot(
-      (doc) => {
-        setAdminSettings(doc.data() as AdminConfig);
+
+    const unsubscribe = subscribeToAdminSettings(
+      (settings) => {
+        setAdminSettings(settings);
         setLoading(false);
       },
-      (error) => {
-        console.error('Firestore snapshot error:', error);
+      () => {
         setLoading(false);
       },
     );
 
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, []);
 };
