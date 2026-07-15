@@ -12,13 +12,8 @@ const QuantityStepper = ({ quantity, onIncrement, onDecrement }: QuantityStepper
   return (
     <View style={styles.container}>
       <Pressable
-        disabled={quantity === 1}
         onPress={onDecrement}
-        style={({ pressed }) => [
-          styles.button,
-          quantity === 1 && { opacity: 0.4 },
-          pressed && quantity > 1 && styles.pressed,
-        ]}
+        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         hitSlop={8}>
         <AntDesign name="minus" size={16} color="#1f2937" />
       </Pressable>

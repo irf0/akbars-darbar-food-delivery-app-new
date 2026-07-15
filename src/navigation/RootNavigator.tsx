@@ -11,17 +11,20 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen';
 import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal';
 import { useAddressMigration } from '@hooks/useAddressMigration';
-import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
+// import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function RootNavigator() {
   const [showSplash, setShowSplash] = useState(true);
   const { authHasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore();
   const { orderType, address, orderTypeHasHydrated } = useOrderTypeStore();
-  const { settings } = useAdminSettingsStore();
+  // const { settings } = useAdminSettingsStore();
   const { migrateLegacyAddress } = useAddressMigration();
 
   const showApp = isAuthenticated && hasCompletedOnboarding;
-  const isShopClosed = settings?.isShopClosed ?? false;
+
+  const isShopClosed = false; //TODO: TEMPORARY NO CHECKS!
+
+  // const isShopClosed = settings?.isShopClosed ?? false;
 
   // Gate: takeaway alone is valid, delivery needs an address alongside it
   const hasValidOrderType = orderType === 'takeaway' || (orderType === 'delivery' && !!address);

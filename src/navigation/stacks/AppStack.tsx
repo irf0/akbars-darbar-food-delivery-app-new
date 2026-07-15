@@ -7,7 +7,7 @@ import MenuDetailScreen from '@features/menu/screens/MenuDetailScreen';
 import CartScreen from '@features/cart/screens/CartScreen';
 import AddressPickerScreen from '@features/geolocation/screens/AddressPickerScreen';
 import AddressesListScreen from '@features/geolocation/screens/AdressListScreen';
-import CheckoutScreen from '@features/cart/screens/CheckoutScreen';
+import CheckoutScreen from '@features/checkout/screens/CheckoutScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 

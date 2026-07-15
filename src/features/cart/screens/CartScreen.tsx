@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View, Pressable, TouchableOpacity } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { Image } from 'expo-image';
 import { getPriceForPortion } from '@utils/getPriceForPortion';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
@@ -21,6 +21,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useCoupons } from '../hooks/useCoupons';
 import { useCouponStore } from '../store/useCouponStore';
 import { calculateCouponDiscount } from '@utils/calculateCouponDiscount';
+import { theme } from '@theme';
 type Props = CompositeScreenProps<
   NativeStackScreenProps<AppStackParamList, 'Cart'>,
   BottomTabScreenProps<BottomTabsParamList>
@@ -48,69 +49,144 @@ const CartScreen = ({ navigation }: Props) => {
 
   const payableAmount = cartTotal - couponDiscount;
 
+  const isDeliveryDisabled = orderType === 'delivery' && cartTotal < 200;
+
   const handleCheckoutPress = () => {
     navigation.navigate('Checkout');
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Text style={styles.headerText}>Your Cart</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Your Cart</Text>
+
+        {items.length > 0 && (
+          <Pressable onPress={() => setClearCartModalVisible(true)}>
+            <Text style={styles.clearCartText}>Clear Cart</Text>
+          </Pressable>
+        )}
+      </View>
+
       {items.length < 1 ? (
-        <View style={{ justifyContent: 'center', alignSelf: 'center', marginTop: '50%' }}>
-          <Text>{"Uh! Oh. You don't have anything in the Cart yet."}</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>{"Uh! Oh. You don't have anything in the Cart yet."}</Text>
+
           <TouchableOpacity
-            style={{ backgroundColor: 'red', padding: 15 }}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('MainTabs', { screen: 'Menu', params: {} })}>
-            <Text style={{ textAlign: 'center' }}>Browse Menu</Text>
+            style={styles.cta}
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate('MainTabs', {
+                screen: 'Menu',
+                params: {},
+              })
+            }>
+            <Text style={styles.ctaText}>Browse Menu</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.screenContainer}>
-          <Pressable onPress={() => setClearCartModalVisible(true)}>
-            <Text style={{ alignSelf: 'flex-end' }}>Clear Cart</Text>
-          </Pressable>
           <FlatList
-            style={{ flex: 1 }}
-            data={items}
-            keyExtractor={(item) => `${item.id}-${item.portion}`}
-            renderItem={({ item }) => (
-              <View style={styles.cartRow}>
-                <View style={styles.leftContent}>
-                  <Image
-                    cachePolicy={'memory-disk'}
-                    source={{ uri: item.image }}
-                    style={styles.itemImage}
-                    contentFit="cover"
-                    transition={200}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text style={styles.itemNameText} numberOfLines={2}>
-                      {item.name} ({item.portion})
-                    </Text>
-                    <Text style={styles.priceText}>
-                      price: ₹{item.quantity * getPriceForPortion(item, orderType)}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+            data={[{ key: 'cart' }]}
+            keyExtractor={(item) => item.key}
+            renderItem={() => (
+              <>
+                <View style={styles.card}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>
+                      Cart ({items.length} {items.length === 1 ? 'Item' : 'Items'})
                     </Text>
                   </View>
+
+                  {items.map((item, index) => (
+                    <Fragment key={`${item.id}-${item.portion}`}>
+                      <View style={styles.cartRow}>
+                        <View style={styles.leftContent}>
+                          <Image
+                            cachePolicy="memory-disk"
+                            source={{ uri: item.image }}
+                            style={styles.itemImage}
+                            contentFit="cover"
+                            transition={200}
+                          />
+
+                          <View style={styles.textContainer}>
+                            <Text style={styles.itemNameText} numberOfLines={2}>
+                              {item.name} ({item.portion})
+                            </Text>
+
+                            <Text style={styles.priceText}>
+                              ₹{item.quantity * getPriceForPortion(item, orderType)}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View style={styles.rightContent}>
+                          <QuantityStepper
+                            quantity={item.quantity}
+                            onIncrement={() => incrementItem(item.id, item.portion)}
+                            onDecrement={() => {
+                              if (item.quantity === 1) {
+                                setActiveItem({
+                                  id: item.id,
+                                  portion: item.portion,
+                                  name: item.name,
+                                });
+                              } else {
+                                decrementItem(item.id, item.portion);
+                              }
+                            }}
+                          />
+                        </View>
+                      </View>
+
+                      {index !== items.length - 1 && <View style={styles.divider} />}
+                    </Fragment>
+                  ))}
                 </View>
 
-                <View style={styles.rightContent}>
-                  <QuantityStepper
-                    quantity={item.quantity}
-                    onIncrement={() => incrementItem(item.id, item.portion)}
-                    onDecrement={() => decrementItem(item.id, item.portion)}
-                  />
+                <Pressable style={styles.card} onPress={() => bottomSheetRef.current?.present()}>
+                  <View style={styles.couponRow}>
+                    <View>
+                      <Text style={styles.cardTitle}>Offers & Coupons</Text>
 
-                  <Pressable
-                    onPress={() =>
-                      setActiveItem({ id: item.id, portion: item.portion, name: item.name })
-                    }
-                    style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}
-                    hitSlop={12}>
-                    <Ionicons name="trash-outline" size={20} color="#ef4444" />
-                  </Pressable>
+                      {appliedCoupon ? (
+                        <Text style={styles.appliedCoupon}>✓ {appliedCoupon.code} applied</Text>
+                      ) : (
+                        <Text style={styles.couponSubtitle}>{coupons.length} offers available</Text>
+                      )}
+                    </View>
+
+                    <Ionicons name="chevron-forward" size={22} color="#999" />
+                  </View>
+                </Pressable>
+
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>Cart Summary</Text>
+
+                  <View style={styles.billRow}>
+                    <Text style={styles.billLabel}>Subtotal</Text>
+                    <Text style={styles.billValue}>₹{cartTotal.toFixed(1)}</Text>
+                  </View>
+
+                  {appliedCoupon && (
+                    <View style={styles.billRow}>
+                      <Text style={styles.billLabel}>Coupon ({appliedCoupon.code})</Text>
+
+                      <Text style={styles.discountText}>-₹{couponDiscount.toFixed(1)}</Text>
+                    </View>
+                  )}
+
+                  <View style={styles.divider} />
+
+                  <View style={styles.totalRow}>
+                    <Text style={styles.totalLabel}>Total</Text>
+
+                    <Text style={styles.totalAmount}>₹{payableAmount.toFixed(1)}</Text>
+                  </View>
                 </View>
-              </View>
+              </>
             )}
           />
 
@@ -144,154 +220,266 @@ const CartScreen = ({ navigation }: Props) => {
               bottomSheetRef.current?.dismiss();
             }}
           />
-          <Pressable
-            onPress={() => bottomSheetRef.current?.present()}
-            style={{
-              marginHorizontal: 16,
-              marginVertical: 12,
-              padding: 16,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: '#E5E7EB',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View>
-              <Text style={{ fontSize: 16, fontWeight: '700' }}>Offers & Coupons</Text>
-
-              {appliedCoupon ? (
-                <Text style={{ color: 'green', marginTop: 4 }}>✓ {appliedCoupon.code} applied</Text>
-              ) : (
-                <Text style={{ color: '#666', marginTop: 4 }}>
-                  {coupons.length} offers available
-                </Text>
-              )}
-            </View>
-
-            <Ionicons name="chevron-forward" size={22} color="#999" />
-          </Pressable>
-
-          <View style={{ paddingHorizontal: 16, gap: 6 }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text>Subtotal</Text>
-
-              <Text>₹{cartTotal.toFixed(1)}</Text>
-            </View>
-
-            {appliedCoupon && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text>Coupon ({appliedCoupon.code})</Text>
-
-                <Text style={{ color: 'green' }}>-₹{couponDiscount.toFixed(1)}</Text>
-              </View>
-            )}
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 8,
-              }}>
-              <Text
-                style={{
-                  fontWeight: '700',
-                  fontSize: 16,
-                }}>
-                Total
-              </Text>
-
-              <Text
-                style={{
-                  fontWeight: '700',
-                  fontSize: 16,
-                }}>
-                ₹{payableAmount.toFixed(1)}
-              </Text>
-            </View>
-          </View>
 
           <TouchableOpacity
-            onPress={() => handleCheckoutPress()}
-            activeOpacity={0.7}
-            style={{ backgroundColor: 'green', padding: 20 }}>
-            <Text style={{ textAlign: 'center' }}>Proceed to Checkout</Text>
+            disabled={isDeliveryDisabled}
+            style={[styles.cta, isDeliveryDisabled && styles.disabledBtn]}
+            activeOpacity={0.8}
+            onPress={handleCheckoutPress}>
+            <Text style={styles.ctaText}>
+              {isDeliveryDisabled ? `Minimum Order Value ₹200` : 'Proceed to Checkout'}
+            </Text>
           </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
   );
 };
-
 export default CartScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  warningText: {
+    color: '#D32F2F',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+    backgroundColor: '#FFEBEE',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  disabledBtn: {
+    opacity: 0.7,
+  },
   screenContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    padding: 16,
+
+  content: {
+    paddingBottom: 120,
+    paddingTop: 4,
   },
-  cartRow: {
+
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
   },
+
+  headerText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#111',
+  },
+
+  clearCartText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#E53935',
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+
+  card: {
+    backgroundColor: '#FFF',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 14,
+    padding: 16,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+
+    elevation: 2,
+  },
+
+  cardHeader: {
+    marginBottom: 8,
+  },
+
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111',
+  },
+
+  cartRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+
   leftContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     marginRight: 12,
   },
+
+  itemImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+    backgroundColor: '#EEE',
+  },
+
   textContainer: {
     flex: 1,
-    marginLeft: 12,
-    gap: 4,
+    marginLeft: 14,
   },
+
   itemNameText: {
     fontSize: 15,
-    fontWeight: '500',
-    color: '#1f2937',
-  },
-  priceText: {
     fontWeight: '600',
-    fontSize: 14,
-    color: '#4b5563',
+    color: '#111',
   },
+
+  priceText: {
+    marginTop: 6,
+    fontSize: 15,
+    fontWeight: '700',
+    color: theme.colors.primary,
+  },
+
   rightContent: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    justifyContent: 'space-between',
+    marginLeft: 12,
+    gap: 14,
   },
+
   deleteButton: {
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: '#fee2e2',
+    padding: 8,
+    borderRadius: 10,
+    backgroundColor: '#FDECEC',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   pressed: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
-  itemImage: {
-    width: 55,
-    height: 55,
+
+  couponRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  couponSubtitle: {
+    marginTop: 4,
+    fontSize: 15,
+    color: '#666',
+  },
+
+  appliedCoupon: {
+    marginTop: 4,
+    fontSize: 15,
+    fontWeight: '600',
+    color: theme.colors.primary,
+  },
+
+  billRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+
+  billLabel: {
+    fontSize: 15,
+    color: '#444',
+  },
+
+  billValue: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111',
+  },
+
+  discountText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: theme.colors.primary,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#EAEAEA',
+    marginVertical: 12,
+  },
+
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  totalLabel: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111',
+  },
+
+  totalAmount: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: theme.colors.primary,
+  },
+
+  cta: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 16,
+
+    backgroundColor: theme.colors.primary,
     borderRadius: 12,
-    backgroundColor: '#f3f4f6',
+    paddingVertical: 16,
+    alignItems: 'center',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+
+    elevation: 4,
+  },
+
+  ctaText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
+    flexWrap: 'wrap',
   },
 });

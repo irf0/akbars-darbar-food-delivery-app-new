@@ -69,7 +69,7 @@ export const TakeawayTimeSlotPicker = ({
                 onSelect(item.value);
                 bottomSheetRef.current?.close();
               }}>
-              <Text style={[styles.time, active && styles.activeTime]}>{item.label}</Text>
+              <Text style={[styles.time, active && styles.activeTime]}>{item?.label}</Text>
             </Pressable>
           );
         }}

@@ -16,4 +16,6 @@ export type AdminConfig = {
   restaurantLng: number;
   cgstRate: number;
   sgstRate: number;
+  deliveryCharge: number;
+  packingCharge: number;
 };

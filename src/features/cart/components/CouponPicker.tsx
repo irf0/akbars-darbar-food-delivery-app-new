@@ -2,6 +2,7 @@ import React from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Coupon } from 'src/global/services/couponService';
+import { useCouponStore } from '../store/useCouponStore';
 
 type Props = {
   bottomSheetRef: React.RefObject<BottomSheetModal | null>;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const CouponPicker = ({ bottomSheetRef, coupons, subtotal, onApply }: Props) => {
+  const appliedCoupon = useCouponStore((state) => state.appliedCoupon);
   return (
     <BottomSheetModal
       enableDynamicSizing={false}
@@ -36,25 +38,43 @@ const CouponPicker = ({ bottomSheetRef, coupons, subtotal, onApply }: Props) => 
           renderItem={({ item }) => {
             const eligible = subtotal >= item.minOrderAmount;
 
+            const isApplied = appliedCoupon?.id === item.id;
+
+            const hasAnotherCoupon = appliedCoupon && appliedCoupon.id !== item.id;
+
+            const offerTitle =
+              item.type === 'flat'
+                ? `₹${item.value} OFF`
+                : item.maxDiscount
+                  ? `${item.value}% OFF up to ₹${item.maxDiscount}`
+                  : `${item.value}% OFF`;
+
             return (
               <View style={styles.card}>
                 <View style={{ flex: 1 }}>
+                  <Text style={styles.offerTitle}>{offerTitle}</Text>
+
                   <Text style={styles.code}>{item.code}</Text>
 
-                  <Text style={styles.description}>{item.description}</Text>
+                  <Text style={styles.minOrder}>Min. order ₹{item.minOrderAmount}</Text>
 
-                  {eligible ? (
-                    <Text style={styles.eligible}>Eligible</Text>
-                  ) : (
+                  {!eligible ? (
                     <Text style={styles.locked}>
                       Spend ₹{item.minOrderAmount - subtotal} more to unlock
                     </Text>
+                  ) : (
+                    <Text style={styles.eligible}>Eligible</Text>
                   )}
                 </View>
 
                 {eligible && (
-                  <Pressable onPress={() => onApply(item)} style={styles.applyButton}>
-                    <Text style={styles.applyText}>Apply</Text>
+                  <Pressable
+                    disabled={isApplied}
+                    onPress={() => onApply(item)}
+                    style={[styles.applyButton, isApplied && styles.appliedButton]}>
+                    <Text style={[styles.applyText, isApplied && styles.appliedText]}>
+                      {isApplied ? 'Applied' : hasAnotherCoupon ? 'Replace' : 'Apply'}
+                    </Text>
                   </Pressable>
                 )}
               </View>
@@ -98,11 +118,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-  code: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-  },
+  //   code: {
+  //     fontSize: 16,
+  //     fontWeight: '700',
+  //     color: '#111827',
+  //   },
 
   description: {
     marginTop: 6,
@@ -132,5 +152,31 @@ const styles = StyleSheet.create({
   applyText: {
     color: '#fff',
     fontWeight: '700',
+  },
+  offerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+  },
+
+  code: {
+    marginTop: 4,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+
+  minOrder: {
+    marginTop: 4,
+    fontSize: 13,
+    color: '#9CA3AF',
+  },
+
+  appliedButton: {
+    backgroundColor: '#DCFCE7',
+  },
+
+  appliedText: {
+    color: '#15803D',
   },
 });
