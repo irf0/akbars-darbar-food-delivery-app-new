@@ -24,9 +24,9 @@ const MenuScreen = ({ navigation, route }: Props) => {
   const openModal = usePortionSelectorStore((state) => state.openModal);
   const { addItem } = useCartStore();
 
+  //check if half is available
   const handleAddBtn = (item: MenuItem) => {
-    const halfPrice =
-      orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price;
+    const halfPrice = orderType === 'delivery' ? item.base_half_price : item.base_full_price;
 
     if (halfPrice === 0) {
       addItem(item, 'full', 1);

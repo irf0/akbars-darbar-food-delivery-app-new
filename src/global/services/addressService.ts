@@ -24,8 +24,8 @@ export interface DarbarUserAddress {
 export const saveUserAddressToDb = async (
   userId: string | undefined,
   data: AddressData,
-): Promise<void> => {
-  await firestore()
+): Promise<string> => {
+  const docRef = await firestore()
     .collection('users')
     .doc(userId)
     .collection('addresses')
@@ -33,6 +33,8 @@ export const saveUserAddressToDb = async (
       ...data,
       createdAt: firestore.FieldValue.serverTimestamp(),
     });
+
+  return docRef.id;
 };
 
 //READ from DB

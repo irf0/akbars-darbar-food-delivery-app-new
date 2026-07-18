@@ -1,7 +1,7 @@
 import { AdminConfig } from '@types';
 import { adminDoc } from '@config/firebase';
 
-const SHOP_CONFIG_DOC_ID = 'vBwzYuteA3P4UHKPHrpP'; //TODO: Rename to shopconfig later.
+const SHOP_CONFIG_DOC_ID = 'shopConfigs';
 
 export const subscribeToAdminSettings = (
   onData: (settings: AdminConfig) => void,

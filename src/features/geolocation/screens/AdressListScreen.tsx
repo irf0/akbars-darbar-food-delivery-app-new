@@ -25,6 +25,7 @@ const AdressListScreen = () => {
   //set the selected address to global store
   const handleSelectAddress = (selected: DarbarUserAddress) => {
     setDelivery({
+      id: selected.id,
       lat: selected.latitude,
       lng: selected.longitude,
       formattedAddress: [selected.flatNum, selected.street, selected.landmark]

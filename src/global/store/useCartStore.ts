@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { CartItem, MenuItem, PortionType } from '../../types/index';
 import { useOrderTypeStore } from './useOrderTypeStore';
+import { getPriceForPortion } from '@utils/getPriceForPortion';
 
 interface CartStoreState {
   items: CartItem[];
@@ -81,19 +82,13 @@ export const useCartStore = create<CartStoreState>()(
 
       totalItems: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
 
-      totalPrice: () =>
-        get().items.reduce((sum, i) => {
-          const currentOrderType = useOrderTypeStore.getState().orderType;
-          const price =
-            i.portion === 'half'
-              ? currentOrderType === 'delivery'
-                ? i.half_delivery_price
-                : i.half_takeaway_price
-              : currentOrderType === 'delivery'
-                ? i.full_delivery_price
-                : i.full_takeaway_price;
-          return sum + price * i.quantity;
-        }, 0),
+      totalPrice: () => {
+        const orderType = useOrderTypeStore.getState().orderType;
+
+        return get().items.reduce((sum, item) => {
+          return sum + getPriceForPortion(item, orderType) * item.quantity;
+        }, 0);
+      },
     }),
     {
       name: 'darbar-cart',

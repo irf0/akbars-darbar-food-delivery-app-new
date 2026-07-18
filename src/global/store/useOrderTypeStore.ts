@@ -4,6 +4,7 @@ import { zustandMMKVStorage } from '@store/mmkvStorage';
 import { OrderType } from '@types';
 
 type Address = {
+  id: string;
   lat: number;
   lng: number;
   formattedAddress: string;

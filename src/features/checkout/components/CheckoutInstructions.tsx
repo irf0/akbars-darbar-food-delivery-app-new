@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '@theme';
+import { useOrderTypeStore } from '@store/useOrderTypeStore';
 
 type Props = {
   cookingInstructions: string;
@@ -19,6 +20,7 @@ const CheckoutInstructions = ({
   onCookingInstructionsChange,
   onDeliveryInstructionsChange,
 }: Props) => {
+  const orderType = useOrderTypeStore((state) => state.orderType);
   const [isCookingExpanded, setIsCookingExpanded] = useState(false);
   const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
 
@@ -56,40 +58,43 @@ const CheckoutInstructions = ({
         />
       )}
 
-      <View style={styles.divider} />
+      {orderType === 'delivery' && (
+        <View>
+          <View style={styles.divider} />
+          {/* Delivery */}
 
-      {/* Delivery */}
+          <Pressable
+            style={styles.instructionHeader}
+            onPress={() => setIsDeliveryExpanded((prev) => !prev)}>
+            <View style={styles.instructionLeft}>
+              <Ionicons name="bicycle-outline" size={22} color={theme.colors.primary} />
 
-      <Pressable
-        style={styles.instructionHeader}
-        onPress={() => setIsDeliveryExpanded((prev) => !prev)}>
-        <View style={styles.instructionLeft}>
-          <Ionicons name="bicycle-outline" size={22} color={theme.colors.primary} />
+              <View style={styles.instructionContent}>
+                <Text style={styles.instructionTitle}>Delivery Instructions</Text>
 
-          <View style={styles.instructionContent}>
-            <Text style={styles.instructionTitle}>Delivery Instructions</Text>
+                <Text style={styles.instructionSubtitle}>Add a note for the delivery partner</Text>
+              </View>
+            </View>
 
-            <Text style={styles.instructionSubtitle}>Add a note for the delivery partner</Text>
-          </View>
+            <Ionicons
+              name={isDeliveryExpanded ? 'chevron-up' : 'chevron-down'}
+              size={20}
+              color="#999"
+            />
+          </Pressable>
+
+          {isDeliveryExpanded && (
+            <TextInput
+              value={deliveryInstructions}
+              onChangeText={onDeliveryInstructionsChange}
+              placeholder="e.g. Leave at the gate, ring the bell..."
+              placeholderTextColor="#999"
+              multiline
+              textAlignVertical="top"
+              style={styles.instructionsInput}
+            />
+          )}
         </View>
-
-        <Ionicons
-          name={isDeliveryExpanded ? 'chevron-up' : 'chevron-down'}
-          size={20}
-          color="#999"
-        />
-      </Pressable>
-
-      {isDeliveryExpanded && (
-        <TextInput
-          value={deliveryInstructions}
-          onChangeText={onDeliveryInstructionsChange}
-          placeholder="e.g. Leave at the gate, ring the bell..."
-          placeholderTextColor="#999"
-          multiline
-          textAlignVertical="top"
-          style={styles.instructionsInput}
-        />
       )}
     </View>
   );

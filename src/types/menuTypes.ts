@@ -16,12 +16,8 @@ export interface MenuItem {
   showPortionName?: boolean;
   halfPortion?: string;
   fullPortion?: string;
-  half_delivery_price: number;
-  half_takeaway_price: number;
-  full_delivery_price: number;
-  full_takeaway_price: number;
-  base_full_price?: number; //new added in v2
-  base_half_price?: number;
+  base_full_price: number; //new added in v2
+  base_half_price: number;
 }
 
 export type MenuByCategory = {

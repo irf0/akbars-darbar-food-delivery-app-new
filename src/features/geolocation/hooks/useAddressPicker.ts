@@ -135,7 +135,7 @@ export const useAddressPicker = () => {
       }
 
       // Only commit orderType after the address is actually persisted
-      await saveUserAddressToDb(currentUserId, {
+      const newAddressId = await saveUserAddressToDb(currentUserId, {
         latitude,
         longitude,
         label: label || 'Home',
@@ -145,6 +145,7 @@ export const useAddressPicker = () => {
       });
 
       setDelivery({
+        id: newAddressId,
         lat: latitude,
         lng: longitude,
         formattedAddress: formatAddress(flatNum, street, landmark),

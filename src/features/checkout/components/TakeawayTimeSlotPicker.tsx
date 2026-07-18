@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { theme } from '@theme';
 import { TimeSlot } from '@utils/generateTimeSlotsForTakeaway';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   visible: boolean;
@@ -20,26 +21,26 @@ export const TakeawayTimeSlotPicker = ({
   onSelect,
   onClose,
 }: Props) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['40%', '60%'], []);
+  const snapPoints = useMemo(() => ['60%', '65%'], []);
 
   useEffect(() => {
     if (visible) {
-      bottomSheetRef.current?.expand();
+      bottomSheetModalRef.current?.present();
     } else {
-      bottomSheetRef.current?.close();
+      bottomSheetModalRef.current?.dismiss();
     }
   }, [visible]);
 
   return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      index={-1}
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
       snapPoints={snapPoints}
-      enableDynamicSizing={false}
       enablePanDownToClose
-      onClose={onClose}
+      enableDynamicSizing={false}
+      onDismiss={onClose}
+
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -49,15 +50,19 @@ export const TakeawayTimeSlotPicker = ({
           pressBehavior="close"
         />
       )}>
-      <Text style={styles.title}>Pickup Today At</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Pickup Today At</Text>
 
+        <Pressable
+          style={({ pressed }) => [styles.closeButton, pressed && styles.closeButtonPressed]}
+          onPress={() => bottomSheetModalRef.current?.dismiss()}>
+          <Ionicons name="close" size={18} color="#555" />
+        </Pressable>
+      </View>
       <BottomSheetFlatList
         data={slots}
         keyExtractor={(item) => item.value.toISOString()}
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-        }}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
           const active = selectedSlot?.getTime() === item.value.getTime();
@@ -67,35 +72,21 @@ export const TakeawayTimeSlotPicker = ({
               style={[styles.row, active && styles.activeRow]}
               onPress={() => {
                 onSelect(item.value);
-                bottomSheetRef.current?.close();
+                bottomSheetModalRef.current?.dismiss();
               }}>
-              <Text style={[styles.time, active && styles.activeTime]}>{item?.label}</Text>
+              <Text style={[styles.time, active && styles.activeTime]}>{item.label}</Text>
             </Pressable>
           );
         }}
       />
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
-  sheet: {
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginHorizontal: 20,
-    marginTop: 12,
-    marginBottom: 16,
-  },
-
-  list: {
-    flex: 1,
-  },
-
   listContent: {
     paddingHorizontal: 20,
+    paddingBottom: 30,
   },
 
   row: {
@@ -111,11 +102,40 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
     backgroundColor: `${theme.colors.primary}15`,
   },
+
   time: {
     fontSize: 16,
     fontWeight: '600',
   },
+
   activeTime: {
     color: theme.colors.primary,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 16,
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111',
+  },
+
+  closeButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  closeButtonPressed: {
+    opacity: 0.7,
   },
 });

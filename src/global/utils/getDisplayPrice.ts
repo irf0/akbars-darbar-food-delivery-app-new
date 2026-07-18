@@ -1,18 +1,23 @@
 import { MenuItem } from '@types';
+import { getPriceForPortion } from './getPriceForPortion';
 
 type OrderType = 'delivery' | 'takeaway';
 
 export function getDisplayPrice(item: MenuItem, orderType: OrderType | null): number {
   if (!orderType) return 0;
 
-  const [halfPrice, fullPrice] =
-    orderType === 'delivery'
-      ? [item.half_delivery_price, item.full_delivery_price]
-      : [item.half_takeaway_price, item.full_takeaway_price];
+  const prices = [
+    {
+      ...item,
+      portion: 'half' as const,
+    },
+    {
+      ...item,
+      portion: 'full' as const,
+    },
+  ]
+    .map((i) => getPriceForPortion(i, orderType))
+    .filter((price) => price > 0);
 
-  const validPrices = [halfPrice, fullPrice].filter((price) => price > 0);
-
-  if (validPrices.length === 0) return 0; // no valid price found, safe fallback
-
-  return Math.min(...validPrices);
+  return prices.length ? Math.min(...prices) : 0;
 }

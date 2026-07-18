@@ -18,4 +18,6 @@ export type AdminConfig = {
   sgstRate: number;
   deliveryCharge: number;
   packingCharge: number;
+  deliveryMenuHikePercentage: number;
+  takeawayMenuHikePercentage: number;
 };

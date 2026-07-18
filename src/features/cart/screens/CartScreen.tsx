@@ -55,6 +55,7 @@ const CartScreen = ({ navigation }: Props) => {
     navigation.navigate('Checkout');
   };
 
+  // console.log(items);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
@@ -222,7 +223,7 @@ const CartScreen = ({ navigation }: Props) => {
           />
 
           <TouchableOpacity
-            disabled={isDeliveryDisabled}
+            // disabled={isDeliveryDisabled}
             style={[styles.cta, isDeliveryDisabled && styles.disabledBtn]}
             activeOpacity={0.8}
             onPress={handleCheckoutPress}>

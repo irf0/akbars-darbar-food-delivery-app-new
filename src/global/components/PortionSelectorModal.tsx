@@ -22,7 +22,6 @@ export const PortionSelectorModal = () => {
   const handleAddToCart = () => {
     if (!portionType) return null;
     addItem(item, portionType, 1);
-    console.log(useCartStore.getState().items);
     closeModal();
   };
 
