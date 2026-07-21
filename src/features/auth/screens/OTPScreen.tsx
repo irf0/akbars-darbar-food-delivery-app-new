@@ -17,34 +17,26 @@ import { useOTP } from '../hooks/useOTP';
 import { useOTPTimer } from '../hooks/useOTPTimer';
 import { getConfirmation } from '../store/confirmationRef';
 
+const OTP_LENGTH = 6;
+
 export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>) {
   const { phoneNumber } = route.params;
   const { loading, error, verifyOTP, resendOTP, clearError } = useOTP();
   const { seconds, canResend, reset } = useOTPTimer(60);
 
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const inputs = useRef<(TextInput | null)[]>([]);
+  const [otp, setOtp] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const hiddenInputRef = useRef<TextInput | null>(null);
   const styles = createStyles(theme);
   const { colors } = theme;
 
-  const handleChange = (text: string, index: number) => {
+  const handleChange = (text: string) => {
     clearError();
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
+    const digitsOnly = text.replace(/[^0-9]/g, '').slice(0, OTP_LENGTH);
+    setOtp(digitsOnly);
 
-    if (text && index < 5) {
-      inputs.current[index + 1]?.focus();
-    }
-
-    if (newOtp.every((digit) => digit !== '')) {
-      handleVerify(newOtp.join(''));
-    }
-  };
-
-  const handleKeyPress = (e: any, index: number) => {
-    if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
-      inputs.current[index - 1]?.focus();
+    if (digitsOnly.length === OTP_LENGTH) {
+      handleVerify(digitsOnly);
     }
   };
 
@@ -61,8 +53,8 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
   const handleResend = async () => {
     const success = await resendOTP(phoneNumber);
     if (success) {
-      setOtp(['', '', '', '', '', '']);
-      inputs.current[0]?.focus();
+      setOtp('');
+      hiddenInputRef.current?.focus();
       reset();
     }
   };
@@ -78,25 +70,43 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
             <Text style={styles.subtitle}>Sent to +91 {phoneNumber}</Text>
           </View>
 
-          <View style={styles.otpContainer}>
-            {otp.map((digit, index) => (
-              <TextInput
-                key={index}
-                textContentType="oneTimeCode"
-                autoComplete={index === 0 ? 'sms-otp' : 'off'}
-                ref={(el) => {
-                  inputs.current[index] = el;
-                }}
-                style={styles.otpInput}
-                keyboardType="number-pad"
-                maxLength={1}
-                value={digit}
-                onChangeText={(text) => handleChange(text, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-                autoFocus={index === 0}
-              />
-            ))}
-          </View>
+          {/* Visual boxes — pure display, driven by `otp` string */}
+          <TouchableWithoutFeedback onPress={() => hiddenInputRef.current?.focus()}>
+            <View style={styles.otpContainer}>
+              {Array.from({ length: OTP_LENGTH }).map((_, index) => {
+                const digit = otp[index] ?? '';
+                const isActiveBox = isFocused && index === otp.length;
+
+                return (
+                  <View
+                    key={index}
+                    style={[
+                      styles.otpBox,
+                      isActiveBox && styles.otpBoxActive,
+                      !!error && styles.otpBoxError,
+                    ]}>
+                    <Text style={styles.otpDigit}>{digit}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </TouchableWithoutFeedback>
+
+          {/* Real input — invisible, captures typing/autofill/paste */}
+          <TextInput
+            ref={hiddenInputRef}
+            value={otp}
+            onChangeText={handleChange}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            autoComplete="sms-otp"
+            maxLength={OTP_LENGTH}
+            autoFocus
+            style={styles.hiddenInput}
+            caretHidden
+          />
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -111,11 +121,11 @@ export default function OTPScreen({ route, navigation }: AuthScreenProps<'OTP'>)
 
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.button, (otp.some((d) => d === '') || loading) && styles.buttonDisabled]}
-            onPress={() => handleVerify(otp.join(''))}
-            disabled={otp.some((d) => d === '') || loading}>
+            style={[styles.button, (otp.length < OTP_LENGTH || loading) && styles.buttonDisabled]}
+            onPress={() => handleVerify(otp)}
+            disabled={otp.length < OTP_LENGTH || loading}>
             {loading ? (
-              <ActivityIndicator color={theme.colors.primary} size="small" />
+              <ActivityIndicator color={theme.colors.textInverse} size="small" />
             ) : (
               <Text style={styles.buttonText}>Verify</Text>
             )}
@@ -138,17 +148,34 @@ const createStyles = (t: typeof theme) =>
       justifyContent: 'space-between',
       marginBottom: t.spacing.xl,
     },
-    otpInput: {
+    otpBox: {
       width: 45,
       height: 55,
       borderWidth: 1,
       borderColor: t.colors.border,
       borderRadius: t.radius.sm,
       backgroundColor: t.colors.surface,
-      textAlign: 'center',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    otpBoxActive: {
+      borderColor: t.colors.primary,
+      borderWidth: 1.5,
+    },
+    otpBoxError: {
+      borderColor: t.colors.error,
+    },
+    otpDigit: {
       fontSize: t.fontSize.xl,
       fontWeight: t.fontWeight.bold,
       color: t.colors.primary,
+    },
+    // Real input sits off-screen — captures focus, typing, autofill, paste
+    hiddenInput: {
+      position: 'absolute',
+      opacity: 0,
+      height: 1,
+      width: 1,
     },
     errorText: {
       color: t.colors.error,

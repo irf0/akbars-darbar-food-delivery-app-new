@@ -4,24 +4,23 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '@navigation/types';
 import { Image } from 'expo-image';
 import { DietBadge } from 'src/global/components/DietBadge';
-import { useOrderTypeStore } from '@store/useOrderTypeStore';
 import { usePortionSelectorStore } from '@store/usePortionSelectorStore';
+import { useCartStore } from '@store/useCartStore';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'MenuDetail'>;
 
 const MenuDetailScreen = ({ route, navigation }: Props) => {
   const { item } = route.params;
-  const orderType = useOrderTypeStore((state) => state.orderType);
+  const { addItem } = useCartStore();
+
   const openModal = usePortionSelectorStore((state) => state.openModal);
 
-  const halfPrice = orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price;
-  const fullPrice = orderType === 'delivery' ? item.full_delivery_price : item.full_takeaway_price;
-
   const isUnavailable = !item.available || item.isOutOfStock;
+  const halfPrice = item.base_half_price;
 
   const handleAddPress = () => {
-    if (halfPrice === 0) {
-      console.log('Directly add to cart!', item);
+    if (!halfPrice || halfPrice === 0) {
+      addItem(item, 'full', 1);
     } else {
       openModal(item);
     }
@@ -47,7 +46,7 @@ const MenuDetailScreen = ({ route, navigation }: Props) => {
           </Text>
         )}
         <Text style={styles.priceText}>
-          {item.fullPortion}: ₹{fullPrice}
+          {item.fullPortion}: ₹{item.base_full_price}
         </Text>
       </View>
 

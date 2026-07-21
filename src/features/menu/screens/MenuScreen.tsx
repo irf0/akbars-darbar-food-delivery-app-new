@@ -19,7 +19,9 @@ type Props = CompositeScreenProps<
 >;
 
 const MenuScreen = ({ navigation, route }: Props) => {
-  const { flattenedMenu } = useFlattenedMenu();
+  const targetCategory = route.params?.category;
+
+  const { flattenedMenu } = useFlattenedMenu(targetCategory);
   const orderType = useOrderTypeStore((state) => state.orderType);
   const openModal = usePortionSelectorStore((state) => state.openModal);
   const { addItem } = useCartStore();

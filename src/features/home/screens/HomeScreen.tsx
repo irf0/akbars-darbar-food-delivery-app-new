@@ -65,6 +65,13 @@ export default function HomeScreen({ navigation }: Props) {
 
       <OrderTypeBar />
 
+      {/* {activeOrder && (
+        <LiveOrderBanner
+          order={activeOrder}
+          onPress={() => navigation.navigate('OrderTracking', { orderId: activeOrder.id })}
+        />
+      )} */}
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* ── Search Bar ── */}
         <TouchableOpacity
@@ -90,7 +97,6 @@ export default function HomeScreen({ navigation }: Props) {
             })
           }
         />
-
         {/* Best-Sellers */}
         <BestSellerList onItemPress={(item) => navigation.navigate('MenuDetail', { item: item })} />
       </ScrollView>

@@ -15,7 +15,7 @@ import ClearCartModal from 'src/global/components/ClearCartModal';
 import { useCartStore } from '@store/useCartStore';
 import QuantityStepper from 'src/global/components/QuantityStepper';
 import { useCartTotal } from '@hooks/useCartTotal';
-import { PortionType } from '@types';
+import { CartItem, PortionType } from '@types';
 import CouponPicker from '../components/CouponPicker';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useCoupons } from '../hooks/useCoupons';
@@ -53,6 +53,12 @@ const CartScreen = ({ navigation }: Props) => {
 
   const handleCheckoutPress = () => {
     navigation.navigate('Checkout');
+  };
+
+  const getPortionLabel = (item: CartItem) => {
+    if (item.portion === 'half') return item.halfPortion || 'Half';
+    if (item.portion === 'full') return item.fullPortion || 'Full';
+    return '';
   };
 
   // console.log(items);
@@ -103,42 +109,43 @@ const CartScreen = ({ navigation }: Props) => {
                   {items.map((item, index) => (
                     <Fragment key={`${item.id}-${item.portion}`}>
                       <View style={styles.cartRow}>
-                        <View style={styles.leftContent}>
-                          <Image
-                            cachePolicy="memory-disk"
-                            source={{ uri: item.image }}
-                            style={styles.itemImage}
-                            contentFit="cover"
-                            transition={200}
-                          />
+                        <Image
+                          cachePolicy="memory-disk"
+                          source={{ uri: item.image }}
+                          style={styles.itemImage}
+                          contentFit="cover"
+                          transition={200}
+                        />
 
-                          <View style={styles.textContainer}>
-                            <Text style={styles.itemNameText} numberOfLines={2}>
-                              {item.name} ({item.portion})
-                            </Text>
+                        <View style={styles.textContainer}>
+                          <Text style={styles.itemNameText} numberOfLines={2}>
+                            {item.name}
+                          </Text>
+                          <Text style={styles.portionText}>{getPortionLabel(item)}</Text>
 
+                          <View style={styles.bottomRow}>
                             <Text style={styles.priceText}>
                               ₹{item.quantity * getPriceForPortion(item, orderType)}
                             </Text>
-                          </View>
-                        </View>
 
-                        <View style={styles.rightContent}>
-                          <QuantityStepper
-                            quantity={item.quantity}
-                            onIncrement={() => incrementItem(item.id, item.portion)}
-                            onDecrement={() => {
-                              if (item.quantity === 1) {
-                                setActiveItem({
-                                  id: item.id,
-                                  portion: item.portion,
-                                  name: item.name,
-                                });
-                              } else {
-                                decrementItem(item.id, item.portion);
-                              }
-                            }}
-                          />
+                            <View style={styles.stepperWrapper}>
+                              <QuantityStepper
+                                quantity={item.quantity}
+                                onIncrement={() => incrementItem(item.id, item.portion)}
+                                onDecrement={() => {
+                                  if (item.quantity === 1) {
+                                    setActiveItem({
+                                      id: item.id,
+                                      portion: item.portion,
+                                      name: item.name,
+                                    });
+                                  } else {
+                                    decrementItem(item.id, item.portion);
+                                  }
+                                }}
+                              />
+                            </View>
+                          </View>
                         </View>
                       </View>
 
@@ -330,43 +337,11 @@ const styles = StyleSheet.create({
     color: '#111',
   },
 
-  cartRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-  },
-
   leftContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     marginRight: 12,
-  },
-
-  itemImage: {
-    width: 72,
-    height: 72,
-    borderRadius: 12,
-    backgroundColor: '#EEE',
-  },
-
-  textContainer: {
-    flex: 1,
-    marginLeft: 14,
-  },
-
-  itemNameText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111',
-  },
-
-  priceText: {
-    marginTop: 6,
-    fontSize: 15,
-    fontWeight: '700',
-    color: theme.colors.primary,
   },
 
   rightContent: {
@@ -482,5 +457,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     flexWrap: 'wrap',
+  },
+
+  cartRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: 10,
+  },
+
+  itemImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: '#EEE',
+  },
+
+  textContainer: {
+    flex: 1,
+    marginLeft: 14,
+  },
+
+  itemNameText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111',
+    lineHeight: 20,
+  },
+
+  portionText: {
+    marginTop: 2,
+    fontSize: 13,
+    color: '#888',
+  },
+
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+
+  priceText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: theme.colors.primary,
+  },
+
+  stepperWrapper: {
+    transform: [{ scale: 0.8 }],
+    marginRight: -8,
   },
 });

@@ -31,3 +31,8 @@ export interface MenuSection {
   category: string;
   data: MenuItem[];
 }
+
+export interface CartItem extends MenuItem {
+  quantity: number;
+  portion: PortionType;
+}

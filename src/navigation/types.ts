@@ -23,6 +23,7 @@ export type AppStackParamList = {
   Profile: undefined;
   Cart: undefined;
   Checkout: undefined;
+  OrderConfirmation: { orderId: string; live?: boolean };
 };
 export type OrderTypeStackParamList = {
   OrderType: undefined;
@@ -33,7 +34,7 @@ export type OrderTypeStackParamList = {
 export type BottomTabsParamList = {
   Home: undefined;
   Menu: { category?: string };
-  Notifications: undefined;
+  OrderHistory: undefined;
   Profile: undefined;
 };
 

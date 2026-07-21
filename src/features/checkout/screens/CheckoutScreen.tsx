@@ -28,14 +28,20 @@ import { useCartStore } from '@store/useCartStore';
 import { useCouponStore } from '@features/cart/store/useCouponStore';
 import { verifyRazorpayPayment } from 'src/global/services/verifyRazorpayPaymentService';
 import { createCodOrder } from 'src/global/services/createCodOrderService';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '@navigation/types';
 
 const CheckoutScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
+
   const bill = useCheckoutBill();
   const address = useOrderTypeStore((state) => state.address);
   const cartItems = useCartStore((state) => state.items);
   const orderType = useOrderTypeStore((state) => state.orderType) as 'delivery' | 'takeaway';
   const settings = useAdminSettingsStore((state) => state.settings);
   const couponCode = useCouponStore((state) => state.appliedCoupon);
+  const clearCart = useCartStore((state) => state.clearCart);
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('online');
@@ -94,14 +100,9 @@ const CheckoutScreen = () => {
               orderType === 'delivery' ? deliveryInstructions || undefined : undefined,
             takeawaySlot:
               orderType === 'takeaway'
-                ? selectedSlot?.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
+                ? selectedSlot?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 : undefined,
           });
-
-          console.log('RZP response', response);
 
           const options = {
             key: 'rzp_live_TDhzAf5La795ue',
@@ -114,58 +115,49 @@ const CheckoutScreen = () => {
           };
 
           const paymentResult = await RazorpayCheckout.open(options);
-          console.log('Payment success:', paymentResult);
 
-          try {
-            const verifyResponse = await verifyRazorpayPayment({
-              razorpay_payment_id: paymentResult.razorpay_payment_id,
-              razorpay_order_id: paymentResult.razorpay_order_id,
-              razorpay_signature: paymentResult.razorpay_signature,
-            });
-
-            console.log('Order verified:', verifyResponse);
-            // TODO: navigate to order confirmation screen using verifyResponse.order_id
-          } catch (verifyError) {
-            console.error('Payment succeeded but verification failed:', verifyError);
-            setShowVerificationFailedAlert(true);
-
-            // TODO: show user a "contact support" message — money was taken but order wasn't confirmed
-          }
+          const verifyResponse = await verifyRazorpayPayment({
+            razorpay_payment_id: paymentResult.razorpay_payment_id,
+            razorpay_order_id: paymentResult.razorpay_order_id,
+            razorpay_signature: paymentResult.razorpay_signature,
+          });
+          clearCart();
+          navigation.navigate('OrderConfirmation', {
+            orderId: verifyResponse.order_id,
+            live: true,
+          });
         } catch (error) {
-          console.error('Payment failed or cancelled:', error);
-          // don't fall through to "Create order in database" below on failure/cancel
+          console.error('Payment or verification failed:', error);
+          setShowVerificationFailedAlert(true);
           return;
         }
-      }
-
-      // takeaway + COD
-      try {
-        const codResponse = await createCodOrder({
-          orderType: 'takeaway',
-          cartItems: cartItems.map((item) => ({
-            id: item.id,
-            portion: item.portion as 'half' | 'full',
-            quantity: item.quantity,
-          })),
-          couponCode: couponCode?.code,
-          cookingInstructions: cookingInstructions || undefined,
-          takeawaySlot: selectedSlot?.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        });
-
-        console.log('COD order created:', codResponse);
-        // TODO: navigate to order confirmation with codResponse.order_id
-      } catch (error) {
-        console.error('COD order creation failed:', error);
-        // TODO: show error alert to user
+      } else {
+        try {
+          const codResponse = await createCodOrder({
+            orderType: 'takeaway',
+            cartItems: cartItems.map((item) => ({
+              id: item.id,
+              portion: item.portion as 'half' | 'full',
+              quantity: item.quantity,
+            })),
+            couponCode: couponCode?.code,
+            cookingInstructions: cookingInstructions || undefined,
+            takeawaySlot: selectedSlot?.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          });
+          clearCart();
+          navigation.navigate('OrderConfirmation', { orderId: codResponse.order_id, live: true });
+        } catch (error) {
+          console.error('COD order creation failed:', error);
+          return;
+        }
       }
     } finally {
       setIsProcessing(false);
     }
   };
-
   const isCashOnDeliveryOrder =
     orderType === 'takeaway' && settings?.isCODEnabled && paymentMethod === 'cod';
 

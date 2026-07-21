@@ -1,48 +1,53 @@
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import { MenuItem, PortionType } from './menuTypes';
 
 export type OrderType = 'delivery' | 'takeaway';
+export type Portion = 'half' | 'full';
+export type PaymentStatus = 'paid' | 'refunded' | 'cod_pending';
+export type OrderStatus = 'placed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type CouponType = 'flat' | 'percentage';
 
-export type DeliveryMethod = 'Delivery' | 'Takeaway';
-
-export type OrderStatus =
-  'Pending' | 'Confirmed' | 'Preparing' | 'Out for Delivery' | 'Delivered' | 'Cancelled';
-
-export interface DeliveryAddress {
-  area: string;
-  building: string;
-  city: string;
-  street: string;
-}
-
-export interface Taxes {
-  CGST: number;
-  SGST: number;
-}
-
-export interface OrderItem extends MenuItem {
+export interface OrderLineItem {
+  id: string;
+  name: string;
+  portion: Portion;
   quantity: number;
-  selectedPortion: PortionType;
+  unitPrice: number;
+  lineTotal: number;
 }
 
-export interface CartItem extends MenuItem {
-  quantity: number;
-  portion: PortionType;
+export interface AppliedCoupon {
+  code: string;
+  type: CouponType;
+  value: number;
 }
 
-export interface Order {
-  orderId: string;
-  items: OrderItem[];
-  orderDeliveryMethod: DeliveryMethod;
+export interface BillBreakdown {
+  itemsSubtotal: number;
+  deliveryCharge: number;
+  packingCharge: number;
+  platformFee: number;
+  discount: number;
+  total: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  appliedCoupon: AppliedCoupon | null;
+}
+
+export interface OrderDoc {
+  uid: string;
+  orderType: OrderType;
+  addressId: string | null;
+  lineItems: OrderLineItem[];
+  bill: BillBreakdown;
+  cookingInstructions: string | null;
+  deliveryInstructions: string | null;
+  takeawaySlot: string | null;
+  currency: 'INR';
+  razorpayOrderId: string | null;
+  razorpayPaymentId: string | null;
+  paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
-  deliveryAddress: DeliveryAddress;
-  deliveryCharge: string;
-  discountGiven: number;
-  estimatedDeliveryTime: number;
-  estimatedTime: string;
-  isCod: boolean;
-  cookingPreference: string;
-  cancellationReason: string;
-  Taxes: Taxes;
+  orderNumber: string;
+  deliveryOtp: string;
   createdAt: FirebaseFirestoreTypes.Timestamp;
 }

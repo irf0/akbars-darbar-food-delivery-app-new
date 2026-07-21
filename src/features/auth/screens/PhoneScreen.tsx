@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -20,10 +20,28 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validationError, setValidationError] = useState('');
   const [errorDismissed, setErrorDismissed] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('Sending code...');
   const { sendOTP, loading, error } = useLogin();
   const activeTheme = theme;
   const { colors, shadow } = activeTheme;
   const styles = createStyles(activeTheme);
+
+  const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      setLoadingMessage('Sending code...');
+      slowTimerRef.current = setTimeout(() => {
+        setLoadingMessage('This is taking longer than usual...');
+      }, 3500);
+    } else {
+      if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
+    }
+
+    return () => {
+      if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
+    };
+  }, [loading]);
 
   const handleChangeText = (value: string) => {
     setPhoneNumber(value);
@@ -94,6 +112,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
               maxLength={10}
               placeholderTextColor={colors.textDisabled}
               autoFocus
+              editable={!loading}
             />
           </View>
 
@@ -114,7 +133,10 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
             onPress={handleContinue}
             disabled={phoneNumber.length < 10 || loading}>
             {loading ? (
-              <ActivityIndicator color={theme.colors.primary} size="large" />
+              <View style={styles.loadingRow}>
+                <ActivityIndicator color={theme.colors.textInverse} size="small" />
+                <Text style={styles.loadingText}>{loadingMessage}</Text>
+              </View>
             ) : (
               <Text style={styles.buttonText}>Send Code</Text>
             )}
@@ -258,6 +280,16 @@ const createStyles = (t: typeof theme) =>
       color: t.colors.textInverse,
       fontSize: t.fontSize.base,
       fontWeight: t.fontWeight.bold,
+    },
+    loadingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    loadingText: {
+      color: t.colors.textInverse,
+      fontSize: t.fontSize.sm,
+      fontWeight: t.fontWeight.semibold,
     },
     footerText: {
       marginTop: t.spacing.lg,

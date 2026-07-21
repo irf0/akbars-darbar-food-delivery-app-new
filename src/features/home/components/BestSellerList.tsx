@@ -20,10 +20,9 @@ const BestSellerList = ({ onItemPress }: Props) => {
   const { addItem } = useCartStore();
 
   const handleAddBtn = (item: MenuItem) => {
-    const halfPrice =
-      orderType === 'delivery' ? item.half_delivery_price : item.half_takeaway_price;
+    const halfPrice = item.base_half_price;
 
-    if (halfPrice === 0) {
+    if (!halfPrice || halfPrice === 0) {
       addItem(item, 'full', 1);
     } else {
       openModal(item);

@@ -5,10 +5,10 @@ import { BottomTabsParamList } from '@navigation/types';
 
 // Screens
 import HomeScreen from '@features/home/screens/HomeScreen';
-import NotificationScreen from '@features/notifications/screens/NotificationScreen';
 import ProfileScreen from '@features/profile/screens/ProfileScreen';
 import MenuScreen from '@features/menu/screens/MenuScreen';
 import { theme } from 'src/theme';
+import OrderHistoryScreen from '@features/orders/screens/OrderHistoryScreen';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator<BottomTabsParamList>();
 const iconConfig: Record<keyof BottomTabsParamList, { active: any; inactive: any }> = {
   Home: { active: 'home', inactive: 'home-outline' },
   Menu: { active: 'search', inactive: 'search-outline' },
-  Notifications: { active: 'notifications', inactive: 'notifications-outline' },
+  OrderHistory: { active: 'receipt', inactive: 'receipt-outline' },
   Profile: { active: 'person', inactive: 'person-outline' },
 };
 
@@ -52,7 +52,7 @@ export const BottomTabs = () => {
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Menu" component={MenuScreen} />
-      <Tab.Screen name="Notifications" component={NotificationScreen} />
+      <Tab.Screen name="OrderHistory" component={OrderHistoryScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

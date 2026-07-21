@@ -12,6 +12,13 @@
         "paths": ["node_modules", ".yarn/cache"]
       }
     },
+    "apk-build": {
+      "developmentClient": false,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "preview": {
       "distribution": "internal"
     },
