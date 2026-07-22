@@ -11,6 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen';
 import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal';
 import { useAddressMigration } from '@hooks/useAddressMigration';
+import messaging from '@react-native-firebase/messaging';
+
 // import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function RootNavigator() {
@@ -38,6 +40,17 @@ export default function RootNavigator() {
   useEffect(() => {
     migrateLegacyAddress();
   }, []);
+
+  //SUBSCRIBE TO PROMO NOTIFS
+  useEffect(() => {
+    const subscribeToPromotions = async () => {
+      await messaging().subscribeToTopic('promotions');
+    };
+
+    if (isAuthenticated) {
+      subscribeToPromotions().catch((err) => console.log('Topic subscribe failed:', err));
+    }
+  }, [isAuthenticated]);
 
   // TODO: replace with proper AppSplashScreen once shared components are rebuilt
   if (showSplash || !authHasHydrated || !orderTypeHasHydrated) {

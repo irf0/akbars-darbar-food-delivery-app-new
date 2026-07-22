@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, TouchableOpacity, Animated, StatusBar } from 'react-native';
+import {
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Animated,
+  StatusBar,
+  Button,
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
@@ -96,6 +104,11 @@ export default function HomeScreen({ navigation }: Props) {
               params: { category: item },
             })
           }
+        />
+
+        <Button
+          title="Test Deep Link"
+          onPress={() => Linking.openURL('myapp://order/qGqE1UStjSAOeAs3EWmF')}
         />
         {/* Best-Sellers */}
         <BestSellerList onItemPress={(item) => navigation.navigate('MenuDetail', { item: item })} />

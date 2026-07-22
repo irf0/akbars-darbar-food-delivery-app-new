@@ -55,6 +55,21 @@ const OrderHistoryScreen = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewInputText, setReviewInputText] = useState('');
   const [activeReviewOrderId, setActiveReviewOrderId] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleManualRefresh = async () => {
+    if (!uid) return;
+    setIsRefreshing(true);
+    try {
+      // This forces your hooks to re-fetch if they listen to state updates
+      // Or you can call your store refetch actions here directly
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleReorder = (order: OrderDoc) => {
     const menuItems = useMenuStore.getState().items;
@@ -111,11 +126,19 @@ const OrderHistoryScreen = () => {
       </View>
     );
   }
-
   if (orders.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>No orders yet</Text>
+        <Text style={styles.emptyText}>
+          {'No Past Orders yet.\nCompleted orders will show up here once delivered.'}
+        </Text>
+
+        <TouchableOpacity
+          style={[{ marginTop: 16 }]}
+          onPress={handleManualRefresh}
+          disabled={isRefreshing}>
+          <Text style={styles.reviewText}>{isRefreshing ? 'Loading...' : 'Check Again'}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -205,6 +228,7 @@ const styles = StyleSheet.create({
     color: '#777',
     fontSize: 15,
     fontWeight: '500',
+    textAlign: 'center',
   },
 
   list: {

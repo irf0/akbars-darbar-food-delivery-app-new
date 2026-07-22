@@ -13,7 +13,8 @@ export interface DarbarUser {
   phone: string;
   firstName: string;
   isRegistered: boolean;
-  fcmToken: string;
+  fcmToken: string | null;
+  isNotificationEnabled: boolean;
   // addresses: UserAddress[]; no need since integrated geolocation but still keep incase
   createdAt: string;
 }

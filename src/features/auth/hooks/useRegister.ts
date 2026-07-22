@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 import { DarbarUser } from '@types';
+import { registerForPushNotificationsAsync } from '@utils/registerForPushNotifications';
 
 export const useRegister = () => {
   const [loading, setLoading] = useState(false);
@@ -18,23 +19,17 @@ export const useRegister = () => {
       const currentUser = auth().currentUser;
       if (!currentUser) return false;
       const token = await currentUser.getIdToken();
+      const result = await registerForPushNotificationsAsync();
+      const fcmToken = result.token;
+      const notificationEnabled = result.enabled;
+
       const newUser: DarbarUser = {
         uid: currentUser.uid,
         phone: currentUser.phoneNumber ?? '',
         firstName,
         isRegistered: true,
-        fcmToken: '',
-        // addresses: [
-        //   {
-        //     id: Date.now().toString(),
-        //     label: addresses.label || 'Home',
-        //     area: addresses.area,
-        //     building: addresses.building,
-        //     street: addresses.street,
-        //     city: addresses.city,
-        //     isDefault: true,
-        //   },
-        // ],
+        fcmToken: fcmToken,
+        isNotificationEnabled: notificationEnabled,
         createdAt: new Date().toISOString(),
       };
       await firestore().collection('users').doc(currentUser.uid).set(newUser);
