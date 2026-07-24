@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from 'src/theme';
+import { Image } from 'expo-image';
 
 interface Props {
   onPress: () => void;
@@ -19,10 +20,14 @@ export const HeroBanner = ({ onPress }: Props) => {
         </Text>
         <TouchableOpacity style={styles.heroBtn} onPress={onPress}>
           <Text style={styles.heroBtnText}>Order Now</Text>
-          <Ionicons name="arrow-forward" size={14} color="#fff" />
+          <Ionicons name="arrow-forward" size={14} color={t.colors.primary} />
         </TouchableOpacity>
       </View>
-      <Text style={styles.heroEmoji}>🍛</Text>
+      <Image
+        source={require('../../../../assets/dum-biryani.png')}
+        style={styles.heroImage}
+        contentFit="contain"
+      />
     </View>
   );
 };
@@ -39,6 +44,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: t.spacing.xl,
     overflow: 'hidden',
+    marginTop: 15,
+  },
+  heroImage: {
+    width: 110,
+    height: 110,
+    borderRadius: t.radius.lg,
+    marginLeft: t.spacing.sm,
   },
   heroContent: { flex: 1 },
   heroEyebrow: {
@@ -62,16 +74,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: t.colors.background,
     alignSelf: 'flex-start',
     paddingHorizontal: t.spacing.md,
     paddingVertical: t.spacing.xs,
     borderRadius: t.radius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
   },
   heroBtnText: {
-    color: '#fff',
+    color: t.colors.primary,
     fontSize: t.fontSize.sm,
     fontWeight: t.fontWeight.semibold,
   },

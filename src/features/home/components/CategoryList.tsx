@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { ImageSourcePropType } from 'react-native';
 import { theme } from 'src/theme';
 import { Image } from 'expo-image';
+import { AnimatedPressable } from '@components/ui/AnimatedPressable';
 
 const t = theme;
 
-const CATEGORY_ICONS: Record<string, any> = {
+const CATEGORY_ICONS: Record<string, ImageSourcePropType> = {
   beverages: require('../../../../assets/CategoryIcons/category-beverages.png'),
   biryani: require('../../../../assets/CategoryIcons/category-biryani.png'),
   snacks: require('../../../../assets/CategoryIcons/category-dessert.png'),
@@ -23,6 +25,10 @@ function getCategoryIcon(category: string) {
   return CATEGORY_ICONS[category.toLowerCase()] ?? FALLBACK_ICON;
 }
 
+function formatCategoryName(category: string) {
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
 interface Props {
   categories: string[];
   onCategoryPress: (category: string) => void;
@@ -31,23 +37,21 @@ interface Props {
 export const CategoryList = ({ categories, onCategoryPress }: Props) => {
   return (
     <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Categories</Text>
+      <View>
+        <Text style={styles.sectionTitle}>Browse by categories</Text>
+        <Text style={styles.sectionSubtitle}>{"Find exactly what you're looking for"}</Text>
       </View>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         data={categories}
         keyExtractor={(i) => i}
-        contentContainerStyle={{ gap: 10 }}
+        contentContainerStyle={{ gap: 10, marginTop: 10 }}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.categoryChip}
-            activeOpacity={0.7}
-            onPress={() => onCategoryPress(item)}>
+          <AnimatedPressable style={styles.categoryChip} onPress={() => onCategoryPress(item)}>
             <Image source={getCategoryIcon(item)} style={styles.categoryIcon} />
-            <Text style={styles.categoryEmoji}>{item}</Text>
-          </TouchableOpacity>
+            <Text style={styles.categoryName}>{formatCategoryName(item)}</Text>
+          </AnimatedPressable>
         )}
       />
     </View>
@@ -67,6 +71,13 @@ const styles = StyleSheet.create({
     fontWeight: t.fontWeight.bold,
     color: t.colors.text,
   },
+
+  sectionSubtitle: {
+    marginTop: 4,
+    fontSize: 14,
+    color: t.colors.textSecondary,
+    fontWeight: '500',
+  },
   sectionLink: {
     fontSize: t.fontSize.sm,
     color: t.colors.primary,
@@ -76,21 +87,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: t.colors.surface,
     borderRadius: t.radius.lg,
-    paddingHorizontal: t.spacing.md,
-    paddingVertical: t.spacing.sm,
-    borderWidth: 1,
-    borderColor: t.colors.border,
-    gap: 4,
-    minWidth: 70,
+    paddingHorizontal: t.spacing.lg,
+    paddingVertical: t.spacing.md,
+    minWidth: 84, // was 70
+    gap: 6,
   },
   categoryIcon: {
-    width: 32,
-    height: 32,
+    width: 40, // was 32
+    height: 40,
     resizeMode: 'contain',
   },
-  categoryEmoji: { fontSize: 24 },
   categoryName: {
-    fontSize: t.fontSize.xs,
+    fontSize: t.fontSize.md,
     fontWeight: t.fontWeight.medium,
     color: t.colors.text,
   },

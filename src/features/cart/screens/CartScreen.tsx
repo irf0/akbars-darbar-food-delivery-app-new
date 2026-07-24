@@ -61,16 +61,22 @@ const CartScreen = ({ navigation }: Props) => {
     return '';
   };
 
-  // console.log(items);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Your Cart</Text>
+        <View style={styles.left}>
+          <Text style={styles.greeting}>Your Cart</Text>
+          <Text style={styles.name}>
+            {items.length} {items.length === 1 ? 'Item' : 'Items'}
+          </Text>
+        </View>
 
         {items.length > 0 && (
-          <Pressable onPress={() => setClearCartModalVisible(true)}>
-            <Text style={styles.clearCartText}>Clear Cart</Text>
-          </Pressable>
+          <View style={styles.right}>
+            <Pressable onPress={() => setClearCartModalVisible(true)} hitSlop={8}>
+              <Text style={styles.clearCartText}>Clear Cart</Text>
+            </Pressable>
+          </View>
         )}
       </View>
 
@@ -230,7 +236,7 @@ const CartScreen = ({ navigation }: Props) => {
           />
 
           <TouchableOpacity
-            // disabled={isDeliveryDisabled}
+            disabled={isDeliveryDisabled}
             style={[styles.cta, isDeliveryDisabled && styles.disabledBtn]}
             activeOpacity={0.8}
             onPress={handleCheckoutPress}>
@@ -248,7 +254,7 @@ export default CartScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.background,
   },
   warningText: {
     color: '#D32F2F',
@@ -267,32 +273,64 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.background,
   },
 
   content: {
-    paddingBottom: 120,
+    paddingBottom: 70,
     paddingTop: 4,
   },
 
   headerContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+    zIndex: 10,
   },
 
-  headerText: {
-    fontSize: 22,
+  left: {
+    flex: 1,
+    marginRight: 16,
+  },
+
+  greeting: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: theme.colors.textSecondary,
+    marginBottom: 4,
+  },
+
+  name: {
+    fontSize: 15,
     fontWeight: '700',
-    color: '#111',
+    color: theme.colors.text,
+  },
+
+  right: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
 
   clearCartText: {
     fontSize: 15,
     fontWeight: '600',
     color: '#E53935',
+  },
+
+  headerText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#111',
   },
 
   emptyContainer: {

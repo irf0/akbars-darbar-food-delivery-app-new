@@ -1,6 +1,8 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { theme } from '@theme';
+import { haptics } from 'src/theme/haptics';
 
 interface QuantityStepperProps {
   quantity: number;
@@ -9,22 +11,31 @@ interface QuantityStepperProps {
 }
 
 const QuantityStepper = ({ quantity, onIncrement, onDecrement }: QuantityStepperProps) => {
+  const handleIncrement = () => {
+    haptics.tap();
+    onIncrement();
+  };
+
+  const handleDecrement = () => {
+    haptics.tap();
+    onDecrement();
+  };
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={onDecrement}
+        onPress={handleDecrement}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-        hitSlop={8}>
-        <AntDesign name="minus" size={16} color="#1f2937" />
+        hitSlop={6}>
+        <AntDesign name="minus" size={14} color={theme.colors.primary} />
       </Pressable>
 
       <Text style={styles.quantity}>{quantity}</Text>
 
       <Pressable
-        onPress={onIncrement}
+        onPress={handleIncrement}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-        hitSlop={8}>
-        <AntDesign name="plus" size={16} color="#1f2937" />
+        hitSlop={6}>
+        <AntDesign name="plus" size={14} color={theme.colors.primary} />
       </Pressable>
     </View>
   );
@@ -36,29 +47,27 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    height: 32,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    borderRadius: 8,
+    backgroundColor: '#FFF',
+    overflow: 'hidden',
   },
   button: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 35,
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f3f4f6',
-  },
-  deleteButton: {
-    backgroundColor: '#fee2e2',
-    borderWidth: 1,
-    borderColor: '#fca5a5',
   },
   pressed: {
-    opacity: 0.6,
+    backgroundColor: theme.colors.primary + '15', // light tint on press
   },
   quantity: {
-    fontSize: 15,
-    fontWeight: '600',
-    minWidth: 20,
+    minWidth: 22,
     textAlign: 'center',
-    color: '#1f2937',
+    fontSize: 14,
+    fontWeight: '700',
+    color: theme.colors.primary,
   },
 });

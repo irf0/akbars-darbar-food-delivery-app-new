@@ -24,6 +24,9 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { useUserReviews } from '../hooks/useUserReviews';
 import { useReviewsStore } from '../store/useReviewsStore';
 import { submitReview } from 'src/global/services/reviewService';
+import { useToastStore } from '@store/useToastStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { haptics } from 'src/theme/haptics';
 
 const formatRupees = (paise: number) => `₹${(paise / 100).toFixed(2)}`;
 
@@ -51,21 +54,17 @@ const OrderHistoryScreen = () => {
   const orders = useOrdersStore((state) => state.orders);
   const isLoading = useOrdersStore((state) => state.isLoading);
   const reviewedOrderIds = useReviewsStore((state) => state.reviewedOrderIds);
-
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewInputText, setReviewInputText] = useState('');
   const [activeReviewOrderId, setActiveReviewOrderId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { refresh } = usePastOrders(uid);
+  const toast = useToastStore.getState();
 
   const handleManualRefresh = async () => {
-    if (!uid) return;
     setIsRefreshing(true);
     try {
-      // This forces your hooks to re-fetch if they listen to state updates
-      // Or you can call your store refetch actions here directly
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error(error);
+      await refresh();
     } finally {
       setIsRefreshing(false);
     }
@@ -86,6 +85,7 @@ const OrderHistoryScreen = () => {
 
       addItem(menuItem, lineItem.portion, lineItem.quantity);
       addedAnyItem = true;
+      toast.show({ message: 'Added to cart', type: 'success' });
     }
 
     if (addedAnyItem) {
@@ -101,6 +101,7 @@ const OrderHistoryScreen = () => {
   };
 
   const openReviewSheet = (orderId: string) => {
+    haptics.select();
     setActiveReviewOrderId(orderId);
     setReviewInputText('');
     setReviewRating(0);
@@ -123,28 +124,40 @@ const OrderHistoryScreen = () => {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text>{'Loading...'}</Text>
       </View>
     );
   }
   if (orders.length === 0) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.emptyText}>
-          {'No Past Orders yet.\nCompleted orders will show up here once delivered.'}
+      <SafeAreaView style={styles.emptyContainer}>
+        <Text style={styles.emptyIcon}>🍽️</Text>
+
+        <Text style={styles.emptyTitle}>No orders yet</Text>
+
+        <Text style={styles.emptySubtitle}>
+          {" Your completed orders will appear here once you've enjoyed your first meal with us."}
         </Text>
 
         <TouchableOpacity
-          style={[{ marginTop: 16 }]}
+          activeOpacity={0.9}
+          style={styles.exploreButton}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}>
+          <Text style={styles.exploreButtonText}>Explore Menu</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.refreshButton}
           onPress={handleManualRefresh}
           disabled={isRefreshing}>
-          <Text style={styles.reviewText}>{isRefreshing ? 'Loading...' : 'Check Again'}</Text>
+          <Text style={styles.refreshButtonText}>{isRefreshing ? 'Refreshing...' : 'Refresh'}</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
-
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={orders}
         keyExtractor={(item) => item.id}
@@ -210,18 +223,77 @@ const OrderHistoryScreen = () => {
         onRatingChange={setReviewRating}
         onSubmit={handleReviewSubmit}
       />
-    </>
+    </SafeAreaView>
   );
 };
 
 export default OrderHistoryScreen;
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 36,
+  },
+
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 22,
+  },
+
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#1F2937',
+  },
+
+  emptySubtitle: {
+    marginTop: 10,
+    fontSize: 15,
+    lineHeight: 24,
+    color: '#7B7B7B',
+    textAlign: 'center',
+    maxWidth: 320,
+  },
+
+  exploreButton: {
+    marginTop: 34,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 34,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+
+  exploreButtonText: {
+    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+
+  refreshButton: {
+    marginTop: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+  },
+
+  refreshButtonText: {
+    color: theme.colors.primary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
+  container: { flex: 1, backgroundColor: theme.colors.background },
+
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8F9FB',
+    backgroundColor: '#FBF9F6',
   },
 
   emptyText: {
@@ -234,7 +306,7 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
     paddingBottom: 28,
-    backgroundColor: '#F8F9FB',
+    backgroundColor: theme.colors.background,
   },
 
   card: {

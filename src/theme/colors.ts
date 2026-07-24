@@ -37,8 +37,8 @@ export const lightColors = {
   secondary: palette.blue500,
 
   // Backgrounds
-  background: palette.white,
-  surface: palette.gray50,
+  background: '#FBF9F6',
+  surface: '#F5F1EC',
   surfaceAlt: palette.gray100,
 
   // Text
@@ -54,6 +54,8 @@ export const lightColors = {
   // Status
   success: palette.green500,
   successBg: palette.green100,
+  successText: '#166534',
+  errorText: '#7F1D1D',
   error: palette.red500sem,
   errorBg: palette.red100sem,
   warning: palette.yellow500,

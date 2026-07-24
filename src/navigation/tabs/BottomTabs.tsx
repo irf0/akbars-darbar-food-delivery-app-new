@@ -1,4 +1,5 @@
 import React from 'react';
+import { ComponentProps } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabsParamList } from '@navigation/types';
@@ -12,17 +13,20 @@ import OrderHistoryScreen from '@features/orders/screens/OrderHistoryScreen';
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
-// 1. Move icons OUTSIDE to prevent re-creating the object on every render
-const iconConfig: Record<keyof BottomTabsParamList, { active: any; inactive: any }> = {
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
+
+const iconConfig: Record<
+  keyof BottomTabsParamList,
+  { active: IoniconName; inactive: IoniconName }
+> = {
   Home: { active: 'home', inactive: 'home-outline' },
-  Menu: { active: 'search', inactive: 'search-outline' },
+  Menu: { active: 'restaurant', inactive: 'restaurant-outline' },
   OrderHistory: { active: 'receipt', inactive: 'receipt-outline' },
   Profile: { active: 'person', inactive: 'person-outline' },
 };
 
 export const BottomTabs = () => {
-  // 2. Use your theme tokens
-  const { colors, spacing, fontSize, fontWeight } = theme;
+  const { colors, spacing, fontSize, fontWeight, radius } = theme;
 
   return (
     <Tab.Navigator
@@ -40,10 +44,17 @@ export const BottomTabs = () => {
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
           backgroundColor: colors.background,
-          borderTopColor: colors.border,
           height: 60,
           paddingBottom: spacing.sm,
           paddingTop: spacing.xs,
+          borderTopLeftRadius: radius.xl,
+          borderTopRightRadius: radius.xl,
+          shadowColor: colors.text,
+          shadowOpacity: 0.08,
+          shadowOffset: { width: 0, height: -4 },
+          shadowRadius: 10,
+          elevation: 8,
+          borderWidth: 1,
         },
         tabBarLabelStyle: {
           fontSize: fontSize.xs,
@@ -52,7 +63,13 @@ export const BottomTabs = () => {
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Menu" component={MenuScreen} />
-      <Tab.Screen name="OrderHistory" component={OrderHistoryScreen} />
+      <Tab.Screen
+        name="OrderHistory"
+        component={OrderHistoryScreen}
+        options={{
+          tabBarLabel: 'Past Orders',
+        }}
+      />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

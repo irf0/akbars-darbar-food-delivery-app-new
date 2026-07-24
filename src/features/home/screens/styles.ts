@@ -97,25 +97,46 @@ export const createStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: t.spacing.lg,
-    paddingBottom: t.spacing.xxl,
+    // paddingBottom: t.spacing.xxl,
   },
   searchBar: {
+    height: 56,
+    marginHorizontal: 20,
+    marginTop: 18,
+    borderRadius: 18,
+    backgroundColor: theme.colors.background,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: t.spacing.sm,
-    backgroundColor: t.colors.surface,
-    borderRadius: t.radius.md,
-    paddingHorizontal: t.spacing.md,
-    height: 46,
-    borderWidth: 1,
-    borderColor: t.colors.border,
-    marginBottom: t.spacing.lg,
-  },
-  searchPlaceholder: {
-    fontSize: t.fontSize.sm,
-    color: t.colors.textSecondary,
+    paddingHorizontal: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 4,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
   },
 
+  placeholder: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 15,
+    color: theme.colors.textSecondary,
+  },
+
+  shortcut: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#F4F4F4',
+  },
+
+  shortcutText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#999',
+  },
   // Loading skeletons
   loadingRow: { gap: t.spacing.sm },
   skeletonCard: {

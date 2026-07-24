@@ -3,7 +3,8 @@ import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 export type OrderType = 'delivery' | 'takeaway';
 export type Portion = 'half' | 'full';
 export type PaymentStatus = 'paid' | 'refunded' | 'cod_pending';
-export type OrderStatus = 'placed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type OrderStatus =
+  'placed' | 'confirmed' | 'preparing' | 'out_for_delivery' | 'ready' | 'completed' | 'cancelled';
 export type CouponType = 'flat' | 'percentage';
 
 export interface OrderLineItem {

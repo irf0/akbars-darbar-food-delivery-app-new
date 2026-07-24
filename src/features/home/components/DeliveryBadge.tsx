@@ -2,13 +2,23 @@ import { theme } from 'src/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
 export const DeliveryBadge = ({ enabled }: { enabled: boolean }) => {
-  const t = theme;
   return (
-    <View style={[deliveryStyles.badge, { backgroundColor: enabled ? '#E8F5E9' : '#FEE2E2' }]}>
+    <View
+      style={[
+        deliveryStyles.badge,
+        { backgroundColor: enabled ? theme.colors.successBg : theme.colors.errorBg },
+      ]}>
       <View
-        style={[deliveryStyles.dot, { backgroundColor: enabled ? '#22C55E' : t.colors.primary }]}
+        style={[
+          deliveryStyles.dot,
+          { backgroundColor: enabled ? theme.colors.success : theme.colors.error },
+        ]}
       />
-      <Text style={[deliveryStyles.text, { color: enabled ? '#166534' : '#7F1D1D' }]}>
+      <Text
+        style={[
+          deliveryStyles.text,
+          { color: enabled ? theme.colors.successText : theme.colors.errorText },
+        ]}>
         {enabled ? 'Delivery Open' : 'Delivery Closed'}
       </Text>
     </View>
@@ -19,11 +29,19 @@ const deliveryStyles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 20,
   },
-  dot: { width: 6, height: 6, borderRadius: 3 },
-  text: { fontSize: 11, fontWeight: '600' },
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+  },
+  text: {
+    fontSize: 10,
+    fontWeight: '600',
+    letterSpacing: 0.1,
+  },
 });

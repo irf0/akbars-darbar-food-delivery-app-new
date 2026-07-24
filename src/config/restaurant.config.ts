@@ -1,9 +1,9 @@
 export const restaurantConfig = {
-  name: 'Akbar Darbar',
+  name: "Akbar's Darbar",
   tagline: 'Authentic Flavours, Delivered Fresh',
   logoLetter: 'D',
 
-  supportPhone: '+91XXXXXXXXXX',
+  supportPhone: '+91 7399445566',
   supportEmail: 'support@darbar.com',
   whatsappNumber: '+91XXXXXXXXXX',
 

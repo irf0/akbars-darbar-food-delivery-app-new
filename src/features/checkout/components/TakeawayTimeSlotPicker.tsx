@@ -23,14 +23,17 @@ export const TakeawayTimeSlotPicker = ({
 }: Props) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['60%', '65%'], []);
+  const snapPoints = useMemo(() => ['65%'], []);
+
+  const wasVisible = useRef(false);
 
   useEffect(() => {
-    if (visible) {
+    if (visible && !wasVisible.current) {
       bottomSheetModalRef.current?.present();
-    } else {
+    } else if (!visible && wasVisible.current) {
       bottomSheetModalRef.current?.dismiss();
     }
+    wasVisible.current = visible;
   }, [visible]);
 
   return (
@@ -40,7 +43,6 @@ export const TakeawayTimeSlotPicker = ({
       enablePanDownToClose
       enableDynamicSizing={false}
       onDismiss={onClose}
-
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}

@@ -13,6 +13,7 @@ module.exports = [
       'react-hooks/exhaustive-deps': 'warn',
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-unused-vars': 'error',
+      'react-hooks/immutability': 'off', // flags Reanimated's .value mutation convention; compiler isn't enabled in app.json anyway
     },
   },
 ];

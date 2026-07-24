@@ -3,6 +3,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Coupon } from 'src/global/services/couponService';
 import { useCouponStore } from '../store/useCouponStore';
+import { theme } from '@theme';
 
 type Props = {
   bottomSheetRef: React.RefObject<BottomSheetModal | null>;
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: theme.colors.background,
   },
 
   title: {
@@ -107,22 +109,12 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-
     backgroundColor: '#fff',
-
     borderRadius: 12,
-
     borderWidth: 1,
     borderColor: '#E5E7EB',
-
     padding: 16,
   },
-
-  //   code: {
-  //     fontSize: 16,
-  //     fontWeight: '700',
-  //     color: '#111827',
-  //   },
 
   description: {
     marginTop: 6,
@@ -143,7 +135,7 @@ const styles = StyleSheet.create({
   },
 
   applyButton: {
-    backgroundColor: '#E53935',
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 8,
@@ -177,6 +169,6 @@ const styles = StyleSheet.create({
   },
 
   appliedText: {
-    color: '#15803D',
+    color: theme.colors.successText,
   },
 });

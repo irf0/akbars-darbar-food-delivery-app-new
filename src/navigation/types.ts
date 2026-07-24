@@ -24,6 +24,8 @@ export type AppStackParamList = {
   Cart: undefined;
   Checkout: undefined;
   OrderConfirmation: { orderId: string; live?: boolean };
+  EditProfile: undefined;
+  Support: { phone: string };
 };
 export type OrderTypeStackParamList = {
   OrderType: undefined;

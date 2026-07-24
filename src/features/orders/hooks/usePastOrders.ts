@@ -1,24 +1,33 @@
-import { useEffect } from 'react';
-import { useOrdersStore } from '@features/orders/store/useOrdersStore';
+import { useCallback, useEffect } from 'react';
 import { fetchUserOrders } from 'src/global/services/ordersService';
+import { useOrdersStore } from '@features/orders/store/useOrdersStore';
 
 export const usePastOrders = (uid: string | undefined) => {
-  const setLoading = useOrdersStore((state) => state.setLoading);
   const setOrders = useOrdersStore((state) => state.setOrders);
+  const setLoading = useOrdersStore((state) => state.setLoading);
 
-  useEffect(() => {
-    if (!uid) return;
+  const loadOrders = useCallback(async () => {
+    if (!uid) {
+      setOrders([]);
+      return;
+    }
 
     setLoading(true);
+    try {
+      const orders = await fetchUserOrders(uid);
+      setOrders(orders);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [uid, setOrders, setLoading]);
 
-    fetchUserOrders(uid)
-      .then((orders) => {
-        setOrders(orders);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch orders:', err);
-        setLoading(false);
-      });
-  }, [uid]);
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  return {
+    refresh: loadOrders,
+  };
 };

@@ -9,8 +9,6 @@ export const fetchUserOrders = async (uid: string): Promise<(OrderDoc & { id: st
     .orderBy('createdAt', 'desc')
     .get();
 
-  console.log('Orders fetched:', snapshot.size);
-
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...(doc.data() as OrderDoc),

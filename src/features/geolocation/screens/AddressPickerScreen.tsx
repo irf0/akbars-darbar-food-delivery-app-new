@@ -15,6 +15,7 @@ const AddressPickerScreen = () => {
     bottomSheetRef,
     snapPoints,
     isLoadingGPS,
+    isConfirming,
     addressInfoMessage,
     flatNum,
     landmark,
@@ -38,7 +39,8 @@ const AddressPickerScreen = () => {
   if (isLoadingGPS || latitude == null || longitude == null) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text>{'Fetching Location...'}</Text>
       </View>
     );
   }
@@ -102,6 +104,7 @@ const AddressPickerScreen = () => {
         setFlatNum={setFlatNum}
         landmark={landmark}
         setLandMark={setLandMark}
+        isConfirming={isConfirming}
         onConfirm={handleConfirmPress}
       />
 
@@ -113,7 +116,7 @@ const AddressPickerScreen = () => {
           icon={<Text style={styles.modalIcon}>📍</Text>}
           cancelText="Change Location"
           confirmText="Takeaway Instead"
-          onCancel={() => setShowServiceabilityModal(true)}
+          onCancel={() => setShowServiceabilityModal(false)}
           onConfirm={() => handleModalConfirmPress()}
         />
       )}

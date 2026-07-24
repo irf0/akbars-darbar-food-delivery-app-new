@@ -10,7 +10,7 @@ type Address = {
   formattedAddress: string;
 };
 
-interface OrderTypeState {
+export interface OrderTypeState {
   orderType: OrderType | null;
   address: Address | null;
   orderTypeHasHydrated: boolean;

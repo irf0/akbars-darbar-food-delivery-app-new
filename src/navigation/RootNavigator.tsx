@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useAuthStore } from '@features/auth/store/useAuthStore';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
@@ -12,6 +11,10 @@ import ShopClosedScreen from '@features/auth/screens/ShopClosedScreen';
 import { PortionSelectorModal } from 'src/global/components/PortionSelectorModal';
 import { useAddressMigration } from '@hooks/useAddressMigration';
 import messaging from '@react-native-firebase/messaging';
+import { ToastHost } from '@components/ui/ToastHost';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FlyToCartOverlay } from '@components/FlyToCartOverlay';
+import AppSplashScreen from '@components/AppSplashScreen';
 
 // import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
@@ -28,7 +31,6 @@ export default function RootNavigator() {
 
   // const isShopClosed = settings?.isShopClosed ?? false;
 
-  // Gate: takeaway alone is valid, delivery needs an address alongside it
   const hasValidOrderType = orderType === 'takeaway' || (orderType === 'delivery' && !!address);
 
   useEffect(() => {
@@ -54,11 +56,7 @@ export default function RootNavigator() {
 
   // TODO: replace with proper AppSplashScreen once shared components are rebuilt
   if (showSplash || !authHasHydrated || !orderTypeHasHydrated) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <AppSplashScreen />;
   }
 
   const navigatorKey = isShopClosed
@@ -70,21 +68,25 @@ export default function RootNavigator() {
       : 'auth';
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer key={navigatorKey} linking={linkingConfig}>
-        {isShopClosed ? (
-          <ShopClosedScreen />
-        ) : showApp ? (
-          hasValidOrderType ? (
-            <AppStack />
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer key={navigatorKey} linking={linkingConfig}>
+          {isShopClosed ? (
+            <ShopClosedScreen />
+          ) : showApp ? (
+            hasValidOrderType ? (
+              <AppStack />
+            ) : (
+              <OrderTypeStack />
+            )
           ) : (
-            <OrderTypeStack />
-          )
-        ) : (
-          <AuthStack />
-        )}
-      </NavigationContainer>
-      <PortionSelectorModal />
-    </GestureHandlerRootView>
+            <AuthStack />
+          )}
+        </NavigationContainer>
+        <ToastHost />
+        <PortionSelectorModal />
+        <FlyToCartOverlay />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

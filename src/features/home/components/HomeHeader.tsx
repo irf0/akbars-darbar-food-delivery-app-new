@@ -1,91 +1,86 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
+
 import { theme } from 'src/theme';
 import { DeliveryBadge } from './DeliveryBadge';
-import { AdminConfig, DarbarUser } from '@types';
+import HeaderCartIcon from '@components/HeaderCartIcon';
 
-const t = theme;
+import { AdminConfig, DarbarUser } from '@types';
 
 interface Props {
   user: DarbarUser | null;
   settings: AdminConfig | null;
-  totalItems: number;
-  onCartPress: () => void;
 }
 
-export const HomeHeader = ({ user, settings, totalItems, onCartPress }: Props) => {
+export const HomeHeader = ({ user, settings }: Props) => {
   const greeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return 'Good Morning';
-    if (h < 17) return 'Good Afternoon';
+    const hour = new Date().getHours();
+
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+
     return 'Good Evening';
   };
 
   return (
-    <View style={styles.header}>
-      <View>
-        <Text style={styles.greeting}>{greeting()}</Text>
-        <Text style={styles.userName}>{user?.firstName ?? 'Guest'} 👋</Text>
+    <View style={styles.container}>
+      <View style={styles.left}>
+        <Text style={styles.greeting}>{greeting()},</Text>
+
+        <Text style={styles.name}>{user?.firstName ?? 'Guest'}</Text>
       </View>
-      <View style={styles.headerRight}>
+
+      <View style={styles.right}>
         {settings && <DeliveryBadge enabled={settings.deliveryEnabled} />}
-        <TouchableOpacity style={styles.cartBtn} onPress={onCartPress}>
-          <Ionicons name="bag-outline" size={22} color={t.colors.text} />
-          {totalItems > 0 && (
-            <View style={styles.cartBadge}>
-              <Text style={styles.cartBadgeText}>{totalItems}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+
+        <HeaderCartIcon />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: t.spacing.lg,
-    paddingVertical: t.spacing.md,
+    backgroundColor: theme.colors.background,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    elevation: 2,
+    zIndex: 10,
   },
+
+  left: {
+    flex: 1,
+    marginRight: 16,
+  },
+
   greeting: {
-    fontSize: t.fontSize.sm,
-    color: t.colors.textSecondary,
-    fontWeight: t.fontWeight.medium,
+    fontSize: 14,
+    fontWeight: '500',
+    color: theme.colors.textSecondary,
+    marginBottom: 4,
   },
-  userName: {
-    fontSize: t.fontSize.xl,
-    fontWeight: t.fontWeight.bold,
-    color: t.colors.text,
+
+  name: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: theme.colors.text,
+    letterSpacing: -0.5,
   },
-  headerRight: {
+
+  right: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: t.spacing.sm,
+    gap: 12,
   },
-  cartBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: t.colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: t.colors.border,
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: t.colors.primary,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cartBadgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
 });

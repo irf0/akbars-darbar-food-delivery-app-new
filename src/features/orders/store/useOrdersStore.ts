@@ -1,18 +1,20 @@
-import { OrderDoc } from '@types';
 import { create } from 'zustand';
+import { OrderDoc } from '@types';
 
-type OrderWithId = OrderDoc & { id: string };
+export type OrderWithId = OrderDoc & { id: string };
 
 interface OrdersStoreState {
   orders: OrderWithId[];
   isLoading: boolean;
+
   setOrders: (orders: OrderWithId[]) => void;
-  setLoading: (isLoading: boolean) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export const useOrdersStore = create<OrdersStoreState>((set) => ({
   orders: [],
-  isLoading: true,
+  isLoading: false,
+
   setOrders: (orders) => set({ orders }),
   setLoading: (isLoading) => set({ isLoading }),
 }));

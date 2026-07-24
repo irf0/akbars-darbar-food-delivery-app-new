@@ -31,6 +31,7 @@ import { createCodOrder } from 'src/global/services/createCodOrderService';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AppStackParamList } from '@navigation/types';
+import { haptics } from 'src/theme/haptics';
 
 const CheckoutScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
@@ -158,6 +159,11 @@ const CheckoutScreen = () => {
       setIsProcessing(false);
     }
   };
+
+  const handleTimePicker = () => {
+    haptics.select();
+    setIsTimePickerVisible(true);
+  };
   const isCashOnDeliveryOrder =
     orderType === 'takeaway' && settings?.isCODEnabled && paymentMethod === 'cod';
 
@@ -177,15 +183,10 @@ const CheckoutScreen = () => {
 
             {orderType === 'takeaway' && (
               <Pressable
-                style={({ pressed }) => [
-                  styles.card,
-                  styles.pickupCard,
-                  pressed && styles.pickupCardPressed,
-                ]}
-                onPress={() => setIsTimePickerVisible(true)}>
+                style={[styles.card, styles.pickupCard]}
+                onPress={() => handleTimePicker()}>
                 <View>
                   <Text style={styles.cardTitle}>Pickup Time</Text>
-
                   <Text style={styles.pickupSubtitle}>
                     {selectedSlot
                       ? selectedSlot.toLocaleTimeString([], {
@@ -284,11 +285,10 @@ export default CheckoutScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.background,
   },
 
   content: {
-    paddingVertical: 16,
     paddingBottom: 110,
   },
 
@@ -298,7 +298,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     borderRadius: 14,
     padding: 16,
-
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -323,10 +322,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  pickupCardPressed: {
-    opacity: 0.7,
-  },
-
   pickupSubtitle: {
     marginTop: 4,
     fontSize: 15,
@@ -339,12 +334,10 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     bottom: 16,
-
     backgroundColor: theme.colors.primary,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 10,

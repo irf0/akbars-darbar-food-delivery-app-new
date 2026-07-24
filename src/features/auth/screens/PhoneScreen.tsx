@@ -10,11 +10,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { AuthScreenProps } from '@navigation/types';
 import { theme } from 'src/theme';
 import { useLogin } from '../hooks/useLogin';
 import { setConfirmation } from '../store/confirmationRef';
+import { haptics } from 'src/theme/haptics';
 
 export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -56,6 +58,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
 
   const handleContinue = async () => {
     if (phoneNumber.length < 10) {
+      haptics.error();
       setValidationError('Enter a valid 10-digit number');
       return;
     }
@@ -63,6 +66,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
     const result = await sendOTP(phoneNumber);
     if (result) {
       setConfirmation(result);
+      haptics.success();
       navigation.navigate('OTP', { phoneNumber });
     }
   };
@@ -104,7 +108,7 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="00000 00000"
+              placeholder="Enter mobile number"
               keyboardType="phone-pad"
               value={phoneNumber}
               onChangeText={handleChangeText}
@@ -143,8 +147,23 @@ export default function PhoneScreen({ navigation }: AuthScreenProps<'Phone'>) {
           </TouchableOpacity>
 
           <Text style={styles.footerText}>
-            By continuing, you agree to our <Text style={styles.linkText}>Terms of Service</Text>{' '}
-            and <Text style={styles.linkText}>Privacy Policy</Text>.
+            By continuing, you agree to our{' '}
+            <Text
+              style={styles.linkText}
+              onPress={() =>
+                Linking.openURL('https://akbars-darbar-legal-pages.vercel.app/terms.html')
+              }>
+              Terms of Service
+            </Text>{' '}
+            and{' '}
+            <Text
+              style={styles.linkText}
+              onPress={() =>
+                Linking.openURL('https://akbars-darbar-legal-pages.vercel.app/privacy.html')
+              }>
+              Privacy Policy
+            </Text>
+            .
           </Text>
         </View>
       </TouchableWithoutFeedback>
@@ -302,5 +321,6 @@ const createStyles = (t: typeof theme) =>
     linkText: {
       color: t.colors.primary,
       fontWeight: t.fontWeight.semibold,
+      fontSize: 12,
     },
   });

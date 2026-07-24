@@ -1,10 +1,10 @@
+import React, { useCallback, useMemo, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import useFlattenedMenu from '@features/menu/hooks/useFlattenedMenu';
 import { useOrderTypeStore } from '@store/useOrderTypeStore';
-import { getDisplayPrice } from '@utils/getDisplayPrice';
-import { Image } from 'expo-image';
-import { DietBadge } from 'src/global/components/DietBadge';
 import { usePortionSelectorStore } from '@store/usePortionSelectorStore';
 import { MenuItem } from '@types';
 import { CompositeScreenProps } from '@react-navigation/native';
@@ -12,6 +12,17 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList, BottomTabsParamList } from '@navigation/types';
 import { useCartStore } from '@store/useCartStore';
+import { theme } from 'src/theme';
+import { haptics } from 'src/theme/haptics';
+import { useToastStore } from '@store/useToastStore';
+import { useFlyToCart } from '@hooks/useFlyToCart';
+
+import MenuScreenHeader from '../components/MenuScreenHeader';
+import CategoryHeader from '../components/Categoryheader';
+import MenuRow from '../components/MenuRow';
+import CartBar from '../components/CartBar';
+
+const t = theme;
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<BottomTabsParamList, 'Menu'>,
@@ -20,90 +31,125 @@ type Props = CompositeScreenProps<
 
 const MenuScreen = ({ navigation, route }: Props) => {
   const targetCategory = route.params?.category;
-
   const { flattenedMenu } = useFlattenedMenu(targetCategory);
   const orderType = useOrderTypeStore((state) => state.orderType);
   const openModal = usePortionSelectorStore((state) => state.openModal);
   const { addItem } = useCartStore();
+  const toast = useToastStore.getState();
+  const imageRefs = useRef<Record<string, Image | null>>({});
+  const flyToCart = useFlyToCart();
 
-  //check if half is available
-  const handleAddBtn = (item: MenuItem) => {
-    const halfPrice = orderType === 'delivery' ? item.base_half_price : item.base_full_price;
+  const stickyHeaderIndices = useMemo(
+    () =>
+      flattenedMenu.reduce<number[]>((acc, item, index) => {
+        if (item.type === 'header') acc.push(index);
+        return acc;
+      }, []),
+    [flattenedMenu],
+  );
 
-    if (halfPrice === 0) {
-      addItem(item, 'full', 1);
-    } else {
-      openModal(item);
-    }
-  };
+  const handleImageRef = useCallback((id: string, ref: Image | null) => {
+    imageRefs.current[id] = ref;
+  }, []);
+
+  const handleRowPress = useCallback(
+    (item: MenuItem) => {
+      navigation.navigate('MenuDetail', { item });
+    },
+    [navigation],
+  );
+
+  const handleAddBtn = useCallback(
+    (item: MenuItem) => {
+      const halfPrice = item.base_half_price;
+
+      if (!halfPrice || halfPrice === 0) {
+        addItem(item, 'full', 1);
+        haptics.success();
+
+        flyToCart({
+          id: item.id,
+          image: item.image,
+          imageRef: imageRefs.current[item.id],
+        });
+
+        toast.show({
+          message: 'Added to cart',
+          type: 'success',
+        });
+      } else {
+        openModal(item);
+      }
+    },
+    [addItem, flyToCart, openModal, toast],
+  );
+
+  const keyExtractor = useCallback(
+    (item: (typeof flattenedMenu)[number]) =>
+      item.type === 'header' ? item.subCategory : item.data.id,
+    [],
+  );
+
+  const getItemType = useCallback((item: (typeof flattenedMenu)[number]) => item.type, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: (typeof flattenedMenu)[number] }) => {
+      if (item.type === 'header') {
+        return <CategoryHeader title={item.subCategory} />;
+      }
+
+      return (
+        <MenuRow
+          item={item.data}
+          orderType={orderType}
+          onPress={handleRowPress}
+          onAdd={handleAddBtn}
+          onImageRef={handleImageRef}
+        />
+      );
+    },
+    [orderType, handleRowPress, handleAddBtn, handleImageRef],
+  );
+
+  const renderSeparator = useCallback(() => <View style={styles.divider} />, []);
+
+  const handleCartBarPress = useCallback(() => {
+    navigation.navigate('Cart');
+  }, [navigation]);
 
   return (
-    <FlashList
-      data={flattenedMenu}
-      keyExtractor={(item) => (item.type === 'header' ? item.subCategory : item.data.id)}
-      getItemType={(item) => item.type}
-      renderItem={({ item }) => {
-        if (item.type === 'header') {
-          return <Text>{item.subCategory}</Text>;
-        }
-        return (
-          <>
-            <Pressable onPress={() => navigation.navigate('MenuDetail', { item: item.data })}>
-              <Image
-                cachePolicy="disk"
-                source={{ uri: item.data.image }}
-                style={[styles.itemImage, { backgroundColor: '#ced0d3' }]}
-                contentFit="cover"
-                recyclingKey={item.data.image}
-                transition={150}
-              />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <MenuScreenHeader />
 
-              <DietBadge type={item.data.item_type} />
-              <Text>{item.data.name}</Text>
-              <Text>{getDisplayPrice(item.data, orderType)}</Text>
-            </Pressable>
-            <TouchableOpacity
-              style={{ padding: 20, backgroundColor: 'red' }}
-              onPress={() => handleAddBtn(item.data)}>
-              <Text>ADD</Text>
-            </TouchableOpacity>
-          </>
-        );
-      }}
-    />
+      <FlashList
+        data={flattenedMenu}
+        keyExtractor={keyExtractor}
+        getItemType={getItemType}
+        stickyHeaderIndices={stickyHeaderIndices}
+        contentContainerStyle={styles.listContent}
+        renderItem={renderItem}
+        ItemSeparatorComponent={renderSeparator}
+        removeClippedSubviews
+      />
+
+      <CartBar onPress={handleCartBarPress} />
+    </SafeAreaView>
   );
 };
 
+export default MenuScreen;
+
 const styles = StyleSheet.create({
-  headerRow: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#f5f5f5',
+  container: {
+    flex: 1,
+    backgroundColor: t.colors.background,
   },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 16,
+  listContent: {
+    paddingHorizontal: t.spacing.md,
+    paddingBottom: t.spacing.xxl * 2, // clears the floating cart bar
   },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  itemImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 12,
-  },
-  itemName: {
-    fontSize: 14,
-  },
-  itemPrice: {
-    fontSize: 14,
-    fontWeight: '600',
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: t.colors.border,
   },
 });
-
-export default MenuScreen;

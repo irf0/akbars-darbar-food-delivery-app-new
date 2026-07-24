@@ -48,6 +48,7 @@ export const useAddressPicker = () => {
   const setLongitude = useAddressStore((state) => state.setLongitude);
 
   const [isLoadingGPS, setIsLoadingGPS] = useState(true);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [addressInfoMessage, setAddressInfoMessage] = useState<string | null>(null);
   const [showServiceabilityModal, setShowServiceabilityModal] = useState<boolean>(false);
   const [showMapSelectionWarningModal, setShowMapSelectionWarningModal] = useState<boolean>(false);
@@ -59,7 +60,6 @@ export const useAddressPicker = () => {
 
   //request permission and feed zustand store
   const fetchLocation = useCallback(async () => {
-    console.log('🟡 fetchLocation CALLED — component mounted or re-triggered');
     try {
       const { status } = await requestLocation();
 
@@ -107,11 +107,11 @@ export const useAddressPicker = () => {
   }, [debouncedLocationUpdate]);
 
   const handleConfirmPress = async () => {
-    if (isLoadingGPS) return; // guard from double-tap
+    if (isConfirming) return; // guard from double-tap
 
     if (latitude == null || longitude == null) return;
 
-    setIsLoadingGPS(true);
+    setIsConfirming(true);
 
     try {
       const { granted } = await checkLocationPermission();
@@ -152,13 +152,6 @@ export const useAddressPicker = () => {
       });
       setShowServiceabilityModal(false);
 
-      console.log(
-        '🟣 confirm reached end. wasAlreadyValidOrderType:',
-        wasAlreadyValidOrderType,
-        'canGoBack:',
-        navigation.canGoBack(),
-      );
-
       if (wasAlreadyValidOrderType && navigation.canGoBack()) {
         navigation.goBack();
       }
@@ -168,7 +161,7 @@ export const useAddressPicker = () => {
       console.error('Something went wrong during serviceability confirmation:', error);
       // TODO: showToast('Something went wrong. Please try again.');
     } finally {
-      setIsLoadingGPS(false);
+      setIsConfirming(false);
     }
   };
 
@@ -182,6 +175,7 @@ export const useAddressPicker = () => {
     bottomSheetRef,
     snapPoints,
     isLoadingGPS,
+    isConfirming,
     addressInfoMessage,
     showServiceabilityModal,
     showMapSelectionWarningModal,
