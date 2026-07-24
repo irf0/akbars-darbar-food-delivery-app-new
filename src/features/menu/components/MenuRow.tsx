@@ -11,19 +11,21 @@ const t = theme;
 export type MenuRowProps = {
   item: MenuItem;
   orderType: 'delivery' | 'takeaway' | null;
+  disabled?: boolean;
   onPress: (item: MenuItem) => void;
   onAdd: (item: MenuItem) => void;
   onImageRef: (id: string, ref: Image | null) => void;
 };
 
-// Memoized so a row only re-renders when its own item or orderType changes.
-// This is what lets the list stay cheap when unrelated state (e.g. the
-// cart totals) changes elsewhere on screen.
+// Memoized so a row only re-renders when its own item, orderType, or
+// disabled state changes. This is what lets the list stay cheap when
+// unrelated state (e.g. the cart totals) changes elsewhere on screen.
 const MenuRow = React.memo(
-  ({ item, orderType, onPress, onAdd, onImageRef }: MenuRowProps) => {
+  ({ item, disabled, orderType, onPress, onAdd, onImageRef }: MenuRowProps) => {
     return (
-      <View style={styles.itemRow}>
+      <View style={[styles.itemRow, disabled && styles.itemRowDisabled]}>
         <TouchableOpacity
+          disabled={disabled}
           style={styles.itemPressable}
           activeOpacity={0.7}
           onPress={() => onPress(item)}>
@@ -46,13 +48,21 @@ const MenuRow = React.memo(
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={() => onAdd(item)}>
-          <Text style={styles.addButtonText}>ADD</Text>
-        </TouchableOpacity>
+        {disabled ? (
+          <Text style={styles.unavailableText}>Unavailable</Text>
+        ) : (
+          <TouchableOpacity
+            style={styles.addButton}
+            activeOpacity={0.8}
+            onPress={() => onAdd(item)}>
+            <Text style={styles.addButtonText}>ADD</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   },
-  (prev, next) => prev.item === next.item && prev.orderType === next.orderType,
+  (prev, next) =>
+    prev.item === next.item && prev.orderType === next.orderType && prev.disabled === next.disabled,
 );
 MenuRow.displayName = 'MenuRow';
 
@@ -63,6 +73,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: t.spacing.lg,
+  },
+  itemRowDisabled: {
+    opacity: 0.5,
   },
   itemPressable: {
     flex: 1,
@@ -124,5 +137,14 @@ const styles = StyleSheet.create({
     fontSize: t.fontSize.xs,
     fontWeight: t.fontWeight.bold,
     color: '#fff',
+  },
+  unavailableText: {
+    fontSize: t.fontSize.xs,
+    fontWeight: t.fontWeight.semibold,
+    color: t.colors.text,
+    marginLeft: t.spacing.sm,
+    marginRight: t.spacing.lg,
+    minWidth: 72,
+    textAlign: 'center',
   },
 });

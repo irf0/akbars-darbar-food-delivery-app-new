@@ -54,6 +54,7 @@ const MenuScreen = ({ navigation, route }: Props) => {
 
   const handleRowPress = useCallback(
     (item: MenuItem) => {
+      // Unavailable items are still viewable — detail screen handles its own disabled state.
       navigation.navigate('MenuDetail', { item });
     },
     [navigation],
@@ -61,6 +62,9 @@ const MenuScreen = ({ navigation, route }: Props) => {
 
   const handleAddBtn = useCallback(
     (item: MenuItem) => {
+      const isUnavailable = !item.available || item.isOutOfStock;
+      if (isUnavailable) return;
+
       const halfPrice = item.base_half_price;
 
       if (!halfPrice || halfPrice === 0) {
@@ -98,6 +102,8 @@ const MenuScreen = ({ navigation, route }: Props) => {
         return <CategoryHeader title={item.subCategory} />;
       }
 
+      const isUnavailable = !item.data.available || item.data.isOutOfStock;
+
       return (
         <MenuRow
           item={item.data}
@@ -105,6 +111,7 @@ const MenuScreen = ({ navigation, route }: Props) => {
           onPress={handleRowPress}
           onAdd={handleAddBtn}
           onImageRef={handleImageRef}
+          disabled={isUnavailable}
         />
       );
     },

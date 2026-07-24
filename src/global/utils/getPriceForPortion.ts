@@ -7,7 +7,7 @@ export function getPriceForPortion(
   item: Pick<CartItem, 'portion' | 'base_half_price' | 'base_full_price'>,
   orderType: OrderType,
 ): number {
-  const settings = useAdminSettingsStore.getState().settings;
+  const settings = useAdminSettingsStore?.getState()?.settings;
 
   if (!settings) {
     throw new Error('Admin settings have not been loaded.');
