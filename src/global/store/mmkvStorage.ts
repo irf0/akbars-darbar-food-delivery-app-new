@@ -8,5 +8,3 @@ export const zustandMMKVStorage: StateStorage = {
   getItem: (name) => mmkv.getString(name) ?? null,
   removeItem: (name) => mmkv.remove(name),
 };
-
-console.log('order-type-storage:', mmkv.getString('order-type-storage'));

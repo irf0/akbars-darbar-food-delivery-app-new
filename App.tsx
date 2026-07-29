@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import RootNavigator from '@navigation/RootNavigator';
 import { useMenu } from '@hooks/useMenu';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useAdminSettings } from '@hooks/useAdminSettings';
 import * as Notifications from 'expo-notifications';
+import { useActiveOrderListener } from '@hooks/useActiveOrderListener';
 
 export default function App() {
-  useAdminSettings(); //listens to admin collection for any changes
+  useActiveOrderListener();
   useMenu(); //listens to menu collection for any changes (app-lifetime-once)
 
   useEffect(() => {

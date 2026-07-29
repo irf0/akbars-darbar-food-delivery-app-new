@@ -8,6 +8,17 @@
 //   isDefault: boolean;
 // }
 
+export interface AddressDoc {
+  id?: string;
+  label: string;
+  flatNum: string;
+  street: string;
+  landmark?: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+}
+
 export interface DarbarUser {
   uid: string;
   phone: string;
