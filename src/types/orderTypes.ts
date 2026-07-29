@@ -1,10 +1,18 @@
-import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { FieldValue } from '@react-native-firebase/firestore';
+import { AddressDoc } from './userTypes';
 
 export type OrderType = 'delivery' | 'takeaway';
 export type Portion = 'half' | 'full';
 export type PaymentStatus = 'paid' | 'refunded' | 'cod_pending';
 export type OrderStatus =
-  'placed' | 'confirmed' | 'preparing' | 'out_for_delivery' | 'ready' | 'completed' | 'cancelled';
+  | 'placed'
+  | 'accepted'
+  | 'confirmed'
+  | 'preparing'
+  | 'out_for_delivery'
+  | 'ready'
+  | 'completed'
+  | 'cancelled';
 export type CouponType = 'flat' | 'percentage';
 
 export interface OrderLineItem {
@@ -38,6 +46,10 @@ export interface OrderDoc {
   uid: string;
   orderType: OrderType;
   addressId: string | null;
+  assignedRiderId: string | null;
+  deliveryAddress: AddressDoc | null;
+  customerName: string;
+  customerPhone: string;
   lineItems: OrderLineItem[];
   bill: BillBreakdown;
   cookingInstructions: string | null;
@@ -48,7 +60,7 @@ export interface OrderDoc {
   razorpayPaymentId: string | null;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
+  createdAt: FieldValue;
   orderNumber: string;
   deliveryOtp: string;
-  createdAt: FirebaseFirestoreTypes.Timestamp;
 }
