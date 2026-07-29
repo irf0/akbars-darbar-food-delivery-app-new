@@ -1,142 +1,19 @@
-import React, { memo, useMemo, ComponentProps } from 'react';
+import React, { memo, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { theme } from '@theme';
-import { easing } from 'src/theme/motion';
 import { haptics } from 'src/theme/haptics';
 import { withOpacity } from '../utils/colors';
 import { OrderDoc } from '@types';
+import { getOrderStatusConfig } from '../utils/getOrderStatusConfig';
 
 type Props = {
   order: OrderDoc;
   onPress: () => void;
 };
 
-type IconName = ComponentProps<typeof Ionicons>['name'];
-
-type StatusConfig = {
-  title: string;
-  subtitle: string;
-  icon: IconName;
-  color: string;
-  step: number;
-};
-
-const DELIVERY_STATUS: Record<string, StatusConfig> = {
-  placed: {
-    title: 'Order placed',
-    subtitle: 'We have received your order',
-    icon: 'receipt-outline',
-    color: theme.colors.info,
-    step: 0,
-  },
-  confirmed: {
-    title: 'Order confirmed',
-    subtitle: 'Restaurant is getting started',
-    icon: 'checkmark-circle-outline',
-    color: theme.colors.info,
-    step: 0,
-  },
-  preparing: {
-    title: 'Preparing your food',
-    subtitle: 'Freshly cooking your meal',
-    icon: 'restaurant-outline',
-    color: theme.colors.warning,
-    step: 1,
-  },
-  out_for_delivery: {
-    title: 'Out for delivery',
-    subtitle: 'Your rider is on the way',
-    icon: 'bicycle-outline',
-    color: theme.colors.warning,
-    step: 2,
-  },
-  completed: {
-    title: 'Delivered',
-    subtitle: 'Enjoy your meal',
-    icon: 'checkmark-circle-outline',
-    color: theme.colors.successText,
-    step: 3,
-  },
-  cancelled: {
-    title: 'Order cancelled',
-    subtitle: 'This order was cancelled',
-    icon: 'close-circle-outline',
-    color: theme.colors.error,
-    step: 3,
-  },
-};
-
-const PICKUP_STATUS: Record<string, StatusConfig> = {
-  placed: {
-    title: 'Order placed',
-    subtitle: 'We have received your order',
-    icon: 'receipt-outline',
-    color: theme.colors.info,
-    step: 0,
-  },
-  confirmed: {
-    title: 'Order confirmed',
-    subtitle: 'Restaurant is getting started',
-    icon: 'checkmark-circle-outline',
-    color: theme.colors.info,
-    step: 0,
-  },
-  preparing: {
-    title: 'Preparing your food',
-    subtitle: 'Freshly preparing your meal',
-    icon: 'restaurant-outline',
-    color: theme.colors.warning,
-    step: 1,
-  },
-  ready: {
-    title: 'Ready for pickup',
-    subtitle: 'Packed & ready',
-    icon: 'bag-check-outline',
-    color: theme.colors.success,
-    step: 2,
-  },
-  completed: {
-    title: 'Picked up',
-    subtitle: 'Enjoy your meal',
-    icon: 'checkmark-circle-outline',
-    color: theme.colors.successText,
-    step: 3,
-  },
-  cancelled: {
-    title: 'Order cancelled',
-    subtitle: 'This order was cancelled',
-    icon: 'close-circle-outline',
-    color: theme.colors.error,
-    step: 3,
-  },
-};
-
-const DELIVERY_STEP_LABELS = ['Placed', 'Preparing', 'On the way', 'Delivered'];
-const PICKUP_STEP_LABELS = ['Placed', 'Preparing', 'Ready', 'Picked up'];
-
 export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
-  const isPickup = order.orderType === 'takeaway';
-
-  const statusMap = isPickup ? PICKUP_STATUS : DELIVERY_STATUS;
-  const stepLabels = isPickup ? PICKUP_STEP_LABELS : DELIVERY_STEP_LABELS;
-
-  const config = statusMap[order.orderStatus as keyof typeof statusMap] ?? statusMap.placed;
-
-  const buttonScale = useSharedValue(1);
-
-  const buttonAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonScale.value }],
-  }));
-
-  const onButtonPressIn = () => {
-    buttonScale.value = withSpring(0.94, easing.spring);
-  };
-
-  const onButtonPressOut = () => {
-    buttonScale.value = withSpring(1, easing.spring);
-  };
+  const { config, steps } = getOrderStatusConfig(order);
 
   const handlePress = () => {
     haptics.tap();
@@ -171,7 +48,7 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
             </View>
 
             <View style={{ flex: 1 }}>
-              <Text style={styles.title}>{config.title}</Text>
+              <Text style={styles.title}>{order.orderStatus}</Text>
               <Text style={styles.subtitle}>{config.subtitle}</Text>
             </View>
           </View>
@@ -189,16 +66,21 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
 
         {/* TIMELINE */}
         <View style={styles.timelineContainer}>
-          {stepLabels.map((label, index) => {
+          {steps.map((label, index) => {
             const active = index <= config.step;
 
             return (
               <React.Fragment key={label}>
                 <View style={[styles.circle, active && { backgroundColor: config.color }]} />
 
-                {index !== stepLabels.length - 1 && (
+                {index !== steps.length - 1 && (
                   <View
-                    style={[styles.line, index < config.step && { backgroundColor: config.color }]}
+                    style={[
+                      styles.line,
+                      index < config.step && {
+                        backgroundColor: config.color,
+                      },
+                    ]}
                   />
                 )}
               </React.Fragment>
@@ -215,14 +97,12 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
             </Text>
           </View>
 
-          <Pressable
-            onPressIn={onButtonPressIn}
-            onPressOut={onButtonPressOut}
-            onPress={handlePress}>
-            <Animated.View style={[styles.trackButton, buttonAnimatedStyle]}>
-              <Text style={styles.trackText}>Track Order</Text>
+          {/* //TODO: Wire correctly with real order doc */}
+          <Pressable onPress={handlePress}>
+            <View style={styles.trackButton}>
+              <Text style={styles.trackText}>{'Live Tracking'}</Text>
               <Ionicons name="arrow-forward" size={16} color={theme.colors.primary} />
-            </Animated.View>
+            </View>
           </Pressable>
         </View>
       </View>
