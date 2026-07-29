@@ -23,7 +23,8 @@ export type AppStackParamList = {
   Profile: undefined;
   Cart: undefined;
   Checkout: undefined;
-  OrderConfirmation: { orderId: string; live?: boolean };
+  OrderConfirmation: { orderId: string | undefined; live?: boolean };
+  LiveOrderTracking: { orderId: string };
   EditProfile: undefined;
   Support: { phone: string };
 };

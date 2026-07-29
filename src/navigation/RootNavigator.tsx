@@ -15,10 +15,12 @@ import { ToastHost } from '@components/ui/ToastHost';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FlyToCartOverlay } from '@components/FlyToCartOverlay';
 import AppSplashScreen from '@components/AppSplashScreen';
+import { useAdminSettings } from '@hooks/useAdminSettings';
 
 // import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function RootNavigator() {
+  useAdminSettings();
   const [showSplash, setShowSplash] = useState(true);
   const { authHasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore();
   const { orderType, address, orderTypeHasHydrated } = useOrderTypeStore();
@@ -54,7 +56,6 @@ export default function RootNavigator() {
     }
   }, [isAuthenticated]);
 
-  // TODO: replace with proper AppSplashScreen once shared components are rebuilt
   if (showSplash || !authHasHydrated || !orderTypeHasHydrated) {
     return <AppSplashScreen />;
   }
