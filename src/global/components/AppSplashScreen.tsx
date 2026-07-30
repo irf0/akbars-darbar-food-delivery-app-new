@@ -1,12 +1,13 @@
-import { theme } from '@theme';
 import React, { useEffect, useState } from 'react';
 import { Animated, View, Text, StyleSheet } from 'react-native';
 
 export const COLORS = {
   brandMaroon: '#7A0C1A',
+  brandMaroonDeep: '#3D0610',
   brandGold: '#D4AF37',
   brandGoldLight: '#E8C766',
   brandGoldDark: '#B8912C',
+  cream: '#F5EDE0',
 };
 
 export default function AppSplashScreen() {
@@ -17,8 +18,8 @@ export default function AppSplashScreen() {
   useEffect(() => {
     Animated.sequence([
       Animated.parallel([
-        Animated.timing(titleOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.timing(titleScale, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.timing(titleOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(titleScale, { toValue: 1, duration: 700, useNativeDriver: true }),
       ]),
       Animated.timing(taglineOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
     ]).start();
@@ -26,7 +27,11 @@ export default function AppSplashScreen() {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={{ opacity: titleOpacity, transform: [{ scale: titleScale }] }}>
+      <Animated.View
+        style={[
+          styles.titleWrapper,
+          { opacity: titleOpacity, transform: [{ scale: titleScale }] },
+        ]}>
         <Text style={styles.title}>{"AKBAR'S"}</Text>
         <Text style={styles.title}>{'DARBAR'}</Text>
         <View style={styles.divider}>
@@ -36,7 +41,7 @@ export default function AppSplashScreen() {
         </View>
       </Animated.View>
       <Animated.Text style={[styles.tagline, { opacity: taglineOpacity }]}>
-        Enjoy the Royale Taste
+        ENJOY THE ROYALE TASTE
       </Animated.Text>
     </View>
   );
@@ -45,40 +50,43 @@ export default function AppSplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.brandMaroon,
+    backgroundColor: COLORS.brandMaroonDeep,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  titleWrapper: {
+    alignItems: 'center',
+  },
   title: {
-    color: theme.colors.surface,
-    fontSize: 34,
-    fontWeight: 'bold',
-    letterSpacing: 3,
+    color: COLORS.cream,
+    fontSize: 32,
+    fontWeight: '800',
+    letterSpacing: 4,
     textAlign: 'center',
-    fontFamily: undefined, // swap in your serif font once loaded, e.g. 'Cinzel-Bold'
+    fontFamily: undefined,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
-    width: 160,
+    marginTop: 14,
+    width: 120,
   },
   line: {
     flex: 1,
-    height: 1,
-    backgroundColor: COLORS.brandGold,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: COLORS.brandGoldDark,
   },
   diamond: {
     color: COLORS.brandGold,
-    fontSize: 12,
-    marginHorizontal: 8,
+    fontSize: 9,
+    marginHorizontal: 10,
   },
   tagline: {
-    marginTop: 16,
-    color: COLORS.brandGold,
-    fontSize: 14,
-    letterSpacing: 1.5,
-    fontStyle: 'italic',
+    marginTop: 20,
+    color: COLORS.brandGoldDark,
+    fontSize: 11,
+    letterSpacing: 3,
+    fontWeight: '500',
   },
 });
