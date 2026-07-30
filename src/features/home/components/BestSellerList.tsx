@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import useBestSellers from '@hooks/useBestSellers';
 import { MenuItem } from '@types';
@@ -48,35 +48,37 @@ const BestSellerList = ({ onItemPress }: Props) => {
   };
 
   const renderItem = ({ item }: { item: MenuItem }) => (
-    <View style={styles.card}>
-      <View style={styles.imageContainer}>
-        <Image
-          ref={(ref) => {
-            imageRefs.current[item?.id] = ref;
-          }}
-          source={{ uri: item.image }}
-          cachePolicy="memory-disk"
-          transition={250}
-          contentFit="fill"
-          style={styles.image}
-        />
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.nameTextContainer}>
-          <DietBadge type={item.item_type} />
-          <Text style={styles.title}>{item.name}</Text>
+    <Pressable onPress={() => onItemPress(item)}>
+      <View style={styles.card}>
+        <View style={styles.imageContainer}>
+          <Image
+            ref={(ref) => {
+              imageRefs.current[item?.id] = ref;
+            }}
+            source={{ uri: item.image }}
+            cachePolicy="memory-disk"
+            transition={250}
+            contentFit="fill"
+            style={styles.image}
+          />
         </View>
 
-        <View style={styles.bottomRow}>
-          <Text style={styles.price}>₹{getDisplayPrice(item, orderType)}</Text>
+        <View style={styles.content}>
+          <View style={styles.nameTextContainer}>
+            <DietBadge type={item.item_type} />
+            <Text style={styles.title}>{item.name}</Text>
+          </View>
 
-          <AnimatedPressable onPress={() => handleAddBtn(item)} style={styles.addButton}>
-            <Text style={styles.addText}>ADD</Text>
-          </AnimatedPressable>
+          <View style={styles.bottomRow}>
+            <Text style={styles.price}>₹{getDisplayPrice(item, orderType)}</Text>
+
+            <AnimatedPressable onPress={() => handleAddBtn(item)} style={styles.addButton}>
+              <Text style={styles.addText}>ADD</Text>
+            </AnimatedPressable>
+          </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (

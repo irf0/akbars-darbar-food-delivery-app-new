@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@hooks/useTheme';
 import {
@@ -17,6 +17,8 @@ import { MenuItem } from '@types';
 import { useMenuSearch } from '../hooks/useMenuSearch';
 import { theme } from 'src/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AppStackParamList } from '@navigation/types';
 
 const VEG_GREEN = '#0F8A3D';
 const NON_VEG_RED = '#E04141';
@@ -24,13 +26,16 @@ const ITEM_HEIGHT = 96;
 
 type MenuRowProps = {
   item: MenuItem;
+  onPress: () => void;
 };
+
+type NavProps = NativeStackScreenProps<AppStackParamList>;
 
 // React.memo skips re-rendering this component if its props haven't changed (shallow comparison).
 
-const MenuRow = React.memo(function MenuRow({ item }: MenuRowProps) {
+const MenuRow = React.memo(function MenuRow({ item, onPress }: MenuRowProps) {
   return (
-    <Pressable style={styles.item}>
+    <Pressable onPress={onPress} style={styles.item}>
       {!!item.image ? (
         <Image
           source={{ uri: item.image }}
@@ -79,10 +84,9 @@ const MenuRow = React.memo(function MenuRow({ item }: MenuRowProps) {
   );
 });
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }: NavProps) => {
   const { filteredItems, searchQuery, setSearchQuery, loading } = useMenuSearch();
-  // console.log(filteredItems)
-  const navigation = useNavigation();
+
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -90,7 +94,9 @@ const SearchScreen = () => {
   const hasResults = filteredItems.length > 0;
 
   const renderItem = useCallback<ListRenderItem<MenuItem>>(
-    ({ item }) => <MenuRow item={item} />,
+    ({ item }) => (
+      <MenuRow onPress={() => navigation.navigate('MenuDetail', { item: item })} item={item} />
+    ),
     [],
   );
 

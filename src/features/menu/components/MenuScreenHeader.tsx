@@ -1,17 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import HeaderCartIcon from '@components/HeaderCartIcon';
-import { theme } from 'src/theme';
+import { theme } from 'src/theme'; // If this is a static object, the below is fine.
+import { Ionicons } from '@expo/vector-icons';
+import { AppStackParamList } from '@navigation/types';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 
-const t = theme;
+const MenuScreenHeader = () => {
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
-const MenuScreenHeader = React.memo(() => (
-  <View style={styles.header}>
-    <Text style={styles.headerTitle}>Menu</Text>
-    <HeaderCartIcon />
-  </View>
-));
-MenuScreenHeader.displayName = 'MenuScreenHeader';
+  return (
+    <View style={styles.header}>
+      <Pressable onPress={() => navigation.goBack()} hitSlop={10}>
+        <Ionicons name="arrow-back" size={25} />
+      </Pressable>
+      <Text style={styles.headerTitle}>Menu</Text>
+      <HeaderCartIcon />
+    </View>
+  );
+};
 
 export default MenuScreenHeader;
 
@@ -23,7 +31,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: t.colors.background,
+    backgroundColor: theme.colors.background,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -33,8 +41,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   headerTitle: {
-    fontSize: t.fontSize.xl,
-    fontWeight: t.fontWeight.bold,
-    color: t.colors.text,
+    fontSize: theme.fontSize.xl,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
   },
 });

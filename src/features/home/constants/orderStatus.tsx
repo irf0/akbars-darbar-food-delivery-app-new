@@ -43,7 +43,7 @@ export const DELIVERY_ORDER_STATUS: Record<string, OrderStatusConfig> = {
     step: 2,
   },
 
-  picked_up: {
+  out_for_delivery: {
     title: 'Out for delivery',
     subtitle: 'Your rider is on the way',
     icon: 'bicycle-outline',

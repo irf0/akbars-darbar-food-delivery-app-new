@@ -54,9 +54,8 @@ export default function HomeScreen({ navigation }: Props) {
       <StatusBar barStyle="dark-content" />
 
       {/* ── Header ── */}
-      <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-        <HomeHeader user={user} settings={settings} />
-      </Animated.View>
+
+      <HomeHeader user={user} settings={settings} />
 
       <OrderTypeBar />
 
@@ -68,7 +67,10 @@ export default function HomeScreen({ navigation }: Props) {
         {activeOrder && (
           <LiveOrderBanner
             order={activeOrder}
-            onPress={() => navigation.navigate('LiveOrderTracking', { orderId: activeOrder.id })}
+            onPressCard={() =>
+              navigation.navigate('OrderConfirmation', { orderId: activeOrder.id, live: true })
+            }
+            onPressBtn={() => navigation.navigate('LiveOrderTracking', { orderId: activeOrder.id })}
           />
         )}
         {/* Hero Banner */}

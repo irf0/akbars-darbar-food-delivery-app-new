@@ -6,18 +6,21 @@ import { haptics } from 'src/theme/haptics';
 import { withOpacity } from '../utils/colors';
 import { OrderDoc } from '@types';
 import { getOrderStatusConfig } from '../utils/getOrderStatusConfig';
+import { useOrderETATimer } from '@features/livetracking/hooks/useOrderETATimer';
 
 type Props = {
   order: OrderDoc;
-  onPress: () => void;
+  onPressBtn: () => void;
+  onPressCard: () => void;
 };
 
-export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
+export const LiveOrderBanner = memo(({ order, onPressBtn, onPressCard }: Props) => {
+  const { etaText } = useOrderETATimer(order.estimatedDeliveryAt);
   const { config, steps } = getOrderStatusConfig(order);
 
   const handlePress = () => {
     haptics.tap();
-    onPress();
+    onPressBtn();
   };
 
   const itemCount = useMemo(() => {
@@ -37,7 +40,7 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
   }, [order.lineItems, itemCount]);
 
   return (
-    <View style={styles.shadowWrapper}>
+    <Pressable onPress={onPressCard} style={styles.shadowWrapper}>
       <View style={[styles.card, { backgroundColor: withOpacity(config.color, 0.04) }]}>
         {/* TOP */}
         <View style={styles.header}>
@@ -48,14 +51,13 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
             </View>
 
             <View style={{ flex: 1 }}>
-              <Text style={styles.title}>{order.orderStatus}</Text>
+              <Text style={styles.title}>{config.title}</Text>
               <Text style={styles.subtitle}>{config.subtitle}</Text>
             </View>
           </View>
-
-          <View style={styles.eta}>
-            <Text style={styles.etaLabel}>ETA</Text>
-            <Text style={styles.etaValue}>18–22 min</Text>
+          <View>
+            <Text style={styles.orderNumber}>{order.orderNumber}</Text>
+            <Text style={styles.itemCount}>OTP : {order.deliveryOtp}</Text>
           </View>
         </View>
 
@@ -89,24 +91,22 @@ export const LiveOrderBanner = memo(({ order, onPress }: Props) => {
         </View>
 
         {/* FOOTER */}
-        <View style={styles.footer}>
-          <View>
-            <Text style={styles.orderNumber}>Order #{order.orderNumber}</Text>
-            <Text style={styles.itemCount}>
-              {itemCount} item{itemCount > 1 ? 's' : ''}
-            </Text>
-          </View>
-
-          {/* //TODO: Wire correctly with real order doc */}
-          <Pressable onPress={handlePress}>
-            <View style={styles.trackButton}>
-              <Text style={styles.trackText}>{'Live Tracking'}</Text>
-              <Ionicons name="arrow-forward" size={16} color={theme.colors.primary} />
+        {order?.orderStatus === 'out_for_delivery' && (
+          <View style={styles.footer}>
+            <View>
+              <Text style={styles.etaValue}>{etaText || '—'}</Text>
             </View>
-          </Pressable>
-        </View>
+
+            <Pressable onPress={handlePress}>
+              <View style={styles.trackButton}>
+                <Text style={styles.trackText}>{'Live Tracking'}</Text>
+                <Ionicons name="arrow-forward" size={16} color={theme.colors.primary} />
+              </View>
+            </Pressable>
+          </View>
+        )}
       </View>
-    </View>
+    </Pressable>
   );
 });
 
@@ -169,8 +169,8 @@ export const styles = StyleSheet.create({
   },
   etaValue: {
     marginTop: 2,
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 15,
+    fontWeight: '700',
     color: theme.colors.text,
   },
   food: {
@@ -216,6 +216,7 @@ export const styles = StyleSheet.create({
   itemCount: {
     marginTop: 3,
     fontSize: 12,
+    textAlign: 'right',
     color: theme.colors.textSecondary,
   },
   trackButton: {
