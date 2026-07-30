@@ -18,7 +18,7 @@ interface Props {
   etaText?: string;
 }
 
-export function OrderStatusHeader({ orderStatus, etaText = '~20 mins' }: Props) {
+export function OrderStatusHeader({ orderStatus, etaText }: Props) {
   const label = STATUS_LABELS[orderStatus] ?? 'Order in progress';
 
   return (
@@ -32,7 +32,7 @@ export function OrderStatusHeader({ orderStatus, etaText = '~20 mins' }: Props) 
 
           {orderStatus !== 'cancelled' && (
             <Text style={styles.etaText}>
-              {orderStatus === 'completed' ? 'Arrived' : `Arriving in ${etaText}`}
+              {orderStatus === 'completed' ? 'Arrived' : `${etaText ? etaText : '~45 mins'}`}
             </Text>
           )}
         </View>

@@ -11,7 +11,7 @@ export const subscribeToRiderLocation = (
   riderId: string,
   onUpdate: (location: RiderLocation) => void,
 ): Unsubscribe => {
-  const ref = database().ref(`riders/${riderId}/location`);
+  const ref = database().ref(`riderLocations/${riderId}`);
 
   const onValueChange = ref.on('value', (snapshot) => {
     const data = snapshot.val();

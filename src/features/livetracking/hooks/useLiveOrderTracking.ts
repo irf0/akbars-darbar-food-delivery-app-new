@@ -6,7 +6,7 @@ import { useRiderLocationListener } from './useRiderLocationListener';
 import { distanceBetween, getRouteAheadOfRider } from '../utils/getRemainingRoute';
 
 // Flip this to false once real orders have an assigned rider with live RTDB updates.
-const USE_MOCK_RIDER = true;
+const USE_MOCK_RIDER = false;
 
 const MOCK_RIDER_LOCATION: LatLng = {
   latitude: 27.481739462442544,

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import MapView, { LatLng, Marker, Polyline } from 'react-native-maps';
 import { Entypo } from '@expo/vector-icons';
 import { customMapStyles } from '@utils/customMapStyles';
@@ -13,6 +13,7 @@ import { OrderDetailsSheet } from '../components/OrderDetailsSheet';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '@navigation/types';
 import { useRiderProfile } from '../hooks/useRiderProfile';
+import { useOrderETATimer } from '../hooks/useOrderETATimer';
 
 const riderIcon = require('../../../../assets/rider-icon.png');
 
@@ -21,6 +22,7 @@ type NavProps = NativeStackScreenProps<AppStackParamList>;
 export default function LiveOrderTrackingScreen({ navigation }: NavProps) {
   const { activeOrder } = useActiveOrderListener();
   const riderProfile = useRiderProfile(activeOrder?.assignedRiderId);
+  const { etaText } = useOrderETATimer(activeOrder?.estimatedDeliveryAt);
 
   const mapRef = useRef<MapView>(null);
 
@@ -38,14 +40,17 @@ export default function LiveOrderTrackingScreen({ navigation }: NavProps) {
     customerLocation,
   });
 
+  console.log(riderLocation);
+
   const animatedRiderCoordinate = useAnimatedMarkerPosition(riderLocation);
 
   // const riderProfile = useRiderProfile(activeOrder?.assignedRiderId); // uncomment when ready
 
   if (!isReady || !riderLocation || !customerLocation) {
     return (
-      <View style={styles.container}>
-        <Text>Loading order tracking...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={lightColors.primary} />
+        <Text style={styles.loadingText}>Locating your rider...</Text>
       </View>
     );
   }
@@ -77,7 +82,11 @@ export default function LiveOrderTrackingScreen({ navigation }: NavProps) {
               <Entypo name="location-pin" size={22} color="#fff" />
             </View>
             <View style={styles.nameBubble}>
-              <Text style={styles.nameBubbleText}>Customer</Text>
+              <Text style={styles.nameBubbleText}>
+                {activeOrder?.deliveryAddress?.label
+                  ? activeOrder?.deliveryAddress?.label
+                  : activeOrder?.customerName}
+              </Text>
             </View>
           </View>
         </Marker>
@@ -90,15 +99,12 @@ export default function LiveOrderTrackingScreen({ navigation }: NavProps) {
             rotation={riderHeading}>
             <View style={styles.markerWrapper}>
               <Image source={riderIcon} style={{ width: 130, height: 130 }} resizeMode="contain" />
-              <View style={styles.nameBubble}>
-                <Text style={styles.nameBubbleText}>Rider</Text>
-              </View>
             </View>
           </Marker>
         )}
       </MapView>
 
-      <OrderStatusHeader orderStatus={activeOrder?.orderStatus ?? 'preparing'} />
+      <OrderStatusHeader orderStatus={activeOrder?.orderStatus ?? 'preparing'} etaText={etaText} />
 
       <View style={styles.bottomSheetContainer}>
         <OrderDetailsSheet
@@ -152,5 +158,21 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
-  nameBubbleText: { fontSize: 11, fontWeight: '600', color: '#222' },
+  nameBubbleText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#222',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4B5563', // or lightColors.textSecondary if that token exists
+  },
 });
