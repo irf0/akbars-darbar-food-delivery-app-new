@@ -47,6 +47,9 @@ export interface OrderDoc {
   orderType: OrderType;
   addressId: string | null;
   assignedRiderId: string | null;
+  dispatchedAt?: number;
+  estimatedMinutes?: number;
+  estimatedDeliveryAt?: number;
   deliveryAddress: AddressDoc | null;
   customerName: string;
   customerPhone: string;
