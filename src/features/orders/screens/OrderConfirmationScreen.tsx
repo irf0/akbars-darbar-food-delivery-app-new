@@ -22,8 +22,10 @@ const formatRupees = (paise: number) => `₹${(paise / 100).toFixed(2)}`;
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   placed: { label: 'Order Placed', color: '#B8860B', bg: '#FFF7E0' },
+  accepted: { label: 'Order Confirmed', color: '#B8860B', bg: '#FFF7E0' },
   preparing: { label: 'Preparing', color: '#B8860B', bg: '#FFF7E0' },
   ready: { label: 'Ready', color: '#1565C0', bg: '#E3F2FD' },
+  out_for_delivery: { label: 'Out for Delivery', color: '#1565C0', bg: '#E3F2FD' },
   completed: { label: 'Completed', color: '#2E7D32', bg: '#E8F5E9' },
   cancelled: { label: 'Cancelled', color: '#C62828', bg: '#FDECEA' },
 };
@@ -36,6 +38,7 @@ const OrderConfirmationScreen = () => {
 
   const handleBack = () => {
     if (live) {
+      //to avoid going to the payment screen
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

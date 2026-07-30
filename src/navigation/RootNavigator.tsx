@@ -17,21 +17,19 @@ import { FlyToCartOverlay } from '@components/FlyToCartOverlay';
 import AppSplashScreen from '@components/AppSplashScreen';
 import { useAdminSettings } from '@hooks/useAdminSettings';
 
-// import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
+import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 
 export default function RootNavigator() {
   useAdminSettings();
   const [showSplash, setShowSplash] = useState(true);
   const { authHasHydrated, isAuthenticated, hasCompletedOnboarding } = useAuthStore();
   const { orderType, address, orderTypeHasHydrated } = useOrderTypeStore();
-  // const { settings } = useAdminSettingsStore();
+  const { settings } = useAdminSettingsStore();
   const { migrateLegacyAddress } = useAddressMigration();
 
   const showApp = isAuthenticated && hasCompletedOnboarding;
 
-  const isShopClosed = false; //TODO: TEMPORARY NO CHECKS!
-
-  // const isShopClosed = settings?.isShopClosed ?? false;
+  const isShopClosed = settings?.isShopClosed ?? false;
 
   const hasValidOrderType = orderType === 'takeaway' || (orderType === 'delivery' && !!address);
 
