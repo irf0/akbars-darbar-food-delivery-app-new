@@ -22,13 +22,16 @@ import { useCoupons } from '../hooks/useCoupons';
 import { useCouponStore } from '../store/useCouponStore';
 import { calculateCouponDiscount } from '@utils/calculateCouponDiscount';
 import { theme } from '@theme';
+import { useAdminSettingsStore } from '@store/useAdminSettingsStore';
 type Props = CompositeScreenProps<
   NativeStackScreenProps<AppStackParamList, 'Cart'>,
   BottomTabScreenProps<BottomTabsParamList>
 >;
 
 const CartScreen = ({ navigation }: Props) => {
+  const { settings } = useAdminSettingsStore();
   const orderType = useOrderTypeStore((state) => state.orderType) as 'delivery' | 'takeaway';
+  const setOrderTypeToPickup = useOrderTypeStore((state) => state.setPickup);
   const { items, incrementItem, decrementItem, removeItem, clearCart } = useCartStore();
   const [activeItem, setActiveItem] = useState<{
     id: string;
@@ -41,15 +44,15 @@ const CartScreen = ({ navigation }: Props) => {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { coupons } = useCoupons();
-
   const applyCoupon = useCouponStore((state) => state.applyCoupon);
   const appliedCoupon = useCouponStore((state) => state.appliedCoupon);
-
   const couponDiscount = calculateCouponDiscount(cartTotal, appliedCoupon);
-
   const payableAmount = cartTotal - couponDiscount;
 
-  const isDeliveryDisabled = orderType === 'delivery' && cartTotal < 200;
+  //TODO: wire this check in backend func later
+  // const isMovNotMet = orderType === 'delivery' && cartTotal < 200;
+  const isDeliveryDisabled = orderType === 'delivery' && !settings?.deliveryEnabled;
+  // const isCheckoutDisabled = isMovNotMet || isDeliveryDisabled;
 
   const handleCheckoutPress = () => {
     navigation.navigate('Checkout');
@@ -98,6 +101,16 @@ const CartScreen = ({ navigation }: Props) => {
         </View>
       ) : (
         <View style={styles.screenContainer}>
+          {isDeliveryDisabled && (
+            <View style={styles.deliveryWarningCard}>
+              <Text style={styles.warningText}>
+                Delivery is currently unavailable in your area.
+              </Text>
+              <Pressable onPress={() => setOrderTypeToPickup()} hitSlop={8}>
+                <Text style={styles.switchToTakeawayText}>Switch to Takeaway →</Text>
+              </Pressable>
+            </View>
+          )}
           <FlatList
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.content}
@@ -235,14 +248,21 @@ const CartScreen = ({ navigation }: Props) => {
             }}
           />
 
-          <TouchableOpacity
-            disabled={isDeliveryDisabled}
-            style={[styles.cta, isDeliveryDisabled && styles.disabledBtn]}
-            activeOpacity={0.8}
+          {/* <TouchableOpacity
+            disabled={isCheckoutDisabled}
+            style={[styles.cta, isCheckoutDisabled && styles.disabledBtn]}
+            activeOpacity={0.9}
             onPress={handleCheckoutPress}>
             <Text style={styles.ctaText}>
-              {isDeliveryDisabled ? `Minimum Order Value ₹200` : 'Proceed to Checkout'}
+              {isDeliveryDisabled
+                ? 'Delivery Unavailable'
+                : isMovNotMet
+                  ? `Minimum Order Value ₹200`
+                  : 'Proceed to Checkout'}
             </Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity style={[styles.cta]} activeOpacity={0.9} onPress={handleCheckoutPress}>
+            <Text style={styles.ctaText}>{'Proceed to Checkout'}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -256,17 +276,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+
+  deliveryWarningCard: {
+    backgroundColor: '#FFEBEE',
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+
   warningText: {
     color: '#D32F2F',
     fontSize: 14,
     fontWeight: '500',
-    textAlign: 'center',
-    backgroundColor: '#FFEBEE',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    overflow: 'hidden',
-    marginBottom: 12,
+    textAlign: 'left',
+  },
+
+  switchToTakeawayText: {
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: '700',
+    color: theme.colors.primary,
   },
   disabledBtn: {
     opacity: 0.7,

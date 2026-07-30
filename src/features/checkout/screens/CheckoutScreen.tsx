@@ -256,7 +256,7 @@ const CheckoutScreen = () => {
               onCancel={() => setShowVerificationFailedAlert(false)}
               onConfirm={() => {
                 setShowVerificationFailedAlert(false);
-                // TODO: navigate to Order History screen once it exists
+                navigation.navigate('MainTabs', { screen: 'Home' });
               }}
             />
           </>

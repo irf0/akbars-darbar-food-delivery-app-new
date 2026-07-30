@@ -126,6 +126,11 @@ export const useAddressPicker = () => {
         }
       }
 
+      // const TESTING_BYPASS_RADIUS_CHECK = true;
+      // const serviceable = TESTING_BYPASS_RADIUS_CHECK
+      //   ? true
+      //   : Boolean((await checkServiceability(latitude, longitude))?.serviceable);
+
       const result = await checkServiceability(latitude, longitude);
       const serviceable = Boolean(result?.serviceable);
 

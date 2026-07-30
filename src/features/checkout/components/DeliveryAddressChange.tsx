@@ -30,7 +30,7 @@ export const DeliveryAddressChange = () => {
         />
         <Text style={styles.label}>{label}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AddressList')}>
-          {orderType === 'delivery' && <Text style={styles.changeTxt}>{'change'}</Text>}
+          {orderType === 'delivery' && <Text style={styles.changeTxt}>{'Change'}</Text>}
         </TouchableOpacity>
       </View>
     </>

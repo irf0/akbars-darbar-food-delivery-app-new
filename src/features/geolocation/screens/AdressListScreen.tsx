@@ -97,7 +97,6 @@ const AddressListScreen = () => {
               <View style={styles.cardBody}>
                 <View style={styles.cardHeader}>
                   <Text style={styles.label}>{item.label}</Text>
-                  {isSelected && <Text style={styles.badge}>Selected</Text>}
                 </View>
                 <Text style={styles.text} numberOfLines={1}>
                   {item.flatNum}
