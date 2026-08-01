@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 export default {
     expo: {
-        name: 'akbarsdabar',
+        name: 'Akabrs Darbar',
         slug: 'akbars-dabar',
         scheme: 'myapp',
         version: '1.0.1',

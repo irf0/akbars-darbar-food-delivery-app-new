@@ -29,6 +29,12 @@
     }
   },
   "submit": {
+    "preview": {
+      "android": {
+        "track": "internal",
+        "serviceAccountKeyPath": "./eas-play-submit-key.json"
+      }
+    },
     "production": {}
   }
 }

@@ -14,7 +14,7 @@ export const useLogin = () => {
       const confirmation = await signInWithPhoneNumber(auth, `+91${phone}`);
       return confirmation;
     } catch (err: any) {
-      console.log('RAW ERROR:', err);
+      console.log('LOGIN ERROR:', err);
       const message = err?.message ?? err?.code ?? 'Failed to send OTP';
       setError(message);
       return null;

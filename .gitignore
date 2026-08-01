@@ -48,3 +48,4 @@ yarn-error.*
 
 *storybook.log
 storybook-static
+eas-play-submit-key.json
