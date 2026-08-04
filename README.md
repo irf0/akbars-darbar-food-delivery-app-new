@@ -2,6 +2,8 @@
 
 React Native food delivery app for a live restaurant client. Order food, track delivery in real time, and pay securely, all from one app.
 
+Part of the Darbar ecosystem — see the [full real-time architecture](https://github.com/irf0) across all three apps.
+
 ## Features
 
 - **Live Order Tracking** — real-time rider location on a map from order pickup to delivery
